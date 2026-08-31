@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5 — Leadership & Psychology, and the warband lists.",
+  "notes": "Special rules shared by more than one Mord Hive warband. A unit refers to one by {\"ref\": \"<id>\"}, optionally with `params` to fill a placeholder and `note` for a warband-specific rider. Rules unique to one unit stay inline on that unit as {\"name\", \"description\"}.",
+  "rules": {
+    "leader": {
+      "id": "leader",
+      "name": "Leader",
+      "description": "Any warrior within {range} of this model may use his Leadership characteristic when taking Leadership tests.",
+      "params": { "range": "6\"" }
+    },
+    "expertCombatant": {
+      "id": "expertCombatant",
+      "name": "Expert Combatant",
+      "description": "So skilled with their weapons that they may re-roll any failed hits when charging. Applies only when armed with single-handed weapons (e.g. club, axe, sword)."
+    },
+    "fear": {
+      "id": "fear",
+      "name": "Fear",
+      "description": "This model causes fear. See the Leadership & Psychology rules."
+    },
+    "largeTarget": {
+      "id": "largeTarget",
+      "name": "Large Target",
+      "description": "This model is a Large Target: it may be picked out and shot at even when it is not the closest model. See the Shooting rules."
+    },
+    "stupidity": {
+      "id": "stupidity",
+      "name": "Stupidity",
+      "description": "This model is subject to Stupidity and must test at the start of each of its own turns. See the Leadership & Psychology rules."
+    },
+    "animal": {
+      "id": "animal",
+      "name": "Animal",
+      "description": "This model is an animal and never gains Experience."
+    }
+  }
+}

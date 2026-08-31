@@ -1,0 +1,137 @@
+{
+  "id": "eldar-wayward-host",
+  "name": "Eldar Wayward Host",
+  "source": "Mord Hive v0.5, pp.087-092 (Eldar Wayward Host). Statlines from datasheets pp.088-089; equipment list p.088; Aspect Warrior Paths p.090; special equipment p.091; Craftworld Psychic Powers p.092 (see spells.json); special skills p.089. The Aspect Warrior's profile is set by its chosen Path (Swooping Hawk / Howling Banshee / Striking Scorpion / Dire Avenger) - the stored line defaults to the Dire Avenger path, with all four in specialRules. The Warlock/Bonesinger is one slot with two builds (a Warlock is a Psyker; a Bonesinger enables a Wraithguard). Eldar have no sourced racial-maximum profile (ceilings left null). TODO: verify Hero skill-table access - the p.087 checkmarks were ambiguous in the PDF extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 12,
+  "heroSlots": [
+    {
+      "id": "aspect-warrior",
+      "unitType": "Aspect Warrior",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 90,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "academic", "speed", "eldar-wayward-host"],
+      "statLine": { "M": 5, "WS": 5, "BS": 5, "S": 3, "T": 3, "W": 1, "I": 5, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["eldarEquipmentList"],
+      "notes": "Exactly one per warband. Path (chosen on recruitment, sets stats/skills/equipment; stored line = Dire Avenger): SWOOPING HAWK M5 WS4 BS5 S3 T3 W1 I5 A1 Ld8 (Hit and Run), HOWLING BANSHEE M6 WS5 BS4 S3 T3 W1 I6 A1 Ld8 (Murderous Dance), STRIKING SCORPION M5 WS5 BS4 S4 T3 W1 I6 A1 Ld8 (Shadow Stalker), DIRE AVENGER M5 WS5 BS5 S3 T3 W1 I5 A1 Ld9 (Battle-Hardened). TODO: verify skill-table access.",
+      "specialRules": [
+        { "ref": "leader", "params": { "range": "6\"" } },
+        { "name": "Path", "description": "On recruitment, choose an Aspect Path (Swooping Hawk, Howling Banshee, Striking Scorpion or Dire Avenger), which sets the Aspect Warrior's stats, skill availability, weapons and equipment. See specialRules." }
+      ]
+    },
+    {
+      "id": "storm-guardians",
+      "unitType": "Storm Guardians",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 45,
+      "startingXp": 12,
+      "skillLists": ["combat", "shooting", "eldar-wayward-host"],
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 5, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["eldarEquipmentList"],
+      "notes": "Professional soldiers, a cut above Guardian Defenders. TODO: verify skill-table access.",
+      "specialRules": []
+    },
+    {
+      "id": "warlock-or-bonesinger",
+      "unitType": "Warlock or Bonesinger",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 55,
+      "startingXp": 12,
+      "skillLists": ["combat", "academic", "speed", "eldar-wayward-host"],
+      "spellLists": ["craftworldPowers"],
+      "startingSpells": 1,
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 5, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["eldarEquipmentList"],
+      "notes": "One slot, two builds. WARLOCK: a Psyker using Craftworld Psychic Powers (spellLists apply). BONESINGER: not a psyker (ignore the spell list) - Construct Shepherd, letting the warband recruit a single Wraithguard (which can't fight if the Bonesinger can't, and 'dies' only on a 1 when taken Out of Action). TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "guardian-defenders",
+      "unitType": "Guardian Defenders",
+      "cost": 30,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 5, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 5, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["eldarEquipmentList"],
+      "notes": "Citizen-soldiers, the bulk of the force. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "rangers",
+      "unitType": "Rangers",
+      "cost": 35,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "statLine": { "M": 5, "WS": 3, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 5, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["eldarEquipmentList"],
+      "notes": "Prepared Position: may deploy Hidden (per the Hiding rules). Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Prepared Position", "description": "May be deployed to the battle Hidden, following the Hiding rules." }]
+    },
+    {
+      "id": "wraithguard",
+      "unitType": "Wraithguard",
+      "cost": 230,
+      "isAnimal": true,
+      "isLargeCreature": true,
+      "maxCount": 1,
+      "statLine": { "M": 3, "WS": 3, "BS": 3, "S": 5, "T": 5, "W": 2, "I": 3, "A": 1, "Ld": 5 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Requires a Bonesinger in the warband. Equipped with either a Wraith Cannon and a club, or a Power Axe and a Shield. Wraithbone Construct: inbuilt 4+ armour save; never gains experience. Awaken!: within 3\" of a Bonesinger gains +1 Movement/BS/WS/Initiative/Attack. Guidance: if not within 3\" of a Bonesinger at the start of its turn, gains Stupidity for that turn. Causes Fear, Immune to Psychology (unless Stupid via Guidance), Immune to Poison, No Pain, Large Target. Bought in groups of 1-5.",
+      "specialRules": [
+        { "ref": "largeTarget" },
+        { "name": "Fear", "description": "Wraithguard cause fear." },
+        { "name": "Wraithbone Construct", "description": "Inbuilt 4+ armour save; never gains experience." },
+        { "name": "Immune to Poison", "description": "Not affected by any poison." },
+        { "name": "No Pain", "description": "Treat a stunned result on the Injury chart as knocked down." }
+      ]
+    }
+  ],
+  "equipmentLists": {
+    "eldarEquipmentList": [
+      "dagger",
+      "sword",
+      "doubleHandedWeapon",
+      "spear",
+      "powerSword",
+      "shurikenPistol",
+      "shurikenCatapult",
+      "rangerLongRifle",
+      "throwingWeapons",
+      "lightArmour",
+      "eldarMeshWeave",
+      "shield",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [
+    { "id": "avengerShurikenCatapult", "name": "Avenger Shuriken Catapult", "category": "missile", "cost": 40, "rarity": 8, "restriction": "Dire Avenger only", "rulesText": "Range 18\", Strength 3. Sublime Weapon (may fire twice a turn and after running, with only a single -1 modifier even if it does both), Monomolecular Disk (as Shuriken Catapult)." },
+    { "id": "shimmerShield", "name": "Shimmer Shield", "category": "armour", "cost": 20, "rarity": 8, "restriction": "Dire Avenger only", "rulesText": "Works as a Shield and a Buckler in close combat, and gives a 6+ Invulnerable Save (after all armour/dodge/step-aside saves) that can never be modified." },
+    { "id": "bansheeMask", "name": "Banshee Mask", "category": "armour", "cost": 15, "rarity": 8, "restriction": "Howling Banshee only", "rulesText": "Counts as a helmet and gives the wearer the Fear rule; any model taking a Fear test caused by it does so at -1 Leadership." },
+    { "id": "mirrorSword", "name": "Mirror Sword", "category": "melee", "cost": 25, "rarity": 8, "restriction": "Howling Banshee only", "rulesText": "As user Strength. Cutting Edge (-1 armour save), Parry (as sword), Mirror (opponents locked in combat are at -1 WS and Initiative)." },
+    { "id": "eldarChainsword", "name": "Chainsword", "category": "melee", "cost": 30, "rarity": null, "restriction": "Striking Scorpion only", "rulesText": "Striking Scorpion chainsword (30 tn on this list; the shared chart lists a Chainsword at 15 tn). +1 to Injury Rolls, strikes at -1 Initiative." },
+    { "id": "mandiblaster", "name": "Mandiblaster", "category": "missile", "cost": 25, "rarity": 8, "restriction": "Striking Scorpion only", "rulesText": "Counts as a helmet and a hands-free las-pistol; may be fired on the turn the wearer charges (per laspistol rules) without the -2 BS penalty." },
+    { "id": "lasBlaster", "name": "Las Blaster", "category": "missile", "cost": 35, "rarity": 8, "restriction": "Swooping Hawk only", "rulesText": "Range 18\", Strength 4. Agile (as Shuriken Catapult), Focused Beam (Strength 5 within half range, 9\" or less)." },
+    { "id": "swoopingHawkWings", "name": "Swooping Hawk Wings", "category": "misc", "cost": 25, "rarity": 8, "restriction": "Swooping Hawk only", "rulesText": "Grants the Fly rule: move 12\" in any direction ignoring terrain, no Initiative checks between building levels; no diving charges; still needs line of sight to charge." },
+    { "id": "wraithCannon", "name": "Wraith Cannon", "category": "missile", "cost": null, "priceRange": "Wraithguard wargear", "rarity": null, "restriction": "Wraithguard only", "rulesText": "Range 12\", always wounds on 4+. Distortion: a model hit and wounded is always Stunned even if it passes its armour save or has wounds remaining." }
+  ],
+  "specialRules": "Eldar Wayward Host. Kindred Hatred: Eldar hate any and all Dark Eldar warriors. Excellent Sight: can spot Hidden enemies from twice as far as normal warriors. Crudity of the Mon'Kiegh: if an Eldar uses any ranged weapon not on their warband's Equipment list it is at -2 Ballistic Skill. | Aspect Warrior Paths (chosen on recruitment, each adds a rule on top of Leader): Swooping Hawk (Hit and Run - may Escape from Combat and automatically reform, may fire at -2 BS in a turn it retreats), Howling Banshee (Murderous Dance - no off-hand penalty with two close combat weapons; may only use Eldar Mesh Weave and Banshee Helmets for armour), Striking Scorpion (Shadow Stalker - may hide even if it ran this turn), Dire Avenger (Battle-Hardened - while on the table and not stunned/knocked down the warband may re-roll failed rout tests). | Min warband size 3, max 12. Wraithguard requires a Bonesinger. | Eldar have no sourced racial-maximum profile (ceilings left null).",
+  "rareItemRollBonus": 0
+}

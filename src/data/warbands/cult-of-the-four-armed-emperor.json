@@ -1,0 +1,142 @@
+{
+  "id": "cult-of-the-four-armed-emperor",
+  "name": "Cult of the Four-Armed Emperor",
+  "source": "Mord Hive v0.5, pp.078-082 (Cult of the Four-Armed Emperor - a Genestealer Cult). Statlines from datasheets pp.079-080; equipment lists p.079; Blessings of the Four-Armed Emperor p.081; Cult Rituals p.082 (see spells.json). Hero/henchman split follows the starting-experience lines (Magus 20, Anointed 8, Hybrid Acolytes 0 as Heroes; Cult Initiates / Hybrid Neophytes / Aberrants as Henchmen). NOTE: p.078 says up to two Hybrid Acolytes while the p.080 datasheet header reads '0-3' - the choice-of-warriors limit (2) is used here. TODO: verify Hero skill-table access - the p.078 checkmarks were ambiguous in the PDF extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 15,
+  "heroSlots": [
+    {
+      "id": "magus",
+      "racialProfile": "human",
+      "unitType": "Magus",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 70,
+      "startingXp": 20,
+      "skillLists": ["academic", "shooting", "speed"],
+      "spellLists": ["cultRituals"],
+      "startingSpells": 1,
+      "statLine": { "M": 4, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["cultEquipmentList"],
+      "notes": "Exactly one per warband. Psyker; uses Cult Rituals (see spells.json). TODO: verify skill-table access.",
+      "specialRules": [
+        { "ref": "leader", "params": { "range": "6\"" } },
+        { "name": "Psyker", "description": "The Magus is a Psyker and uses Cult Rituals." }
+      ]
+    },
+    {
+      "id": "anointed",
+      "unitType": "Anointed",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 90,
+      "startingXp": 8,
+      "skillLists": ["combat", "strength", "speed"],
+      "statLine": { "M": 5, "WS": 4, "BS": 0, "S": 4, "T": 4, "W": 2, "I": 4, "A": 2, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "A Genestealer; never uses weapons or armour. Causes Fear. Must start the game with one or more Blessings of the Four-Armed Emperor (bought at recruitment only; see specialRules) - cost is on top of the 90 tn hire. TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Fear", "description": "Anointed are terrifying creatures of nightmare and cause fear." }]
+    },
+    {
+      "id": "hybrid-acolytes",
+      "racialProfile": "human",
+      "unitType": "Hybrid Acolytes",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 25,
+      "startingXp": 0,
+      "skillLists": ["combat", "shooting", "strength"],
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["cultEquipmentList"],
+      "notes": "Must start the game with one or more Blessings each (bought at recruitment only; see specialRules). TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "cult-initiates",
+      "racialProfile": "human",
+      "unitType": "Cult Initiates",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["cultEquipmentList"],
+      "notes": "The bulk of the sect. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "hybrid-neophytes",
+      "racialProfile": "human",
+      "unitType": "Hybrid Neophytes",
+      "cost": 35,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 5,
+      "statLine": { "M": 4, "WS": 2, "BS": 2, "S": 4, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 6 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["workerStockEquipmentList"],
+      "notes": "Ferocious: simpler creatures that automatically pass any Leadership test. Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Ferocious", "description": "Automatically pass any Leadership test they are required to make." }]
+    },
+    {
+      "id": "aberrants",
+      "unitType": "Aberrants",
+      "cost": 45,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 3,
+      "statLine": { "M": 4, "WS": 4, "BS": 2, "S": 3, "T": 4, "W": 2, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["workerStockEquipmentList"],
+      "notes": "Overly-blessed cult members. Bought in groups of 1-5.",
+      "specialRules": []
+    }
+  ],
+  "equipmentLists": {
+    "cultEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "doubleHandedWeapon",
+      "spear",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "shotgun",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ],
+    "workerStockEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "doubleHandedWeapon",
+      "flail",
+      "lasAutoPistol",
+      "heavyStubber",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [
+    { "id": "chainWeapon", "name": "Chain Weapon", "category": "melee", "cost": null, "priceRange": "3x weapon price", "rarity": null, "restriction": "Hero only", "rulesText": "Any melee weapon upgraded to a Chain Weapon (Hero only): +1 to Injury Rolls, strikes at -1 Initiative. Costs 3x the base weapon price." }
+  ],
+  "specialRules": "Cult of the Four-Armed Emperor (a Genestealer Cult). Blessings of the Four-Armed Emperor (bought for a Hybrid Acolyte or Anointed on recruitment only, never later; first at listed price, second and subsequent for the same model cost double): Shadow in the Warp (4+ save vs psychic powers/prayers, 20 tn), Rending Claw (no weapon in that arm; extra attack at +1 Strength, 50 tn), Fleet of Claw (+1 Movement, 40 tn), Spine Shield (obstruct an opponent to reduce his attacks by -1, min 1, 35 tn), Acid Blood (on losing a wound in close combat, models in base contact suffer a S3 hit, no crits, 30 tn), Spines (models in base contact suffer an automatic S1 hit at the start of each close combat phase, no crits, 35 tn), Prehensile Stinger (extra S5 attack each combat phase; S2 vs poison-immune, 40 tn), Extra Arm (use a single-handed weapon for +1 attack, or carry a shield/buckler; an Anointed gains the extra attack but still can't carry a weapon, 40 tn), Nightmarish Form (causes fear, 40 tn). | Worker-Stock Equipment List prices Heavy Stubber at 60 tn (the shared chart lists 50). Chain Weapon costs 3x the weapon price (Hero only). | Min warband size 3, max 15. Anointed are Genestealers (null ceilings; never advance toward a human max).",
+  "rareItemRollBonus": 0
+}

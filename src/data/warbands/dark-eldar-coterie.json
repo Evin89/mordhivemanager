@@ -1,0 +1,151 @@
+{
+  "id": "dark-eldar-coterie",
+  "name": "Dark Eldar Coterie",
+  "source": "Mord Hive v0.5, pp.083-086 (Dark Eldar Coterie). Statlines from datasheets pp.084-085; equipment list p.084; special equipment/skills p.086. Eldar have no sourced racial-maximum profile (ceilings left null). Scourge's starting experience was not listed in the p.083 table (8 assumed - TODO verify). TODO: verify Hero skill-table access - the p.083 checkmarks were ambiguous in the PDF extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 12,
+  "heroSlots": [
+    {
+      "id": "kabalite-trueborn",
+      "unitType": "Kabalite Trueborn",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 70,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "academic", "speed", "dark-eldar-coterie"],
+      "statLine": { "M": 5, "WS": 5, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 6, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "Exactly one per warband. TODO: verify skill-table access.",
+      "specialRules": [{ "ref": "leader", "params": { "range": "6\"" } }]
+    },
+    {
+      "id": "wyches",
+      "unitType": "Wyches",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 45,
+      "startingXp": 12,
+      "skillLists": ["combat", "speed", "dark-eldar-coterie"],
+      "statLine": { "M": 5, "WS": 5, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 6, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "Melee Specialists: may only ever use Splinter Pistols and Throwing Weapons as a ranged weapon. May take Combat Drugs (Wyches only). TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Melee Specialists", "description": "May only use Splinter Pistols and Throwing Weapons as ranged weapons." }]
+    },
+    {
+      "id": "wracks",
+      "unitType": "Wracks",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 65,
+      "startingXp": 8,
+      "skillLists": ["combat", "strength", "dark-eldar-coterie"],
+      "statLine": { "M": 5, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "Broken by their Maker: must earn twice the usual XP to gain an advance. TODO: verify skill-table access.",
+      "specialRules": [
+        { "name": "Cause Fear", "description": "Wracks are nightmares made manifest and cause fear." },
+        { "name": "Immune to Psychology", "description": "Not affected by psychology; never leaves combat." },
+        { "name": "Immune to Poison", "description": "Not affected by any poison." },
+        { "name": "No Pain", "description": "Treat a 'stunned' result on the Injury chart as 'knocked down'." },
+        { "name": "Broken by their Maker", "description": "Must earn twice the usual number of experience points to gain an advance." }
+      ]
+    },
+    {
+      "id": "beast-master",
+      "unitType": "Beast Master",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 45,
+      "startingXp": 8,
+      "skillLists": ["combat", "speed", "dark-eldar-coterie"],
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 6, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "May be accompanied by up to two Warp Beasts (brought as henchmen). TODO: verify skill-table access.",
+      "specialRules": []
+    },
+    {
+      "id": "scourge",
+      "unitType": "Scourge",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 65,
+      "startingXp": 8,
+      "skillLists": ["shooting", "speed", "dark-eldar-coterie"],
+      "statLine": { "M": 6, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 6, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "Fly: may move 12\" in any direction ignoring terrain, no Initiative checks for levels; no diving charges; still needs line of sight to charge. Starting XP not listed in the ruleset table (8 assumed - TODO verify). TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Fly", "description": "May move 12\" in any direction ignoring terrain; no Initiative checks moving between building levels; may not make diving charges; still needs line of sight to charge." }]
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "kabalite-warriors",
+      "unitType": "Kabalite Warriors",
+      "cost": 35,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 6, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["darkEldarEquipmentList"],
+      "notes": "The beating heart of the warband. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "warp-beasts",
+      "unitType": "Warp Beasts",
+      "cost": 25,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "statLine": { "M": 6, "WS": 3, "BS": 0, "S": 4, "T": 4, "W": 1, "I": 1, "A": 1, "Ld": 4 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Requires a Beastmaster in the warband. Ephemeral Creatures (never gain experience). If the Beastmaster dies or can't fight, the beasts vanish/don't participate. Esoteric Entity (always a 6+ armour save that can never be modified). Cause Fear. Use the Beastmaster's basic Leadership within 6\" only. Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Ephemeral Creatures", "description": "Not of the physical plane; never gain experience." },
+        { "name": "Esoteric Entity", "description": "Always have a 6+ armour save that can never be modified in any way." },
+        { "name": "Fear", "description": "Warp Beasts cause fear." }
+      ]
+    }
+  ],
+  "equipmentLists": {
+    "darkEldarEquipmentList": [
+      "dagger",
+      "axe",
+      "sword",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "beastlash",
+      "splinterPistol",
+      "splinterRifle",
+      "splinterCannon",
+      "throwingWeapons",
+      "lightArmour",
+      "eldarMeshWeave",
+      "shield",
+      "buckler",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [
+    { "id": "tormentorHelm", "name": "Tormentor Helm", "category": "armour", "cost": 40, "rarity": 9, "restriction": "Leader only", "rulesText": "Counts as a helmet with a built-in Splinter Pistol (usable in addition to other weapons and in close combat, hitting on the user's BS). Causes Fear. Rare 9. (The special-gear table on p.084 lists it at 40 tn; p.086 lists 45 tn.)" },
+    { "id": "combatDrugs", "name": "Combat Drugs", "category": "misc", "cost": 15, "rarity": null, "restriction": "Wych only", "rulesText": "One use, refilled after each use. On entering battle roll 2D6: 2 Bad Batch (taken OOA, no serious injury roll), 3-5 Resilient (+1 T), 6-8 Strong (+1 S), 9-11 Inured to Pain (count 1-4 as Knocked Down on the Injury chart), 12 Master Work (+1 WS/S/I/A) - for the battle." },
+    { "id": "darkVenom", "name": "Dark Venom", "category": "misc", "cost": 15, "rarity": null, "restriction": "Heroes only", "rulesText": "A dose of poison (see Master of Poisons)." },
+    { "id": "darkEldarBlade", "name": "Dark Eldar Blade", "category": "melee", "cost": null, "priceRange": "+20 tn upgrade", "rarity": 9, "restriction": "Heroes only", "rulesText": "Upgrade to a Dagger, Sword or Axe for +20 tn: Critical Damage (+1 to Critical Chart results), Wicked Edge (stuns on a 2-4), inherits the original weapon's positives and negatives. Rare 9." }
+  ],
+  "specialRules": "Dark Eldar Coterie. Kindred Hatred: Dark Eldar hate any and all other Eldar (Craftworld, Corsair or Exodite) warriors. Excellent Sight: can spot Hidden enemies from twice as far as normal warriors. Crudity of the Mon'Kiegh: if an Eldar uses any ranged weapon not on their warband's Equipment list it is at -2 Ballistic Skill. She who Thirsts: a Dark Eldar Coterie warband may never include any model that is a Psyker. | Min warband size 3, max 12. Warp Beasts require a Beastmaster. | Eldar have no sourced racial-maximum profile (ceilings left null).",
+  "rareItemRollBonus": 0
+}

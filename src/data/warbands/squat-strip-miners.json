@@ -1,0 +1,121 @@
+{
+  "id": "squat-strip-miners",
+  "name": "Squat Strip Miners",
+  "source": "Mord Hive v0.5, pp.055-058 (Squat Strip Miners). Statlines from datasheets pp.056-057; equipment lists p.056; Squat special skills p.058 (see skills.json warbandSpecific). Techmites (Claim-Jumper attachments: Surveyor 25 tn, Defensor 45 tn, Striker 75 tn) are documented in specialRules rather than being a recruitable henchmen type, since they attach to a specific Claim Jumper and don't count toward warband size or gain XP. Squats have no sourced racial-maximum profile in the PDF text, so their ceilings are left null. TODO: verify Hero skill-table access - the p.056 checkmark columns were ambiguous; TODO: verify Techmite profiles (their small stat tables extracted unreliably).",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 12,
+  "heroSlots": [
+    {
+      "id": "drill-master",
+      "unitType": "Drill Master",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 85,
+      "startingXp": 20,
+      "skillLists": ["combat", "academic", "strength", "squat-strip-miners"],
+      "statLine": { "M": 3, "WS": 5, "BS": 4, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["squatEquipmentList"],
+      "notes": "Exactly one per warband. Subject to all Squat special rules (see specialRules). TODO: verify skill-table access.",
+      "specialRules": [{ "ref": "leader", "params": { "range": "6\"" } }]
+    },
+    {
+      "id": "engineer",
+      "unitType": "Engineer",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 50,
+      "startingXp": 10,
+      "skillLists": ["combat", "academic", "squat-strip-miners"],
+      "statLine": { "M": 3, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["boreGuardEquipmentList"],
+      "notes": "Armourer: missile weapons bought from the warband's basic lists have their range increased by 2\" (pistols) or 4\" (others) in battles he takes part in; no effect on Hired Guns' gear. TODO: verify skill-table access.",
+      "specialRules": []
+    },
+    {
+      "id": "claim-jumper",
+      "unitType": "Claim Jumpers",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 50,
+      "startingXp": 8,
+      "skillLists": ["combat", "shooting", "squat-strip-miners"],
+      "statLine": { "M": 3, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 2, "I": 2, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["squatEquipmentList"],
+      "notes": "Scouts. Each Claim Jumper may take up to two Techmites (see specialRules), no more than one of each type. TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "prospectors",
+      "unitType": "Prospectors",
+      "cost": 40,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 3, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["squatEquipmentList"],
+      "notes": "Dig in and claim the find. Subject to Squat special rules. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "bore-guard",
+      "unitType": "Bore Guard",
+      "cost": 40,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 5,
+      "statLine": { "M": 3, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 9 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["boreGuardEquipmentList"],
+      "notes": "Patrol the dig works. Subject to Squat special rules. Bought in groups of 1-5.",
+      "specialRules": []
+    }
+  ],
+  "equipmentLists": {
+    "squatEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "lasAutoPistol",
+      "boltPistol",
+      "shotgun",
+      "lightArmour",
+      "heavyArmour",
+      "carapaceArmour",
+      "shield",
+      "helmet"
+    ],
+    "boreGuardEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "boltPistol",
+      "bolter",
+      "heavyStubber",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [],
+  "specialRules": "Squat Strip Miners. All Squats: Hard to Kill (taken out of action only on a 6, not 5-6: treat 1-2 as knocked down, 3-5 as stunned, 6 out of action), Hard Head (ignore the special rules for maces/clubs etc.), Armour (never suffer movement penalties for wearing armour), Hates Orks (hate any model from the Ork Mob list), Incomparable Strip Miners (+1 to the number of Refined Diamantine pieces found at the end of a game). Techmites and Hired Guns are not Squats for these rules. | Techmites (automata attached to Claim Jumpers; do not count as Squats, do not count toward warband size, never gain XP; a Techmite more than 3\" from its owner at the start of its Movement phase is stunned; no Claim Jumper may have more than one of each type): SURVEYOR (25 tn; Light Armour, Lamp Pack, Dagger; add/subtract 1 from the owner's Exploration Roll, may range up to 9\" from owner), DEFENSOR (45 tn; Light Armour, Shield, Sword; if its owner is charged it may move up to 3\" to intercept), STRIKER (75 tn; Light Armour, Heavy Stubber, Club; if its owner doesn't fire, it may fire with the owner's BS and always counts as stationary). TODO: verify Techmite profiles. | Carapace Armour is 90 tn on the Squat list (the shared chart lists 80). Min warband size 3, max 12. | Squats have no sourced racial-maximum profile (ceilings left null).",
+  "rareItemRollBonus": 0
+}

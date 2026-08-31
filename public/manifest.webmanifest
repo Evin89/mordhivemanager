@@ -1,0 +1,14 @@
+{
+  "name": "Mord Hive",
+  "short_name": "Mord Hive",
+  "description": "Gang and campaign manager for Mord Hive — an unofficial fan tool.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E9E9E6",
+  "theme_color": "#E9E9E6",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

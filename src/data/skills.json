@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5, Skill Lists (pp.101-104). Transcribed verbatim from the ruleset. Warband-specific lists live under `warbandSpecific`, keyed by warband id.",
+  "lists": {
+    "combat": {
+      "name": "Combat",
+      "skills": [
+        { "id": "combat.strikeToInjure", "name": "Strike to Injure", "effect": "Add +1 to all injury rolls caused by the model in hand-to-hand combat." },
+        { "id": "combat.combatMaster", "name": "Combat Master", "effect": "If he fights against more than one enemy at a time, he gains an extra Attack in each hand-to-hand combat phase as long as he is fighting two or more enemy models. In addition, the warrior is immune to 'All Alone' tests." },
+        { "id": "combat.weaponsTraining", "name": "Weapons Training", "effect": "May use any hand-to-hand combat weapon he comes across, not just those in his equipment options. In addition, this model doesn't receive the -1 to hit modifier for his 'offhand' weapon." },
+        { "id": "combat.webOfSteel", "name": "Web of Steel", "effect": "The model gains +1 to all his rolls on Critical Hit tables in hand-to-hand combat." },
+        { "id": "combat.expertSwordsman", "name": "Expert Swordsman", "effect": "May re-roll all missed attacks if he is using a sword (of any kind) in the hand-to-hand phase of the turn that he charges." },
+        { "id": "combat.stepAside", "name": "Step Aside", "effect": "Each time he suffers a wound in close combat he may make an additional saving throw of 5+. This save is never modified and is taken after all other armour saves." },
+        { "id": "combat.bulwark", "name": "Bulwark", "effect": "A defensive style requiring a shield in one hand and a single-handed hand weapon (sword, spear, hammer, etc.) in the other: the warrior gets an additional +1 bonus on his armour saving roll in close combat." }
+      ]
+    },
+    "shooting": {
+      "name": "Shooting",
+      "skills": [
+        { "id": "shooting.hipFire", "name": "Hip Fire", "effect": "The warrior may fire their weapon after running at an additional -1 to hit. If the weapon has the Agile rule, they no longer receive the -1 to hit for running and shooting." },
+        { "id": "shooting.gunslinger", "name": "Gunslinger", "effect": "Expert with all kinds of pistols. If equipped with a brace of pistols of any type he may fire with each one in the shooting phase. He may also fire both when charging with pistols with the 'Shoot in Hand-To-Hand combat' rule." },
+        { "id": "shooting.eagleEyes", "name": "Eagle Eyes", "effect": "He adds +6\" to the range of any missile weapon he is using." },
+        { "id": "shooting.nimble", "name": "Nimble", "effect": "May move and fire with weapons that are normally only used if the firer has not moved. May not be used with the Hip Fire rule." },
+        { "id": "shooting.trickShooter", "name": "Trick Shooter", "effect": "He ignores all modifiers for cover when using missile weapons." },
+        { "id": "shooting.rockSolid", "name": "Rock Solid", "effect": "This warrior doesn't receive the -1 to hit penalty for firing a weapon multiple times." },
+        { "id": "shooting.knifeFighter", "name": "Knife-Fighter", "effect": "May throw a maximum of three throwing knives/stars in his shooting phase and may divide his shots between any targets within range. Cannot be combined with the Hip Fire skill." },
+        { "id": "shooting.weaponsTraining", "name": "Weapons Training", "effect": "May use any missile weapon he comes across, not just those in his equipment options. In addition his weapon never Misfires on the roll of a 1 to hit." }
+      ]
+    },
+    "academic": {
+      "name": "Academic",
+      "skills": [
+        { "id": "academic.battleTongue", "name": "Battle Tongue", "effect": "Increases the range of his Leader ability by 6\".", "prerequisite": { "text": "Leader only.", "requiresLeader": true } },
+        { "id": "academic.psychicMastery", "name": "Psychic Mastery", "effect": "Gains +1 to his rolls to see whether he can cast powers successfully. Ecclesiastic Priests may not use this skill.", "prerequisite": { "text": "Heroes capable of casting powers only." } },
+        { "id": "academic.streetwise", "name": "Streetwise", "effect": "May add +2 to the roll that determines his chances of finding rare items (this can assist with finding Power Armour Components also)." },
+        { "id": "academic.haggle", "name": "Haggle", "effect": "May deduct 2D6 thrones from the price of any single item (to a minimum cost of 1 tn) once per post battle sequence." },
+        { "id": "academic.forbiddenLore", "name": "Forbidden Lore", "effect": "May learn Lesser Psy-Arcana if he owns a Tome of Arcana. Ecclesiastic Priests may not use this skill." },
+        { "id": "academic.diamantineHunter", "name": "Diamantine Hunter", "effect": "If a Hero with this skill is searching the ruins in the exploration phase you may re-roll one dice when rolling on the Exploration chart. The second result stands." },
+        { "id": "academic.battlePsyker", "name": "Battle-Psyker", "effect": "The mental powers of the Psyker allow him to wear armour and cast psychic powers.", "prerequisite": { "text": "Psykers only." } },
+        { "id": "academic.tactician", "name": "Tactician", "effect": "The warband leader may reposition his warriors after his opponent has set up and may advance them up to 12 inches onto the board instead of 8 inches.", "prerequisite": { "text": "Warband leader only.", "requiresLeader": true } },
+        { "id": "academic.hunch", "name": "Hunch", "effect": "The warband leader may position up to 3 of his men capable of earning experience in any ruined building at least 12 inches from an enemy model and not in the enemy deployment zone.", "prerequisite": { "text": "Warband leader only.", "requiresLeader": true } },
+        { "id": "academic.mindFocus", "name": "Mind Focus", "effect": "When using a power or prayer the warrior may reroll one dice used in the difficulty roll.", "prerequisite": { "text": "A warrior capable of using prayers or casting psychic powers only." } }
+      ]
+    },
+    "strength": {
+      "name": "Strength",
+      "skills": [
+        { "id": "strength.mightyBlow", "name": "Mighty Blow", "effect": "+1 Strength bonus in close combat (excluding pistols). Applies to all close combat weapons." },
+        { "id": "strength.cityFighter", "name": "City Fighter", "effect": "Adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins." },
+        { "id": "strength.resilient", "name": "Resilient", "effect": "Deduct -1 Strength from all hits against him in close combat. This does not affect armour save modifiers." },
+        { "id": "strength.fearsome", "name": "Fearsome", "effect": "Such is his reputation and physique that he causes fear in opposing models." },
+        { "id": "strength.strongman", "name": "Strongman", "effect": "May use a double-handed weapon without the usual penalty of always striking last." },
+        { "id": "strength.unstoppableCharge", "name": "Unstoppable Charge", "effect": "He adds +1 to hit and +1 attack in a turn that he charges." },
+        { "id": "strength.splinteringBlow", "name": "Splintering Blow", "effect": "The armour modifier (Cutting Edge) from all axes is increased to -2." },
+        { "id": "strength.beatDown", "name": "Beat Down", "effect": "When attacking with any Morning Star or Flail, if you wounded an enemy in the first round of combat, the strength bonus continues into the next round, lasting as long as you keep wounding each round or until the combat ends." },
+        { "id": "strength.impressiveBulk", "name": "Impressive Bulk", "effect": "Whenever the hero makes a Strength or Toughness test he may add +1 to the characteristic for the purposes of the test." },
+        { "id": "strength.devastatingStrike", "name": "Devastating Strike", "effect": "When using two-handed weapons in combat the warrior's hits confer an additional -1 to Armour Save in combination with any existing modifier." }
+      ]
+    },
+    "speed": {
+      "name": "Speed",
+      "skills": [
+        { "id": "speed.leap", "name": "Leap", "effect": "May leap D6\" in the movement phase in addition to his normal movement (once per turn); may move/run/charge and leap, jump over man-sized models and 1\" obstacles without penalty, or leap gaps (committed before rolling)." },
+        { "id": "speed.sprint", "name": "Sprint", "effect": "May triple his Movement rate when he runs or charges, rather than doubling it." },
+        { "id": "speed.acrobat", "name": "Acrobat", "effect": "May fall or jump from up to 12\" without damage if he passes a single Initiative test, and can re-roll failed Diving Charge rolls. Still only makes a diving charge from up to 6\"." },
+        { "id": "speed.lightningReflexes", "name": "Lightning Reflexes", "effect": "If charged he will 'strike first' against those that charged that turn; order versus the charger(s) is decided by comparing Initiative." },
+        { "id": "speed.jumpUp", "name": "Jump Up", "effect": "May ignore knocked down results when rolling for injuries, unless knocked down by a successful helmet save or the No Pain special rule." },
+        { "id": "speed.dodge", "name": "Dodge", "effect": "May avoid any hits from a missile weapon on a D6 roll of 5+, taken as soon as a hit is scored, before rolling to wound and before other skills/equipment." },
+        { "id": "speed.scaleSheerSurfaces", "name": "Scale Sheer Surfaces", "effect": "May climb up or down a height equal to twice his normal Movement, and does not need to make Initiative tests when doing so." },
+        { "id": "speed.sureFooted", "name": "Sure-Footed", "effect": "May re-roll any failed Initiative-based tests for climbing, jumping, diving charges, falling off ledges or any other relevant test." },
+        { "id": "speed.spry", "name": "Spry", "effect": "May run or charge while climbing." }
+      ]
+    }
+  },
+  "warbandSpecific": {
+    "tau-pathfinder-cadre": {
+      "name": "T'au Pathfinder Cadre",
+      "skills": [
+        { "id": "tau.droneTinkerer", "name": "Drone Tinkerer", "effect": "If the model has a Drone Controller it may take a second drone of the same kind. Its purchased drones may gain XP at half the usual rate but may never become heroes.", "prerequisite": { "text": "Earth Caste Engineer only." } },
+        { "id": "tau.auxiliaryCadreSpecialist", "name": "Auxiliary Cadre Specialist", "effect": "The limit on Kroot Carnivores is increased by 2." },
+        { "id": "tau.tashvarTrained", "name": "Tash'var Trained", "effect": "May select from Combat Skills when allowed to select a new skill." },
+        { "id": "tau.protoShaper", "name": "Proto-Shaper", "effect": "This Kroot may become the Warband's Leader, and all Kroot can now purchase and wear Light Armour as if on their equipment list.", "prerequisite": { "text": "Kroot Carnivore only." } }
+      ]
+    },
+    "eldar-wayward-host": {
+      "name": "Eldar Wayward Host",
+      "skills": [
+        { "id": "eldar.aspectInitiate", "name": "Aspect Initiate", "effect": "Gains access to weapons and skills as if following the same Aspect Path as the warband's leader (equipment and skills only, not the Path's initial bonuses).", "prerequisite": { "text": "Non-Aspect-Warrior only." } },
+        { "id": "eldar.infiltrate", "name": "Infiltrate", "effect": "Always set up after the opposing warband, anywhere out of sight and more than 12\" from any enemy. If both players have infiltrators, roll off; lowest sets up first.", "prerequisite": { "text": "Striking Scorpions only." } },
+        { "id": "eldar.swiftReflexes", "name": "Swift Reflexes", "effect": "May avoid melee or missile attacks on a 6 (4+ in the relevant area if he also has Step Aside or Dodge).", "prerequisite": { "text": "Howling Banshee only." } },
+        { "id": "eldar.khainesAspect", "name": "Khaine's Aspect", "effect": "May choose skills from the Strength skills table from now on.", "prerequisite": { "text": "Dire Avenger only." } },
+        { "id": "eldar.keenEyes", "name": "Keen Eyes", "effect": "May always roll to charge opponents he cannot see (instead of the normal 4\"), as long as he has movement to reach them.", "prerequisite": { "text": "Swooping Hawk only." } }
+      ]
+    },
+    "dark-eldar-coterie": {
+      "name": "Dark Eldar Coterie",
+      "skills": [
+        { "id": "darkEldar.gladiatorialPast", "name": "Gladiatorial Past", "effect": "Counts as being a Wych for equipment purchases." },
+        { "id": "darkEldar.quicksilverFighter", "name": "Quicksilver Fighter", "effect": "May make a 4\" follow-up move if he takes all his opponents out of action; contact with another enemy starts a new combat next turn (counts as charging). May not follow up in the opponent's turn." },
+        { "id": "darkEldar.masterOfPoisons", "name": "Master of Poisons", "effect": "If the Hero doesn't search the ruins during the Exploration Phase he may make D3 doses of Dark Venom instead (used next battle; cannot be sold or traded)." },
+        { "id": "darkEldar.lethalReflexes", "name": "Lethal Reflexes", "effect": "May avoid melee or missile attacks on a 6. With Step Aside or Dodge this improves to 4+ in the relevant area." }
+      ]
+    },
+    "ork-mob": {
+      "name": "Ork Mob",
+      "skills": [
+        { "id": "ork.ardEad", "name": "'ard 'ead", "effect": "3+ save on a D6 to avoid being stunned (treat stunned as knocked down if saved). With a helmet the save is 2+ (replaces the normal Helmet rule)." },
+        { "id": "ork.waaagh", "name": "Waaagh!", "effect": "May add +D3\" to his charge range." },
+        { "id": "ork.ereWeGo", "name": "'ere we go!", "effect": "May ignore Fear and Terror tests when charging." },
+        { "id": "ork.daCunninPlan", "name": "da cunnin' plan", "effect": "The warband may re-roll any failed Rout tests as long as the Boss is not out of action.", "prerequisite": { "text": "Boss only.", "requiresLeader": true } },
+        { "id": "ork.wellArd", "name": "Well 'ard", "effect": "May add +1 to his armour saves." },
+        { "id": "ork.eadbasher", "name": "'eadbasher", "effect": "Any knocked down results the Ork causes in hand-to-hand count as stunned results instead." }
+      ]
+    },
+    "lost-and-the-damned": {
+      "name": "Lost and the Damned",
+      "skills": [
+        { "id": "latd.tattooedBody", "name": "Tattooed Body", "effect": "The Eye of the Gods effect (becoming a Chaos Spawn or receiving a Mark) triggers on 10+ instead of 12+.", "prerequisite": { "text": "Warband leader only.", "requiresLeader": true } },
+        { "id": "latd.sweepingBlow", "name": "Sweeping Blow", "effect": "Whenever the Hero takes an enemy out of action with a double-handed weapon he may immediately make an additional attack against another model in base contact. Requires the Strongman skill." },
+        { "id": "latd.mutant", "name": "Mutant", "effect": "The Hero may buy one mutation (see the Mutations section). Heroes with the Mark of the Great Corrupter may choose a Blessing of Nurgle instead (except the Mark of Nurgle). May be taken more than once." },
+        { "id": "latd.heartOfTheWarrior", "name": "Heart of the Warrior", "effect": "May re-roll any failed Rout test and is immune to fear and all alone tests.", "prerequisite": { "text": "Warband leader only.", "requiresLeader": true } }
+      ]
+    },
+    "squat-strip-miners": {
+      "name": "Squat Strip Miners",
+      "skills": [
+        { "id": "squat.extraTough", "name": "Extra Tough", "effect": "When rolling on the Heroes Serious Injury chart after being taken out of action, the dice may be re-rolled once; the second result must be accepted even if worse." },
+        { "id": "squat.resourceHunter", "name": "Resource Hunter", "effect": "When rolling on the Exploration chart at the end of a game, the Hero may modify one dice roll by +1/-1." },
+        { "id": "squat.trueGrit", "name": "True Grit", "effect": "When rolling on the Injury table for this Hero, a roll of 1-3 is knocked down, 4-5 stunned, 6 out of action." },
+        { "id": "squat.thickSkull", "name": "Thick Skull", "effect": "3+ save on a D6 to avoid being stunned (treat stunned as knocked down if saved). With a helmet the save is 2+ instead (replaces the normal Helmet rule)." }
+      ]
+    },
+    "forsaken-astartes": {
+      "name": "Forsaken Astartes",
+      "skills": [
+        { "id": "forsakenAstartes.discerningEye", "name": "Discerning Eye", "effect": "Academic skill. May re-roll the D6 to see which Power Armour Component has been found." },
+        { "id": "forsakenAstartes.ammunitionSavant", "name": "Ammunition Savant", "effect": "Academic skill. Instead of finding fresh ammunition for the Astartes Bolter, may remove a single piece of Refined Diamantine to replenish it." }
+      ]
+    },
+    "order-of-the-black-sepulchre": {
+      "name": "Order of the Black Sepulchre",
+      "skills": [
+        { "id": "obhs.emperorsBenediction", "name": "The Emperor's Benediction", "effect": "Any Chaotic opponents lose their first attack against the sister in the first round of hand-to-hand combat (down to a minimum of 1)." },
+        { "id": "obhs.aquilineWard", "name": "Aquiline Ward", "effect": "Any psychic power which would affect her is nullified on a D6 roll of 4+. A nullified power will not affect any other models either." },
+        { "id": "obhs.righteousFury", "name": "Righteous Fury", "effect": "The model hates all non-Imperial warbands and all models in them." },
+        { "id": "obhs.absoluteFaith", "name": "Absolute Faith", "effect": "May re-roll any Fear tests and does not have to test if fighting alone against several opponents." },
+        { "id": "obhs.utterDetermination", "name": "Utter Determination", "effect": "Only the Palatine may have this skill: allows her to re-roll any failed Rout tests.", "prerequisite": { "text": "Palatine only.", "requiresLeader": true } }
+      ]
+    }
+  }
+}

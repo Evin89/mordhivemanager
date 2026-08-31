@@ -1,0 +1,140 @@
+{
+  "id": "ordo-hereticus-retainers",
+  "name": "Ordo Hereticus Retainers",
+  "source": "Mord Hive v0.5, pp.042-046 (Ordo Hereticus Retainers). Statlines from the datasheets pp.044-045; equipment list p.044; Imperial Prayers p.046 (see spells.json). TODO: verify Ecclesiastic Priest and Acolyte skill-table access — the checkmark columns on p.042 were ambiguous in the PDF text extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 12,
+  "heroSlots": [
+    {
+      "id": "interrogator",
+      "racialProfile": "human",
+      "unitType": "Interrogator",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 60,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "academic", "strength", "speed"],
+      "statLine": { "M": 4, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["ordoHereticusEquipmentList"],
+      "notes": "Each warband must include exactly one Interrogator.",
+      "specialRules": [
+        { "ref": "leader", "params": { "range": "6\"" } },
+        { "name": "Burn the Witch!", "description": "Hates all models who can manifest psychic powers." }
+      ]
+    },
+    {
+      "id": "ecclesiastic-priest",
+      "racialProfile": "human",
+      "unitType": "Ecclesiastic Priest",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 40,
+      "startingXp": 12,
+      "skillLists": ["combat", "academic", "strength"],
+      "spellLists": ["imperialPrayers"],
+      "startingSpells": 1,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["ordoHereticusEquipmentList"],
+      "notes": "May use Imperial Prayers while in armour. TODO: verify skill-table access.",
+      "specialRules": [
+        { "name": "Prayers", "description": "A devout servant of the Emperor; may use Imperial Prayers (see spells.json). Prayers are not psychic powers." }
+      ]
+    },
+    {
+      "id": "acolyte",
+      "racialProfile": "human",
+      "unitType": "Acolyte",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 25,
+      "startingXp": 8,
+      "skillLists": ["combat", "shooting", "academic", "speed"],
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["ordoHereticusEquipmentList"],
+      "notes": "Trusted advisors, serfs and bodyguards. TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Burn the Witch!", "description": "Hates all models who can manifest psychic powers." }]
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "inquisitorial-militia",
+      "racialProfile": "human",
+      "unitType": "Inquisitorial Militia",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["ordoHereticusEquipmentList"],
+      "notes": "The bulk of the warband. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "arco-flagellants",
+      "unitType": "Arco-Flagellants",
+      "cost": 45,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 5,
+      "statLine": { "M": 5, "WS": 4, "BS": 0, "S": 4, "T": 4, "W": 1, "I": 3, "A": 1, "Ld": 10 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Never use or need weapons/armour (chem-induced rage). Do not gain experience. May have Augmentations installed on recruitment only (Sub-Dermal Plating 10 tn; Frenzon Injector 10 tn, replenished 10 tn/battle; Enhanced Motive Actuators 15 tn = Sprint; Electrified Armaments 15 tn; Prey-Sight 15 tn) - each Augment after the second costs double. Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Immune to Psychology", "description": "Immune to all Psychology." },
+        { "name": "Cause Fear", "description": "Arco-Flagellants cause fear." },
+        { "name": "No Pain", "description": "Treat a stunned result on the Injury chart as knocked down." },
+        { "name": "Murder-Bot", "description": "A single hard-coded purpose; do not gain experience." }
+      ]
+    },
+    {
+      "id": "cyber-mastiffs",
+      "unitType": "Cyber-Mastiffs",
+      "cost": 20,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 5,
+      "statLine": { "M": 6, "WS": 4, "BS": 0, "S": 4, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 5 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Jaws and brutality; never use or need weapons/armour. Do not gain experience. May have Augmentations installed on recruitment only (see Arco-Flagellants). Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Immune to Psychology", "description": "Immune to all Psychology." },
+        { "name": "Sanctioned-Directive", "description": "A single hard-coded purpose; do not gain experience." }
+      ]
+    }
+  ],
+  "equipmentLists": {
+    "ordoHereticusEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "flail",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "boltPistol",
+      "shotgun",
+      "handFlamer",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [],
+  "specialRules": "Ordo Hereticus Retainers. Puritans to the Core / Burn the Witch: this warband hates the Mutant, the Witch and the Heretic, and may never hire any Xenos, Chaotic or Abhuman Hired Guns. Bolt Pistol and Hand Flamer are Heroes only. Min warband size 3, max 12. | Arco-Flagellants and Cyber-Mastiffs receive Augmentations (installed on recruitment only, never later; each Augment after the second costs double): Sub-Dermal Plating (6+ save that can never be ignored, 10 tn), Frenzon Injector (Frenzy and Hatred; replenished 10 tn after each battle, 10 tn), Enhanced Motive Actuators (counts as knowing Sprint, 15 tn), Electrified Armaments (wounds stun on 2-4 instead of 3-4, 15 tn), Prey-Sight (may always charge hidden models, 15 tn). | Human models use the standard Human maximum profile (TODO: verify vs v0.5). | TODO: verify Ecclesiastic Priest / Acolyte skill-table access - the p.042 checkmarks were ambiguous in the PDF extraction.",
+  "rareItemRollBonus": 0
+}

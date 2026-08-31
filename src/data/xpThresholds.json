@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5 uses the shared Mordheim experience-track advance thresholds (Experience section, pp.100-101: an Advance roll is made when accumulated experience reaches a thick-bordered box). Hero and Henchman tracks reused from the core rules.",
+  "heroThresholds": [
+    {
+      "xp": 2,
+      "label": "1st Advance"
+    },
+    {
+      "xp": 4,
+      "label": "2nd Advance"
+    },
+    {
+      "xp": 6,
+      "label": "3rd Advance"
+    },
+    {
+      "xp": 8,
+      "label": "4th Advance"
+    },
+    {
+      "xp": 11,
+      "label": "5th Advance"
+    },
+    {
+      "xp": 14,
+      "label": "6th Advance"
+    },
+    {
+      "xp": 17,
+      "label": "7th Advance"
+    },
+    {
+      "xp": 20,
+      "label": "8th Advance"
+    },
+    {
+      "xp": 24,
+      "label": "9th Advance"
+    },
+    {
+      "xp": 28,
+      "label": "10th Advance"
+    },
+    {
+      "xp": 32,
+      "label": "11th Advance"
+    },
+    {
+      "xp": 36,
+      "label": "12th Advance"
+    },
+    {
+      "xp": 41,
+      "label": "13th Advance"
+    },
+    {
+      "xp": 46,
+      "label": "14th Advance"
+    },
+    {
+      "xp": 51,
+      "label": "15th Advance"
+    },
+    {
+      "xp": 57,
+      "label": "16th Advance"
+    },
+    {
+      "xp": 63,
+      "label": "17th Advance"
+    },
+    {
+      "xp": 69,
+      "label": "18th Advance"
+    },
+    {
+      "xp": 76,
+      "label": "19th Advance"
+    },
+    {
+      "xp": 83,
+      "label": "20th Advance"
+    },
+    {
+      "xp": 90,
+      "label": "21st Advance"
+    }
+  ],
+  "henchmenThresholds": [
+    {
+      "xp": 2,
+      "label": "1st Advance"
+    },
+    {
+      "xp": 5,
+      "label": "2nd Advance"
+    },
+    {
+      "xp": 9,
+      "label": "3rd Advance"
+    },
+    {
+      "xp": 14,
+      "label": "4th Advance"
+    }
+  ]
+}

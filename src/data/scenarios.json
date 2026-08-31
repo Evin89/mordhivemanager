@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5, Scenarios (pp.106-113). The nine core-book missions and the 2D6 Scenario Table (p.105). Each scenario grants the universal +1 Survives plus the awards listed; refined-diamantine amounts and terrain/deployment detail live in the book and the post-battle Income step. TODO: verify per-scenario diamantine amounts against the ruleset.",
+  "universalAward": {
+    "id": "survives",
+    "label": "Survives",
+    "amount": "+1",
+    "note": "If a Hero or Henchman group survives the battle they gain +1 Experience."
+  },
+  "rollTable": [
+    { "roll": 2, "scenario": null, "note": "The player with the lower warband rating may choose which scenario is played." },
+    { "roll": 3, "scenario": "street-fight" },
+    { "roll": 4, "scenario": "hidden-treasure" },
+    { "roll": 5, "scenario": "diamantine-hunt" },
+    { "roll": 6, "scenario": "occupy" },
+    { "roll": 7, "scenario": "skirmish" },
+    { "roll": 8, "scenario": "breakthrough" },
+    { "roll": 9, "scenario": "surprise-attack" },
+    { "roll": 10, "scenario": "chance-encounter" },
+    { "roll": 11, "scenario": "defend-the-find" },
+    { "roll": 12, "scenario": null, "note": "The player with the lower warband rating may choose which scenario is played." }
+  ],
+  "scenarios": [
+    {
+      "id": "defend-the-find",
+      "name": "Defend the Find",
+      "summary": "A warband finds a hab-block full of diamantine, only to be challenged by a rival. The objective is the central building; the smaller warband defends it, the other attacks.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
+        { "id": "refinedDiamantine", "label": "Refined Diamantine", "amount": "shards", "note": "One shard of refined diamantine per Hero (see the book / Income step)." }
+      ]
+    },
+    {
+      "id": "skirmish",
+      "name": "Skirmish",
+      "summary": "A straightforward clash over scattered shards of diamantine (D3+1 counters). Warriors carrying a counter at the end score extra.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perDiamantineCounter", "label": "Per Diamantine Counter", "amount": "+1", "note": "A warrior carrying a diamantine counter at the end of the battle receives +1 Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    },
+    {
+      "id": "diamantine-hunt",
+      "name": "Diamantine Hunt",
+      "summary": "News of a huge deposit draws rival warbands to block each other and claim it all.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
+        { "id": "refinedDiamantine", "label": "Refined Diamantine", "amount": "shards", "note": "Your warriors earn one shard of diamantine for each (see the book / Income step)." }
+      ]
+    },
+    {
+      "id": "breakthrough",
+      "name": "Breakthrough",
+      "summary": "One warband must break through the enemy's lines.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
+        { "id": "breakingThrough", "label": "Breaking Through", "amount": "+1", "note": "Any warrior earns +1 Experience for breaking through enemy lines (a whole Henchman group gains +1)." }
+      ]
+    },
+    {
+      "id": "street-fight",
+      "name": "Street Fight(er)",
+      "summary": "A brutal running fight through the ruined streets of the hive.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    },
+    {
+      "id": "chance-encounter",
+      "name": "Chance Encounter",
+      "summary": "Two warbands stumble into one another amid the ruins.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    },
+    {
+      "id": "hidden-treasure",
+      "name": "Hidden Treasure",
+      "summary": "A cache of priceless refined diamantine lies hidden somewhere on the table.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    },
+    {
+      "id": "occupy",
+      "name": "Occupy",
+      "summary": "Hold more of the ruined buildings than your opponent. A warband occupies all buildings it has standing models in.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    },
+    {
+      "id": "surprise-attack",
+      "name": "Surprise Attack",
+      "summary": "One warband catches the other off guard.",
+      "awards": [
+        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
+        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+      ]
+    }
+  ]
+}

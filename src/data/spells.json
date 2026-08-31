@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5. Imperial Prayers (p.046). Psychic Powers (p.019) and other lists are added as their warbands are converted.",
+  "difficultyNote": "Difficulty is the 2D6 the caster must equal or beat.",
+  "lists": {
+    "craftworldPowers": {
+      "id": "craftworldPowers",
+      "name": "Craftworld Psychic Powers",
+      "kind": "magic",
+      "die": "D6",
+      "usedBy": ["Warlock"],
+      "notes": "An Eldar Warlock uses the Craftworld Psychic Powers.",
+      "source": "Mord Hive v0.5 p.092",
+      "spells": [
+        { "id": "craftworld.eldritchStorm", "roll": 1, "name": "Eldritch Storm", "difficulty": 7, "effect": "A psychic bolt strikes the closest enemy within 10\" for a single Strength 5 hit (Strength 6 if the target wears any armour except helmets and shields)." },
+        { "id": "craftworld.empower", "roll": 2, "name": "Empower", "difficulty": 7, "effect": "On a model within 6\" (or himself), roll a D6: 1-2 +1 BS or +1 to hit in close combat, 3-4 +1 Toughness, 5-6 +1 Movement and Initiative. Lasts until the Warlock or model is Stunned/OOA; only one model at a time." },
+        { "id": "craftworld.conceal", "roll": 3, "name": "Conceal", "difficulty": 7, "effect": "All Eldar within 6\" (including the Warlock) in cover may immediately go into hiding, even if they ran or already shot a missile weapon." },
+        { "id": "craftworld.fatefulDivergence", "roll": 4, "name": "Fateful Divergence", "difficulty": 6, "effect": "The Warlock and any Eldar within 4\" gain a 4+ save against Psychic Powers or Imperial Prayers. Remains until the Warlock is taken Out of Action." },
+        { "id": "craftworld.touchOfKhaine", "roll": 5, "name": "The Touch of Kaela Mensha Khaine", "difficulty": 8, "effect": "A single Eldar within 6\" (or himself) is subject to Frenzy and gains +1 Strength. Lasts until Stunned/OOA; the Warlock must pass a Leadership roll at the start of each turn to keep it going. One model at a time." },
+        { "id": "craftworld.quicken", "roll": 6, "name": "Quicken", "difficulty": 7, "effect": "A single Eldar within 6\" (or himself) may make an additional 5\" sprint move (counts as running; may not if it already fired a missile weapon, and may not charge with it)." }
+      ]
+    },
+    "cultRituals": {
+      "id": "cultRituals",
+      "name": "Cult Rituals",
+      "kind": "ritual",
+      "die": "D6",
+      "usedBy": ["Magus"],
+      "notes": "The Magus knows one randomly rolled Psychic Power from the Cult Rituals.",
+      "source": "Mord Hive v0.5 p.082",
+      "spells": [
+        { "id": "cultRituals.theHorror", "roll": 1, "name": "The Horror", "difficulty": 10, "effect": "Range 6\", the closest enemy (or a base-contact model if in combat) is immediately stunned; if it cannot be stunned it is knocked down instead." },
+        { "id": "cultRituals.goutOfBioPlasma", "roll": 2, "name": "Gout of Bio-Plasma", "difficulty": 8, "effect": "Range 8\", D3 S5 hits on the first model in its path. Afterwards the Magus rolls on the Injury table for himself (treat 'out of action' as stunned)." },
+        { "id": "cultRituals.massHypnosis", "roll": 3, "name": "Mass Hypnosis", "difficulty": 9, "effect": "Range 12\", the closest enemy. Roll a D6 + Magus's Leadership vs a D6 + the target's Leadership; if the Magus wins he controls the model until it passes a Leadership test in its own recovery phase (it may attack its own side but not the Magus's warband, and can't commit suicide)." },
+        { "id": "cultRituals.hisArrival", "roll": 4, "name": "His Arrival!", "difficulty": 10, "effect": "The Magus causes fear in his enemies for the duration of the battle." },
+        { "id": "cultRituals.intoTheShadows", "roll": 5, "name": "Into the Shadows", "difficulty": 7, "effect": "The Magus may immediately move anywhere within 12\", including into base contact (counts as charging). If he engages a fleeing enemy he scores one automatic hit and the opponent flees again if it survives." },
+        { "id": "cultRituals.mentalOnslaught", "roll": 6, "name": "Mental Onslaught", "difficulty": 7, "effect": "The Magus brings his force of will to bear against all that come too close to him. TODO: full effect text was truncated in the PDF extraction (p.082) - verify against the ruleset." }
+      ]
+    },
+    "waaaghPowers": {
+      "id": "waaaghPowers",
+      "name": "Waaagh! Psychic Powers",
+      "kind": "ritual",
+      "die": "D6",
+      "usedBy": ["Wyrd Boy"],
+      "notes": "Howling prayers to the Ork gods Gork and Mork, used by Ork Wyrd Boyz.",
+      "source": "Mord Hive v0.5 p.077",
+      "spells": [
+        { "id": "waaagh.ledzGo", "roll": 1, "name": "Led'z Go", "difficulty": 9, "effect": "Any Ork or Grot within 4\" of the Wyrd Boy automatically strikes first in hand-to-hand combat, regardless of other circumstances. Lasts until the caster is knocked down, stunned or taken out of action." },
+        { "id": "waaagh.oiGerroff", "roll": 2, "name": "Oi! Gerroff!", "difficulty": 7, "effect": "Range 8\". Moves one enemy model D6\" directly away from the Wyrd Boy; if it collides with a model or building both suffer 1 S3 hit. May not target models in hand-to-hand combat." },
+        { "id": "waaagh.zzap", "roll": 3, "name": "Zzap!", "difficulty": 9, "effect": "Range 12\". Causes D3 S4 hits on the closest enemy target, with no armour saves." },
+        { "id": "waaagh.fooledYa", "roll": 4, "name": "Fooled Ya!", "difficulty": 6, "effect": "No enemy may charge the Wyrd Boy during their next turn. If engaged in hand-to-hand combat he may immediately move 4\" away." },
+        { "id": "waaagh.choppa", "roll": 5, "name": "Choppa", "difficulty": 7, "effect": "An ectoplasmic choppa: counts as a normal choppa with +2 Strength and gives +1 Attack. Lasts until the Wyrd Boy suffers a wound." },
+        { "id": "waaagh.fireOfGork", "roll": 6, "name": "Fire of Gork (or possibly Mork)", "difficulty": 8, "effect": "Range 12\". Two bolts each cause D3 S3 hits, fired both at the closest enemy or split between the two closest." }
+      ]
+    },
+    "nurgleRituals": {
+      "id": "nurgleRituals",
+      "name": "Nurgle Rituals",
+      "kind": "ritual",
+      "die": "D6",
+      "usedBy": ["Plague Abbot"],
+      "notes": "The Plague Abbot is a Psyker and uses the Rituals of Nurgle.",
+      "source": "Mord Hive v0.5 p.062",
+      "spells": [
+        { "id": "nurgleRituals.daemonicVigour", "roll": 1, "name": "Daemonic Vigour", "difficulty": 7, "effect": "Any Plague Bearers within 8\" of the Plague Abbot increase their Daemonic Aura save from 5+ to 4+ until the beginning of their next turn." },
+        { "id": "nurgleRituals.buboes", "roll": 2, "name": "Buboes", "difficulty": 7, "effect": "Range 8\", a single enemy warrior must pass a Toughness test or lose a Wound. No armour saves." },
+        { "id": "nurgleRituals.stenchOfNurgle", "roll": 3, "name": "Stench of Nurgle", "difficulty": 8, "effect": "Range 6\", affects all living creatures friend or foe: each enemy warrior in range must pass a Toughness test or lose an Attack until their next turn." },
+        { "id": "nurgleRituals.pestilence", "roll": 4, "name": "Pestilence", "difficulty": 10, "effect": "All enemy models within 12\" of the Plague Abbot suffer a Strength 3 hit. No armour saves." },
+        { "id": "nurgleRituals.scabrousHide", "roll": 5, "name": "Scabrous Hide", "difficulty": 8, "effect": "The Plague Abbot gains a 2+ armour save (replacing any normal save) until the beginning of his next Shooting phase." },
+        { "id": "nurgleRituals.ariseYeFaithful", "roll": 6, "name": "Arise ye Faithful!", "difficulty": 5, "effect": "One Blight Victim that went out of action during the last hand-to-hand or Shooting phase returns to battle within 6\" of the Plague Abbot (not straight into hand-to-hand combat)." }
+      ]
+    },
+    "imperialPrayers": {
+      "id": "imperialPrayers",
+      "name": "Imperial Prayers",
+      "kind": "prayer",
+      "die": "D6",
+      "usedBy": ["Ecclesiastic Priest"],
+      "notes": "An Ecclesiastic Priest may use prayers while in armour. Prayers are not psychic powers, so protection against psychic powers does not affect them.",
+      "source": "Mord Hive v0.5 p.046",
+      "spells": [
+        { "id": "imperialPrayers.hammerOfTheEmperor", "roll": 1, "name": "Hammer of the Emperor", "difficulty": 7, "effect": "The wielder gains +2 Strength in hand-to-hand combat and all hits he inflicts cause double damage (e.g. 2 wounds instead of 1). Test each combat phase he wants to use the Hammer." },
+        { "id": "imperialPrayers.heartsOfSteel", "roll": 2, "name": "Hearts of Steel", "difficulty": 8, "effect": "Allied warriors within 8\" become immune to Fear and All Alone tests, and the whole warband gains +1 to Rout tests. Lasts until the caster is knocked down, stunned or put out of action; not cumulative if recast." },
+        { "id": "imperialPrayers.soulfire", "roll": 3, "name": "Soulfire", "difficulty": 9, "effect": "All enemy models within 4\" suffer a Strength 3 hit with no armour saves. Chaos models in range suffer a Strength 5 hit instead." },
+        { "id": "imperialPrayers.shieldOfFaith", "roll": 4, "name": "Shield of Faith", "difficulty": 6, "effect": "The Priest is immune to all psychic powers. Roll at the start of each turn in the recovery phase; on a 1 or 2 the shield disappears." },
+        { "id": "imperialPrayers.healingHand", "roll": 5, "name": "Healing Hand", "difficulty": 5, "effect": "One model within 2\" (including himself) is restored to full Wounds. Friendly models within 2\" that are stunned or knocked down immediately stand and continue fighting." },
+        { "id": "imperialPrayers.armourOfRighteousness", "roll": 6, "name": "Armour of Righteousness", "difficulty": 9, "effect": "The Priest gains a 2+ armour save (replacing his normal save) and causes fear (and is therefore immune to fear himself)." }
+      ]
+    }
+  }
+}

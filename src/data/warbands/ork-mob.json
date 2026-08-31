@@ -1,0 +1,132 @@
+{
+  "id": "ork-mob",
+  "name": "Ork Mob",
+  "source": "Mord Hive v0.5, pp.073-077 (Ork Mob). Statlines from datasheets pp.075-076; equipment lists p.074; Ork special skills p.076 (see skills.json); Waaagh! Psychic Powers p.077 (see spells.json). Orks/Grots have no sourced racial-maximum profile (ceilings left null). Attack Squigs have a variable 2D6\" Movement - a representative fixed value is stored with a note. TODO: verify Hero skill-table access - the p.074 checkmark columns were ambiguous in the PDF text extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 20,
+  "heroSlots": [
+    {
+      "id": "ork-boss",
+      "unitType": "Ork Boss",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 80,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "strength", "speed", "ork-mob"],
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 4, "T": 4, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["orkEquipmentList"],
+      "notes": "Exactly one per warband. TODO: verify skill-table access.",
+      "specialRules": [{ "ref": "leader", "params": { "range": "6\"" } }]
+    },
+    {
+      "id": "wyrd-boy",
+      "unitType": "Wyrd Boy",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 40,
+      "startingXp": 10,
+      "skillLists": ["academic", "ork-mob"],
+      "spellLists": ["waaaghPowers"],
+      "startingSpells": 1,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["orkEquipmentList"],
+      "notes": "Psyker; uses the Waaagh! Psychic Powers (see spells.json). TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Psyker", "description": "An Ork Wyrd Boy is a Psyker and uses the Waaagh! Psychic Powers." }]
+    },
+    {
+      "id": "nobz",
+      "unitType": "Nobz",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 40,
+      "startingXp": 15,
+      "skillLists": ["combat", "strength", "speed", "ork-mob"],
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 3, "T": 4, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["orkEquipmentList"],
+      "notes": "Rising stars of the mob. TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "ork-boyz",
+      "unitType": "Ork Boyz",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 3, "BS": 2, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["orkEquipmentList"],
+      "notes": "Core of the mob. Subject to Animosity. Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Animosity", "description": "Ork Boyz are subject to the rules for Animosity (see specialRules)." }]
+    },
+    {
+      "id": "grotz",
+      "unitType": "Grotz",
+      "cost": 15,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 2, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 5 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["grotEquipmentList"],
+      "notes": "No more than two Grotz per Ork (including heroes). Subject to Animosity. Not Orks (count as half a model for Rout tests when taken out of action). Runts (may gain XP but are killed if they roll 'That Lad's Got Talent'). Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Animosity", "description": "Grotz are subject to the rules for Animosity (see specialRules)." }]
+    },
+    {
+      "id": "attack-squigs",
+      "unitType": "Attack Squigs",
+      "cost": 15,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 5,
+      "statLine": { "M": 7, "WS": 4, "BS": 0, "S": 4, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 5 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Never more Attack Squigs than Grotz. VARIABLE MOVEMENT: move 2D6\" (representative fixed value stored); never run or charge, but contact on a normal move counts as charging. Minderz: must stay within 6\" of a Grot (12\" with a Squig Prodder) or go wild. Bomb Squig: if a Grot has a Detonator, squigs can be upgraded to Bomb Squigs for 5 tn (3\" blast, S4 at -2 armour on death/detonation). Not Orks (count half for Rout). Animals; never gain experience. Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Animals", "description": "Attack Squigs are animals of a sort and do not gain experience." }]
+    }
+  ],
+  "equipmentLists": {
+    "orkEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "flail",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "slugga",
+      "shoota",
+      "bigShoota",
+      "lightArmour",
+      "shield",
+      "helmet"
+    ],
+    "grotEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "spear",
+      "sword",
+      "slugga",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "shield",
+      "helmet",
+      "squigProdder",
+      "detonator"
+    ]
+  },
+  "exclusiveEquipment": [],
+  "specialRules": "Ork Mob. Animosity: at the start of the Ork player's turn, roll a D6 for each Ork or Grot Henchman not in hand-to-hand combat; on a 1, roll again on the Animosity chart - 1 'I'Erd Dat!' (charge/shoot the nearest friendly Ork/Grot, or behave as 2-5 if none in reach or nearest is a Hero; no other action this turn), 2-5 'Wud Yoo Say?' (spends the turn hurling insults; may do nothing else but defend in combat), 6 'I'll Show Yer!' (an extra move toward the nearest enemy, charging if able - may move twice this turn). Distasteful Company: Orks may only hire Chrono-Gladiators, Ogryn Bodyguards or Unsanctioned Psykers. | Not Orks: each Grot or Attack Squig taken out of action counts as only half a model for Rout tests. Runts: Grotz may gain XP but are killed if they roll 'That Lad's Got Talent'. | Min warband size 3, max 20. No more than two Grotz per Ork (heroes included); never more Attack Squigs than Grotz. | Orks and Grots have no sourced racial-maximum profile (ceilings left null).",
+  "rareItemRollBonus": 0
+}

@@ -1,0 +1,133 @@
+{
+  "id": "tau-pathfinder-cadre",
+  "name": "T'au Pathfinder Cadre",
+  "source": "Mord Hive v0.5, pp.093-096 (T'au Pathfinder Cadre). Statlines from datasheets pp.094-095; equipment lists p.094; support systems / XV15 suit p.096; special skills p.096. Drones share one profile and differ only by cost/loadout (Spotter 35 tn, Shield 45 tn, Gun 55 tn) - modelled as a single Drone henchmen type with null cost, documented in notes; they attach to a model with a Drone Controller and don't count toward warband size. T'au/Kroot have no sourced racial-maximum profile (ceilings left null). TODO: verify Hero skill-table access - the p.093 checkmarks were ambiguous in the PDF extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 15,
+  "heroSlots": [
+    {
+      "id": "shas-vre",
+      "unitType": "Shas'vre",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 60,
+      "startingXp": 20,
+      "skillLists": ["shooting", "academic", "speed", "tau-pathfinder-cadre"],
+      "statLine": { "M": 4, "WS": 3, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["tauEquipmentList"],
+      "notes": "Exactly one per warband. Only the Shas'vre may use the Damaged XV15 Stealth Suit (and only if an Earth Caste Engineer is in the warband). TODO: verify skill-table access.",
+      "specialRules": [{ "ref": "leader", "params": { "range": "6\"" } }]
+    },
+    {
+      "id": "shas-ui",
+      "unitType": "Shas'ui",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 35,
+      "startingXp": 8,
+      "skillLists": ["shooting", "academic", "tau-pathfinder-cadre"],
+      "statLine": { "M": 4, "WS": 2, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["tauEquipmentList"],
+      "notes": "NCOs who keep the warriors in line. TODO: verify skill-table access.",
+      "specialRules": []
+    },
+    {
+      "id": "earth-caste-engineers",
+      "unitType": "Earth Caste Engineers",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 35,
+      "startingXp": 8,
+      "skillLists": ["academic", "shooting", "tau-pathfinder-cadre"],
+      "statLine": { "M": 4, "WS": 2, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["fireWarriorEquipmentList"],
+      "notes": "Support Technicians: a model may only use a Damaged XV15 Stealth Suit if an Earth Caste Engineer is in the warband. TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "path-finders",
+      "unitType": "Path Finders",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 2, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["tauEquipmentList"],
+      "notes": "The largest group of stranded T'au. Bought in groups of 1-5. See Ta'Lissera (specialRules) for the bonding ritual / Monat rules.",
+      "specialRules": []
+    },
+    {
+      "id": "fire-warriors",
+      "unitType": "Fire Warriors",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "statLine": { "M": 4, "WS": 2, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["fireWarriorEquipmentList"],
+      "notes": "Slower but more heavily armed. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "kroot-carnivores",
+      "unitType": "Kroot Carnivores",
+      "cost": 35,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "statLine": { "M": 5, "WS": 4, "BS": 3, "S": 4, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["krootEquipmentList"],
+      "notes": "A bit uncivilised: a Kroot may become a Hero (via the promotion rules) but may never be the Warband's Leader (unless it has Proto-Shaper), and a Kroot Hero never assists in exploration. Brutish: a Kroot Hero may learn Combat Skills instead of Shooting Skills. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "drones",
+      "unitType": "Drones",
+      "cost": null,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 6,
+      "statLine": { "M": 6, "WS": 2, "BS": 2, "S": 2, "T": 4, "W": 1, "I": 4, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "VARIABLE COST - choose a type on purchase: SPOTTER (35 tn; enemy within 4\" gain no cover benefit; may be up to 12\" from owner), SHIELD (45 tn; models within 3\" including itself are at -1 to hit from missile weapons), GUN (55 tn; +1 BS if it fires at the same target as its owner). One Drone per model with a Drone Controller; do not count toward warband size; never gain XP; must stay within 6\" of their owner or count as stunned. Bought in groups of 1-5.",
+      "specialRules": [{ "name": "Drones", "description": "Do not gain XP. Must remain within 6\" of their owner; if further at the start of their movement phase they count as stunned." }]
+    }
+  ],
+  "equipmentLists": {
+    "tauEquipmentList": [
+      "dagger",
+      "club",
+      "axe",
+      "sword",
+      "pulsePistol",
+      "pulseBlaster",
+      "pulseCarbine",
+      "lightArmour",
+      "heavyArmour",
+      "helmet"
+    ],
+    "fireWarriorEquipmentList": ["dagger", "club", "pulsePistol", "pulseRifle", "heavyArmour", "helmet"],
+    "krootEquipmentList": ["dagger", "axe", "sword", "doubleHandedWeapon", "spear", "krootRifle", "pulseBlaster", "helmet", "shield"]
+  },
+  "exclusiveEquipment": [
+    { "id": "damagedXV15StealthSuit", "name": "Damaged XV15 Stealth Suit", "category": "armour", "cost": 140, "rarity": 11, "restriction": "Shas'vre only (needs an Earth Caste Engineer in the warband)", "rulesText": "Works as Carapace Armour; also +1 Strength and Movement up to 6\" (may exceed racial maximum), and lets the wearer install 2 sub-systems instead of 1. (The p.094 list prices it at 140 tn; p.096 lists 150 tn.)" },
+    { "id": "droneController", "name": "Drone Controller Sub-System", "category": "misc", "cost": 10, "rarity": 8, "restriction": "Heroes only, one sub-system per model", "rulesText": "May purchase a single Drone as part of its equipment; the Drone acts as a model but does not count toward the warband's maximum models." },
+    { "id": "blackSunFilter", "name": "Black Sun Filter Sub-System", "category": "misc", "cost": 15, "rarity": 9, "restriction": "Heroes only, one sub-system per model", "rulesText": "May discover hidden enemies at 4x the model's Initiative value." },
+    { "id": "targetLock", "name": "Target Lock Sub-System", "category": "misc", "cost": 20, "rarity": 10, "restriction": "Heroes only, one sub-system per model", "rulesText": "No -1 to hit for moving and shooting; a Move-or-Fire weapon may now move and fire at -1 to hit." }
+  ],
+  "specialRules": "T'au Pathfinder Cadre. Ta'Lissera (Bonding Knife Ritual): when recruiting a non-Kroot Henchman group of 2+ warriors you may have them practise the Ta'Lissera (note it on the roster); that group may no longer buy new recruits. If a bonded group is reduced to a single model, that model becomes a Monat. Monat (Lone Warrior): gains Lone Warrior (immune to all Psychology) and Special Mission (may take any equipment from the list, including 'model only' items). Auxiliary Hosts: the T'au may hire any Hired Gun available (even faction-limited ones), except the most egregiously chaotic, and their initial hire fee is reduced by 20% (rounding up). | Only one sub-system per model (a Damaged XV15 Stealth Suit allows two). Min warband size 3, max 15. | T'au and Kroot have no sourced racial-maximum profile (ceilings left null).",
+  "rareItemRollBonus": 0
+}

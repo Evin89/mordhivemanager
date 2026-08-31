@@ -1,0 +1,126 @@
+{
+  "id": "forsaken-astartes",
+  "name": "Forsaken Astartes",
+  "source": "Mord Hive v0.5, pp.051-054 (Forsaken Astartes). Statlines from datasheets pp.052-053; equipment list p.052; the Damaged Astartes Plate 'mini-game', Astartes Bolter and Astartes special skills pp.053-054. Modelled (per the designer's note) on a nerfed Undead warband: one powerful hero plus semi-useless mooks. TODO: verify Hero skill-table access - the p.051 checkmark columns were ambiguous in the PDF text extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 12,
+  "heroSlots": [
+    {
+      "id": "forsaken-astartes",
+      "unitType": "Forsaken Astartes",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 180,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "strength", "speed", "forsaken-astartes"],
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 4, "T": 4, "W": 2, "I": 5, "A": 2, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["forsakenAstartesEquipmentList"],
+      "notes": "Exactly one per warband. Always equipped with Damaged Astartes Plate (counts as Carapace Armour that can never be removed; repaired over the campaign via scavenged Power Armour Components - see specialRules). TODO: verify skill-table access.",
+      "specialRules": [
+        { "ref": "leader", "params": { "range": "6\"" } },
+        { "name": "Cause Fear", "description": "Astartes are terrifying post-human monsters and cause fear." },
+        { "name": "Immune to Psychology", "description": "Not affected by psychology (such as fear) and never leaves combat." },
+        { "name": "Immune to Poison", "description": "Not affected by any poison." },
+        { "name": "No Pain", "description": "Treat a 'stunned' result on the Injury chart as 'knocked down'." }
+      ]
+    },
+    {
+      "id": "artificer",
+      "racialProfile": "human",
+      "unitType": "Artificer",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 35,
+      "startingXp": 8,
+      "skillLists": ["academic", "shooting", "forsaken-astartes"],
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["forsakenAstartesEquipmentList"],
+      "notes": "Artificer: when searching for Power Armour Components, may add 2 to the rarity roll. May install found components into the Damaged Astartes Plate. TODO: verify skill-table access.",
+      "specialRules": []
+    },
+    {
+      "id": "chapter-serf",
+      "racialProfile": "human",
+      "unitType": "Chapter Serfs",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 3,
+      "cost": 20,
+      "startingXp": 0,
+      "skillLists": ["combat", "shooting", "academic"],
+      "statLine": { "M": 4, "WS": 2, "BS": 2, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["forsakenAstartesEquipmentList"],
+      "notes": "Trained: when searching for Power Armour Components, may add 1 to the rarity roll. TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "armourial-servitors",
+      "unitType": "Armourial Servitors",
+      "cost": 50,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 3,
+      "statLine": { "M": 4, "WS": 4, "BS": 2, "S": 3, "T": 4, "W": 1, "I": 2, "A": 1, "Ld": 6 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["forsakenAstartesEquipmentList"],
+      "notes": "Never gain experience. Mono-Task: on recruitment choose one - Weapons-Drill Servitor (WS4 BS2, shown above) or Targeting-Calibration Servitor (BS4 WS2). Having (or lacking) each type on the roster determines whether the Forsaken Astartes can use hand-to-hand / missile weapons that battle (see specialRules). Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Immune to Psychology", "description": "Immune to all Psychology." },
+        { "name": "No Pain", "description": "Treat a stunned result on the Injury chart as knocked down." }
+      ]
+    },
+    {
+      "id": "devoted-rabble",
+      "racialProfile": "human",
+      "unitType": "Devoted Rabble",
+      "cost": 15,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 2, "BS": 2, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 6 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["forsakenAstartesEquipmentList"],
+      "notes": "Rabble: groups must always be 3 or more and stay within 3\" of each other; a group under 3 cannot enter a battle until refilled. The Angel Falls!: if the Forsaken Astartes is knocked down in line of sight, roll a Leadership test for the Rabble - fail = acts as failed All Alone; pass = gains frenzy for the battle (or until knocked down) and must move toward whatever knocked the Astartes down.",
+      "specialRules": []
+    }
+  ],
+  "equipmentLists": {
+    "forsakenAstartesEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "boltPistol",
+      "bolter",
+      "heavyStubber",
+      "shotgun",
+      "handFlamer",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ]
+  },
+  "exclusiveEquipment": [
+    { "id": "astartesBolter", "name": "Astartes Bolter", "category": "missile", "cost": 45, "rarity": null, "restriction": "Forsaken Astartes only", "rulesText": "Max Range 30\", Strength 4. Fire Twice (may fire twice per turn at an extra -1 to hit on both shots), Diamantine Tipped (saves at an extra -2 armour modifier), Explosive Bolt (models within 1.5\" of a model hit suffer a S3 shooting hit), Rare Ammunition (must be restocked between battles: 4D6 Thrones, Rarity 8), Gene-Coded (gene-locked to its Astartes; usable only by the Astartes it was bought for)." },
+    { "id": "chainWeapon", "name": "Chain Weapon", "category": "melee", "cost": null, "priceRange": "3x weapon price", "rarity": null, "restriction": "", "rulesText": "Any melee weapon upgraded to a Chain Weapon: +1 to Injury Rolls, strikes at -1 Initiative. Costs 3x the base weapon price." },
+    { "id": "powerWeapon", "name": "Power Weapon", "category": "melee", "cost": null, "priceRange": "4x weapon price", "rarity": null, "restriction": "Forsaken Astartes only", "rulesText": "Any melee weapon upgraded to a Power Weapon. Costs 4x the base weapon price. TODO: verify Power Weapon profile vs v0.5." },
+    { "id": "heavyStubberServitor", "name": "Heavy Stubber (Servitors only)", "category": "missile", "cost": 50, "rarity": null, "restriction": "Servitors only", "rulesText": "Heavy Stubber, restricted to Servitors on this list. Same profile as the standard Heavy Stubber." }
+  ],
+  "specialRules": "Forsaken Astartes. My Armour is Contempt: instead of an Exploration Roll, any hero may Scavenge Parts (Availability Roll needs a 10; skills that help an Availability Roll apply). On finding a Power Armour Component, roll a D6 for which part; an Artificer not Out of Action at the end of the last battle may install found components into the Damaged Astartes Plate during the Trading step. Let not the Alien Live: may never hire any Xenos Hired Gun. High Maintenance: if no functional Weapons-Drill Servitor is on the roster at the start of a battle, the Astartes loses hand-to-hand weapons that battle (counts as a pair of clubs); if no functional Targeting-Calibration Servitor, he loses missile weapons (counts as armed with a throwing weapon only). | Damaged Astartes Plate: counts as Carapace Armour that can never be removed. Repaired over a campaign by scavenged parts (D6): 1 Auto-Sensors Relay (ignore long-range modifiers; find hidden models at 3x Initiative), 2 Repaired Muscle-Fibre Cortex (ignore negative Initiative modifiers on weapons, incl. double-handed strike-last), 3 Machine Spirit Reintegration (no -to hit for firing an Astartes Bolter twice), 4 Auto-Narthecium Refill (Medicae Kit restoring a wound once per battle; two uses then must be replaced), 5 Motive Actuators (+1 Move; not slowed by Carapace + shield), 6 Ablative Armour Repair (2+ save, degrades like other armour). Duplicate rolls give a spare. If the Astartes is taken out of action, on a D6 1-3 a random repaired subsystem is damaged again. | Min warband size 3, max 12. Bolt Pistol/Bolter/Hand Flamer are Heroes only; Heavy Stubber is Servitors only; Astartes Bolter is Forsaken Astartes only. | Astartes special skills (Academic): Discerning Eye (re-roll the D6 for which Power Armour Component was found), Ammunition Savant (spend one piece of Refined Diamantine to replenish Astartes Bolter ammo instead of finding fresh).",
+  "rareItemRollBonus": 0
+}

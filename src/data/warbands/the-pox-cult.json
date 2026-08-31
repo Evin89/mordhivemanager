@@ -1,0 +1,145 @@
+{
+  "id": "the-pox-cult",
+  "name": "The Pox Cult",
+  "source": "Mord Hive v0.5, pp.059-062 (The Pox Cult). Statlines from datasheets pp.060-061; equipment lists p.060; Nurgle Rituals p.062 (see spells.json); Blessings of Nurgle p.062. TODO: verify Fetid Enforcer / The Blessed skill-table access - the p.059 checkmark columns were ambiguous in the PDF text extraction.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 20,
+  "heroSlots": [
+    {
+      "id": "plague-abbot",
+      "racialProfile": "human",
+      "unitType": "Plague Abbot",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 70,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "academic", "strength", "speed"],
+      "spellLists": ["nurgleRituals"],
+      "startingSpells": 1,
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["poxCultEquipmentList"],
+      "notes": "Exactly one per warband.",
+      "specialRules": [
+        { "ref": "leader", "params": { "range": "6\"" } },
+        { "name": "Psyker", "description": "A Plague Abbot is a Psyker and uses the Nurgle Rituals (see spells.json)." }
+      ]
+    },
+    {
+      "id": "fetid-enforcer",
+      "racialProfile": "human",
+      "unitType": "Fetid Enforcer",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 60,
+      "startingXp": 8,
+      "skillLists": ["combat", "strength", "speed"],
+      "statLine": { "M": 4, "WS": 4, "BS": 2, "S": 4, "T": 4, "W": 1, "I": 2, "A": 2, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["fetidEnforcerEquipmentList"],
+      "notes": "Unnatural Strength: starts the game with the Strongman skill (Strength list). TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Unnatural Strength", "description": "Starts with the Strongman skill from the Strength Skill list." }]
+    },
+    {
+      "id": "the-blessed",
+      "racialProfile": "human",
+      "unitType": "The Blessed",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 25,
+      "startingXp": 0,
+      "skillLists": ["combat", "strength"],
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["poxCultEquipmentList"],
+      "notes": "Must start the game with one or more Blessings of Nurgle (bought at recruitment only; see specialRules) - the cost is on top of the 25 tn hire. TODO: verify skill-table access.",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "plague-bearers",
+      "unitType": "Plague Bearers",
+      "cost": 50,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 4, "T": 4, "W": 1, "I": 4, "A": 2, "Ld": 10 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Daemons of Nurgle; neither need nor use weapons/armour. Never gain experience. Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Cloud of Flies", "description": "A Plague Bearer's close combat opponent suffers -1 to hit on all attacks." },
+        { "name": "Stream of Corruption", "description": "A shooting attack, range 6\", Strength 3, no armour saves." },
+        { "name": "Demonic", "description": "A Daemon of Nurgle; never gains Experience." },
+        { "name": "Immune to Poison", "description": "Totally immune to all poisons and diseases." },
+        { "name": "Immune to Psychology", "description": "Automatically passes any Leadership-based test." },
+        { "name": "Cause Fear", "description": "Plague Bearers cause fear." },
+        { "name": "Daemonic Aura", "description": "5+ armour save (modified by Strength as normal), negated by blessed/force weapons and psychic powers. Their own attacks count as force/blessed." },
+        { "name": "Daemonic Instability", "description": "If taken out of action, banished/destroyed on a D6 of 1-3 (no injury roll). If the warband routs, each Plague Bearer takes a Leadership test or counts as destroyed." }
+      ]
+    },
+    {
+      "id": "brethren",
+      "racialProfile": "human",
+      "unitType": "Brethren",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": 7,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["poxCultEquipmentList"],
+      "notes": "Devoted followers. Bought in groups of 1-5.",
+      "specialRules": []
+    },
+    {
+      "id": "blight-victims",
+      "unitType": "Blight Victims",
+      "cost": 15,
+      "isAnimal": true,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 2, "BS": 0, "S": 3, "T": 3, "W": 1, "I": 1, "A": 1, "Ld": 5 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": [],
+      "notes": "Shambling undead; may not have weapons or armour and suffer no penalty for it. Never gain experience. Bought in groups of 1-5.",
+      "specialRules": [
+        { "name": "Cause Fear", "description": "Terrifying undead; cause fear." },
+        { "name": "May not run", "description": "Slow undead; may not run (but may charge normally)." },
+        { "name": "Immune to Psychology", "description": "Not affected by psychology; never leaves combat." },
+        { "name": "Immune to Poison", "description": "Not affected by any poison." },
+        { "name": "No Pain", "description": "Treat a stunned result on the Injury chart as knocked down." },
+        { "name": "No Brain", "description": "Never gain experience." }
+      ]
+    }
+  ],
+  "equipmentLists": {
+    "poxCultEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "axe",
+      "sword",
+      "flail",
+      "doubleHandedWeapon",
+      "spear",
+      "halberd",
+      "lasAutogun",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "shotgun",
+      "lightArmour",
+      "heavyArmour",
+      "shield",
+      "helmet"
+    ],
+    "fetidEnforcerEquipmentList": ["axe", "flail", "doubleHandedWeapon", "lightArmour", "shield", "shotgun"]
+  },
+  "exclusiveEquipment": [],
+  "specialRules": "The Pox Cult. Dangerous to Know: a Pox-Cult warband may never hire any type of Hired Gun. | Blessings of Nurgle (bought for The Blessed on recruitment only, never later; the first is at the listed price, second and subsequent cost double): Stream of Corruption (shooting attack, range 6\", S3, no saves; 25 tn), Cloud of Flies (close combat opponent suffers -1 to hit; 25 tn), Bloated Foulness (+1 Wound, +1 Toughness, -1 Movement; 40 tn), Mark of Nurgle (+1 Wound, immune to all poisons; 35 tn), Hideous (causes Fear; 40 tn). | Fetid Enforcer Equipment List prices Light Armour at 20 tn and Shield at 15 tn (the shared chart lists 15 and 5). | Min warband size 3, max 20. | Human models use the standard Human maximum profile (TODO: verify vs v0.5); Plague Bearers and Blight Victims never advance (null ceilings).",
+  "rareItemRollBonus": 0
+}

@@ -1,0 +1,120 @@
+{
+  "id": "order-of-the-black-sepulchre",
+  "name": "Order of the Black Sepulchre",
+  "source": "Mord Hive v0.5, pp.047-050 (Order of the Black Sepulchre, by Jordi RS). Statlines from the datasheets pp.049-050; equipment list p.048; warband skills p.048 (see skills.json warbandSpecific). Palatine and Sister Superior each choose Shooting OR Strength on joining (Specialization) - both are listed here and the player keeps one. Sisters Repentia cannot be recruited (they are created when a sister takes the Oath of Repentance) and so are not a recruitable type here; see specialRules. TODO: verify Sister Exactor/Pronatus skill-table access.",
+  "startingGold": 500,
+  "minWarbandSize": 3,
+  "maxWarbandSize": 15,
+  "heroSlots": [
+    {
+      "id": "palatine",
+      "racialProfile": "human",
+      "unitType": "Palatine",
+      "isLeader": true,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 60,
+      "startingXp": 20,
+      "skillLists": ["combat", "shooting", "academic", "strength", "speed", "order-of-the-black-sepulchre"],
+      "statLine": { "M": 4, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["blackSepulchreEquipmentList"],
+      "notes": "Exactly one Palatine leads the warband. Specialization: on joining, choose access to EITHER the Shooting OR the Strength skill list (not both).",
+      "specialRules": [{ "ref": "leader", "params": { "range": "6\"" } }]
+    },
+    {
+      "id": "sister-exactor",
+      "racialProfile": "human",
+      "unitType": "Sister Exactor",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 35,
+      "startingXp": 8,
+      "skillLists": ["combat", "academic", "strength", "speed", "order-of-the-black-sepulchre"],
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["blackSepulchreEquipmentList"],
+      "notes": "Enforcer and taskmaster. TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Exhort", "description": "Once per turn, at the start of the movement phase (before charges), if armed with a Neural Whip she may exhort a henchwoman within 3\": roll a D6, on a 1 the henchwoman is knocked down; on 2+ until end of turn she adds 1\" Move, +1 Leadership and ignores Strike Last on her weapons." }]
+    },
+    {
+      "id": "sister-pronatus",
+      "racialProfile": "human",
+      "unitType": "Sister Pronatus",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 1,
+      "cost": 25,
+      "startingXp": 0,
+      "skillLists": ["combat", "academic", "strength", "speed", "order-of-the-black-sepulchre"],
+      "statLine": { "M": 4, "WS": 2, "BS": 2, "S": 3, "T": 3, "W": 1, "I": 2, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["blackSepulchreEquipmentList"],
+      "notes": "May never wear armour for any reason. TODO: verify skill-table access.",
+      "specialRules": [{ "name": "Blessed Sight", "description": "May re-roll any failed characteristic tests and any rolls to hit in close combat or shooting (accept the second result). If not put out of action, may roll two dice for her in the exploration phase and pick either as the result." }]
+    },
+    {
+      "id": "sister-superior",
+      "racialProfile": "human",
+      "unitType": "Sister Superior",
+      "isLeader": false,
+      "isLargeCreature": false,
+      "maxCount": 2,
+      "cost": 35,
+      "startingXp": 8,
+      "skillLists": ["combat", "shooting", "academic", "strength", "speed", "order-of-the-black-sepulchre"],
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["blackSepulchreEquipmentList"],
+      "notes": "Retired veterans of the Sororitas. Specialization: on joining, choose access to EITHER the Shooting OR the Strength skill list (not both).",
+      "specialRules": []
+    }
+  ],
+  "henchmenTypes": [
+    {
+      "id": "novitiates",
+      "racialProfile": "human",
+      "unitType": "Novitiates",
+      "cost": 25,
+      "isAnimal": false,
+      "isLargeCreature": false,
+      "maxCount": null,
+      "statLine": { "M": 4, "WS": 3, "BS": 3, "S": 3, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 7 },
+      "statMaximums": { "M": null, "WS": null, "BS": null, "S": null, "T": null, "W": null, "I": null, "A": null, "Ld": null },
+      "equipmentOptions": ["blackSepulchreEquipmentList"],
+      "notes": "Convent-bound sisters who have taken their final vows. Bought in groups of 1-5.",
+      "specialRules": []
+    }
+  ],
+  "equipmentLists": {
+    "blackSepulchreEquipmentList": [
+      "dagger",
+      "maceHammer",
+      "sword",
+      "neuralWhip",
+      "doubleHandedWeapon",
+      "chainsword",
+      "eviscerator",
+      "lasAutoCarbine",
+      "lasAutoPistol",
+      "boltPistol",
+      "bolter",
+      "handFlamer",
+      "lightArmour",
+      "heavyArmour",
+      "carapaceArmour",
+      "shield",
+      "helmet",
+      "blessedWater",
+      "holyRelic",
+      "puritySeal"
+    ]
+  },
+  "exclusiveEquipment": [
+    { "id": "chainWeapon", "name": "Chain Weapon", "category": "melee", "cost": null, "priceRange": "3x weapon price", "rarity": null, "restriction": "Order of the Black Sepulchre", "rulesText": "Any melee weapon upgraded to a Chain Weapon: +1 to Injury Rolls, but strikes at -1 Initiative. Costs 3x the base weapon price." },
+    { "id": "powerWeapon", "name": "Power Weapon", "category": "melee", "cost": null, "priceRange": "4x weapon price", "rarity": null, "restriction": "Palatine and Sister Superior only", "rulesText": "Any melee weapon upgraded to a Power Weapon. Costs 4x the base weapon price. Palatine and Sister Superior only. TODO: verify Power Weapon rules profile vs v0.5." }
+  ],
+  "specialRules": "Order of the Black Sepulchre (by Jordi RS). Oath of Repentance: at the end of the Experience step after each game, each non-Repentia warrior must take the Oath of Repentance if she (a) failed an All Alone test and fled/was still fleeing at battle's end, (b) failed at least one Fear test against an enemy that wasn't taken out of action, or (c) rolled '24 - Madness' on the Serious Injury table (in which case don't roll for stupidity/frenzy). On taking the Oath: all her equipment goes to the warband stash; she loses her warrior type and its abilities but keeps her statline, skills and experience, becoming a Sister Repentia henchwoman (her own group, un-joinable); if she already has 14+ XP she can't gain more; thereafter she may only use the Sister Repentia equipment list (Weapons Expert/Training don't bypass this). Sisters Repentia: Frenzied Fury (subject to Frenzy; hate all Chaos and Xenos), Immune to Psychology, 'Respected' (each Repentia death gives 1 XP to a non-Repentia henchwomen group), '...but shunned' (may gain XP but must always re-roll 'That Lad's Got Talent', so can never become heroines; don't count as friendly for All Alone tests). Repentia equipment list: Eviscerator 25 tn, Chainsword 15 tn, Purity Seal 10 tn. | Chain Weapon costs 3x the weapon price; Power Weapon 4x (Palatine and Sister Superior only). | Min warband size 3, max 15. | Human models use the standard Human maximum profile (TODO: verify vs v0.5).",
+  "rareItemRollBonus": 0
+}

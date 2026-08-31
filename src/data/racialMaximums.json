@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5. TODO: verify against v0.5's own Maximum Characteristics profile — a max-profile table was not present in the PDF text layer (likely an image/roster page), so the Human ceiling below is carried over from the shared Mordheim/40K-on-Mordheim lineage (consistent with the units seen: Officer Ld 8, ceiling Ld 9). Non-human races (Ork, Eldar, Dark Eldar, Squat, Astartes, T'au) are intentionally omitted rather than guessed (§8 sourcing line); their units carry null maximums until a source is confirmed.",
+  "profiles": {
+    "human": {
+      "id": "human",
+      "name": "Human",
+      "statMaximums": { "M": 4, "WS": 6, "BS": 6, "S": 4, "T": 4, "W": 3, "I": 6, "A": 4, "Ld": 9 },
+      "notes": "TODO: verify vs Mord Hive v0.5 maximum profile."
+    }
+  }
+}

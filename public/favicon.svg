@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Mord Hive">
+  <!-- Original bolt-plate sigil (§2 IP line: no GW iconography). A gunmetal
+       riveted plate with the app's initials-free mark: an industrial frame with
+       corner bolts, matching the Codex frame device. -->
+  <rect width="64" height="64" fill="#111215"/>
+  <rect x="8" y="8" width="48" height="48" fill="none" stroke="#767A80" stroke-width="3"/>
+  <g fill="#AEB0B5">
+    <circle cx="14" cy="14" r="2.6"/>
+    <circle cx="50" cy="14" r="2.6"/>
+    <circle cx="14" cy="50" r="2.6"/>
+    <circle cx="50" cy="50" r="2.6"/>
+  </g>
+  <!-- Central chevron stack — the hive descent. -->
+  <g fill="none" stroke="#F1F1EE" stroke-width="3.5" stroke-linecap="square">
+    <polyline points="22,26 32,34 42,26"/>
+    <polyline points="22,36 32,44 42,36"/>
+  </g>
+</svg>
