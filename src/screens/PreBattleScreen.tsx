@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
 import PageChip from '../components/PageChip';
 import { Button, Select, TextField } from '../components/ui';
 import { useWarbands, useWarbandLookup } from '../store/warbands';
+import { useSoloCampaigns } from '../store/soloCampaign';
 import { computeWarbandRating, countModels } from '../lib/rating';
 import { buildNpcWarband, difficultyForBudget, generateAgenda, TEMPERAMENT_LABELS, TEMPERAMENT_HINTS } from '../lib/npc';
+import { budgetForAct, actLabel } from '../lib/soloAgenda';
 import { generateBattlefield } from '../lib/battlefield';
 import BattlefieldMap from '../components/BattlefieldMap';
-import { warbandDefinitionsByName } from '../data/warbandRegistry';
+import { warbandDefinitionsByName, getWarbandDefinition } from '../data/warbandRegistry';
 import { BattleSession, defaultBattleSession, loadBattleSession, saveBattleSession } from '../store/battle';
 import scenariosData from '../data/scenarios.json';
 
@@ -28,6 +30,31 @@ export default function PreBattleScreen() {
   const [roll, setRoll] = useState<string | null>(null);
   const [npcTypeId, setNpcTypeId] = useState(warbandDefinitionsByName[0]?.id ?? '');
   const [npcBudget, setNpcBudget] = useState(500);
+
+  const [searchParams] = useSearchParams();
+  const { getCampaign } = useSoloCampaigns();
+  const campaign = getCampaign(searchParams.get('campaign') ?? undefined);
+  // A solo chapter for this warband: muster the nemesis at act strength if the
+  // session doesn't already carry an opponent (so a resume doesn't re-roll it).
+  const campaignActive = campaign && campaign.warbandId === warbandId && campaign.status === 'active';
+  useEffect(() => {
+    if (!campaignActive || !campaign) return;
+    if (session.npcWarband) return;
+    const def = getWarbandDefinition(campaign.nemesisType);
+    if (!def) return;
+    const npc = buildNpcWarband(def, budgetForAct(campaign.act));
+    const next: BattleSession = {
+      ...session,
+      npcWarband: npc,
+      opponentName: npc.name,
+      opponentWarbandId: null,
+      npcAgenda: generateAgenda(),
+      npcAgendaRevealed: false,
+    };
+    setSession(next);
+    saveBattleSession(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaignActive]);
 
   if (!warband) return <Navigate to="/warbands" replace />;
 
@@ -82,6 +109,16 @@ export default function PreBattleScreen() {
     <div>
       <BackHeader title="Pre-Battle" to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
+        {campaignActive && campaign && (
+          <Plate className="p-3">
+            <p className="font-display uppercase tracking-[0.05em] text-ink text-sm">
+              {campaign.name} · {actLabel(campaign.act)} · Chapter {campaign.chapter}
+            </p>
+            <p className="font-body text-ink-faded text-sm">
+              The {campaign.nemesisName} return in force. Record the outcome back on the campaign page afterwards.
+            </p>
+          </Plate>
+        )}
         <div className="flex items-center justify-between gap-2">
           <p className="font-display uppercase tracking-[0.05em] text-ink text-lg">{warband.name}</p>
           <PageChip>Rating {computeWarbandRating(warband)}</PageChip>

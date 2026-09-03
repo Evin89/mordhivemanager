@@ -3,6 +3,7 @@ import { strings } from './strings';
 import ThemeToggle from './components/ThemeToggle';
 import ChevronRail from './components/ChevronRail';
 import { WarbandsProvider } from './store/warbands';
+import { SoloCampaignsProvider } from './store/soloCampaign';
 import Landing from './screens/Landing';
 import DesignSandbox from './screens/DesignSandbox';
 import WarbandsListScreen from './screens/WarbandsListScreen';
@@ -16,6 +17,8 @@ import TradingPostScreen from './screens/TradingPostScreen';
 import PreBattleScreen from './screens/PreBattleScreen';
 import DuringBattleScreen from './screens/DuringBattleScreen';
 import PostBattleScreen from './screens/PostBattleScreen';
+import SoloCampaignsScreen from './screens/SoloCampaignsScreen';
+import SoloCampaignScreen from './screens/SoloCampaignScreen';
 import RulesScreen from './screens/RulesScreen';
 
 /**
@@ -28,6 +31,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <WarbandsProvider>
+        <SoloCampaignsProvider>
         <div className="min-h-full flex flex-col">
           <TopBar />
           <ChevronRail />
@@ -46,6 +50,8 @@ export default function App() {
               <Route path="/warbands/:warbandId/pre-battle" element={<PreBattleScreen />} />
               <Route path="/warbands/:warbandId/battle" element={<DuringBattleScreen />} />
               <Route path="/warbands/:warbandId/post-battle" element={<PostBattleScreen />} />
+              <Route path="/solo" element={<SoloCampaignsScreen />} />
+              <Route path="/solo/:campaignId" element={<SoloCampaignScreen />} />
               <Route path="/rules" element={<RulesScreen />} />
               <Route path="*" element={<Landing />} />
             </Routes>
@@ -57,6 +63,7 @@ export default function App() {
             </div>
           </footer>
         </div>
+        </SoloCampaignsProvider>
       </WarbandsProvider>
     </BrowserRouter>
   );
@@ -98,6 +105,7 @@ function TopBar() {
         <nav className="flex items-center gap-1">
           {link('/', strings.nav.home)}
           {link('/warbands', strings.nav.warbands)}
+          {link('/solo', 'Solo')}
           {link('/rules', strings.nav.rules)}
           {link('/design', strings.nav.design)}
           <div className="pl-2">
