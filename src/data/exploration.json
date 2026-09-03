@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5, Income / Exploration (pp.114-120). Shards-found table p.114; the multiples chart and location effects pp.115-120. Effect text is condensed but faithful. The app auto-applies only the flat shards read off the dice total; each location's loot is shown for the player to add by hand, since almost all of it is dice-based, conditional, or a choice (per the same conservative rule Mordheim Manager uses for Exploration).",
+  "procedure": {
+    "summary": "Roll 1D6 per Hero who survived without going out of action, +1 die if you won, plus any dice from skills/equipment. Keep a maximum of six dice. Add them and read the shards off the table; any doubles or more also find a location.",
+    "notes": [
+      "Do not roll for Henchmen.",
+      "Keep at most six dice even if you rolled more.",
+      "Multiples: pick the most numerous set; ties go to the highest face. (double 1 + double 3 -> use the double 3.)",
+      "Designer's note: every warband may re-roll one single die once, after rolling but before reducing to six.",
+      "Designer's note: OOA (but not dead) Heroes may assist in campaign games."
+    ],
+    "maxDiceKept": 6,
+    "builtInReroll": true
+  },
+  "shardsFound": [
+    { "min": 1, "max": 5, "shards": 1 },
+    { "min": 6, "max": 11, "shards": 2 },
+    { "min": 12, "max": 17, "shards": 3 },
+    { "min": 18, "max": 24, "shards": 4 },
+    { "min": 25, "max": 30, "shards": 5 },
+    { "min": 31, "max": 35, "shards": 6 },
+    { "min": 36, "max": null, "shards": 7 }
+  ],
+  "chart": [
+    { "id": "sump-hole", "kind": "double", "face": 1, "count": 2, "combination": "1 1", "name": "Sump Hole", "effect": "Choose a Hero and roll a D6. If the result is equal to or lower than his Toughness, he finds one shard of refined diamantine at the bottom of the hole. If he fails, he swallows tainted water and must miss the next game through sickness." },
+    { "id": "mercator-stall", "kind": "double", "face": 2, "count": 2, "combination": "2 2", "name": "Mercator's Stall", "effect": "After a thorough search you find loot worth 1D6 Thrones. If you roll a 1 you also find a Lucky Charm." },
+    { "id": "corpse", "kind": "double", "face": 3, "count": 2, "combination": "3 3", "name": "Corpse", "effect": "Search the corpse — roll a D6: 1-2 D6 Thrones; 3 Dagger; 4 Axe; 5 Sword; 6 TODO: verify the 6 result vs v0.5 p.116 (missing from the source text layer)." },
+    { "id": "straggler", "kind": "double", "face": 4, "count": 2, "combination": "4 4", "name": "Straggler", "effect": "Evil/Chaotic warbands may sacrifice him: the leader gains +1 Experience. Any other warband interrogates him: next time you roll on the Exploration chart, roll one extra die and discard any one die." },
+    { "id": "overturned-cargo-8", "kind": "double", "face": 5, "count": 2, "combination": "5 5", "name": "Overturned Cargo-8", "effect": "Roll a D6: 1-2 a Mord Hive Cartograph; 3-4 a credit pouch with 2D6 Thrones; 5-6 a Noble's Court Dagger and Sword (kept or sold at twice a normal weapon's value)." },
+    { "id": "ruined-habs", "kind": "double", "face": 6, "count": 2, "combination": "6 6", "name": "Ruined Habs", "effect": "You find loot worth D6 Thrones amidst the ruins." },
+
+    { "id": "destroyed-bar", "kind": "triple", "face": 1, "count": 3, "combination": "1 1 1", "name": "Destroyed Bar", "effect": "The leader takes a Leadership test. Pass: 4D6 Thrones of wines and ales to sell immediately. Fail: the men drink most of it — only D6 Thrones of alcohol remain by the time you reach camp." },
+    { "id": "armourial-hall", "kind": "triple", "face": 2, "count": 3, "combination": "2 2 2", "name": "Armourial Hall", "effect": "Roll a D6: 1 Sword; 2 Double-handed weapon; 3 Flail; 4 D3 Halberds; 5 Auto/Lasgun; 6 2D6 Thrones worth of armour plates (to treasury)." },
+    { "id": "prisoners", "kind": "triple", "face": 3, "count": 3, "combination": "3 3 3", "name": "Prisoners", "effect": "Evil/Chaotic warbands sacrifice the victims: D3 Experience shared among Heroes. Xenos sell them into slavery for 3D6 tn. Others escort them out for 2D6 tn, and one prisoner may join a human Henchman group (if you can equip him)." },
+    { "id": "gun-merchant", "kind": "triple", "face": 4, "count": 3, "combination": "4 4 4", "name": "Gun Merchant", "effect": "Roll a D6: 1-2 D3 Auto/Las Pistols; 3 D3 Shotguns; 4 D3 Auto/Las Carbines; 5 D3 Hot-Shot Lasgun Packs; 6 a Heavy Stubber." },
+    { "id": "mercator-complex", "kind": "triple", "face": 5, "count": 3, "combination": "5 5 5", "name": "Mercator Complex", "effect": "You find several items worth 2D6 Thrones in total." },
+    { "id": "returning-a-favour", "kind": "triple", "face": 6, "count": 3, "combination": "6 6 6", "name": "Returning a Favour", "effect": "Gain the services of any one Hired Gun available to your warband, free of charge, for the next battle. Afterwards he departs unless you pay his upkeep as normal." },
+
+    { "id": "specialist-gunsmith", "kind": "fourOfAKind", "face": 1, "count": 4, "combination": "1 1 1 1", "name": "Specialist Gun-Smith Hab-Stall", "effect": "Roll a D6: 1 D3 Shotguns; 2 a brace of Auto/Las Pistols; 3 a Bolt Pistol; 4 D3 Auto/Lasguns; 5 D3 loads of Dum Dum ammunition; 6 a Long-Las." },
+    { "id": "shrine", "kind": "fourOfAKind", "face": 2, "count": 4, "combination": "2 2 2 2", "name": "Shrine", "effect": "Strip the shrine for 3D6 Thrones of loot. Any Imperial faction may instead save the relics: 3D6 Thrones from their patrons and one chosen weapon becomes blessed (always wounds a Chaos-aligned model on a 2+)." },
+    { "id": "middle-hive-hab", "kind": "fourOfAKind", "face": 3, "count": 4, "combination": "3 3 3 3", "name": "Middle-Hive Hab", "effect": "Your gang finds 3D6 Thrones worth of loot." },
+    { "id": "artificers-workshop", "kind": "fourOfAKind", "face": 4, "count": 4, "combination": "4 4 4 4", "name": "Artificer's Workshop", "effect": "Roll a D6: 1-2 D3 Shields or Bucklers; 3 D3 Helmets; 4 D3 suits of Light Armour; 5 D3 suits of Heavy Armour; 6 a set of Carapace Armour." },
+    { "id": "graveyard", "kind": "fourOfAKind", "face": 5, "count": 4, "combination": "5 5 5 5", "name": "Graveyard", "effect": "Any warband may loot the graveyard for D6x10 Thrones. Imperial warbands may instead seal the graves: D6 Experience shared among the Heroes." },
+    { "id": "underhive-catacombs", "kind": "fourOfAKind", "face": 6, "count": 4, "combination": "6 6 6 6", "name": "Underhive Catacombs", "effect": "In your next battle, position up to three fighters anywhere at ground level, set up at the end of your first turn and not within 8\" of any enemy — infiltrating through the tunnels." },
+
+    { "id": "mercator-executives-house", "kind": "fiveOfAKind", "face": 1, "count": 5, "combination": "1 1 1 1 1", "name": "Mercator Executive's House", "effect": "Hidden amongst the debris you find D6x10 Thrones to add to your treasury." },
+    { "id": "biologis-laboratory", "kind": "fiveOfAKind", "face": 2, "count": 5, "combination": "2 2 2 2 2", "name": "Biologis Laboratory", "effect": "Loot worth 3D6 Thrones and a battered notebook. One Hero may study the Biologis data-slate: he may henceforth choose from Academic skills in addition to his normal lists." },
+    { "id": "jewelsmith", "kind": "fiveOfAKind", "face": 3, "count": 5, "combination": "3 3 3 3 3", "name": "Jewelsmith", "effect": "Roll a D6: 1-2 quartz worth D6x5 Thrones; 3-4 an amethyst worth 20 Thrones; 5 a necklace worth 50 Thrones; 6 a ruby worth D6x15 Thrones. If not sold, a Hero may display them: +1 to rolls for locating rare items." },
+    { "id": "looted-supply-depot", "kind": "fiveOfAKind", "face": 4, "count": 5, "combination": "4 4 4 4 4", "name": "Looted Supply Depot", "effect": "Sell the valuables for 2D6x5 Thrones. If you roll a double on that 2D6, instead find the symbol of the Order of Freetraders: a Hero gains the Haggle skill." },
+    { "id": "shattered-refinery", "kind": "fiveOfAKind", "face": 5, "count": 5, "combination": "5 5 5 5 5", "name": "Shattered Refinery", "effect": "You find D3 shards of refined diamantine. Then take a Leadership test against the leader: if passed, a Cyber-Mastiff that was guarding the building joins the warband." },
+    { "id": "mag-lev-station", "kind": "fiveOfAKind", "face": 6, "count": 5, "combination": "6 6 6 6 6", "name": "Mag-Lev Station", "effect": "From now on you may re-roll one die whenever you roll on the Exploration chart. Note it on the roster; further Mag-Lev entrances grant no additional re-rolls." },
+
+    { "id": "sketchy-cargo-lift", "kind": "sixOfAKind", "face": 1, "count": 6, "combination": "1 1 1 1 1 1", "name": "Sketchy Looking Cargo-Lift", "effect": "You may send one Hero down. Roll a D6: on a 1 he is devoured by a creature of the dark; on a 2+ he returns with 3D3+2 shards of refined diamantine." },
+    { "id": "hidden-treasure", "kind": "sixOfAKind", "face": 2, "count": 6, "combination": "2 2 2 2 2 2", "name": "Hidden Treasure", "effect": "Roll for each item separately: D3 shards of refined diamantine (4+); 5D6x5 Thrones (auto); a Holy/unholy Relic (5+); a suit of Heavy Armour (5+); D3 Gems worth 10 Thrones each (4+); a Cameoline Cloak (5+); a Holy Tome (5+); an Archaeotech Device (5+)." },
+    { "id": "arbites-hall", "kind": "sixOfAKind", "face": 3, "count": 6, "combination": "3 3 3 3 3 3", "name": "Arbites Hall of Judgement", "effect": "Roll a D6: 1 D3 Mauls and Shields; 2 D3 suits of Heavy Armour; 3 a Power Axe; 4 a Double-Handed Power Maul; 5 a Bolter; 6 Carapace Armour." },
+    { "id": "slaughtered-warband", "kind": "sixOfAKind", "face": 4, "count": 6, "combination": "4 4 4 4 4 4", "name": "Slaughtered Warband", "effect": "Roll for each item separately: 3D6x5 Thrones (auto); D6 Daggers (auto); D3 Light Armour (4+); Heavy Armour (5+); a Mord Hive Cartograph (4+); D3 Auto/Las Guns (5+); D3 Swords (3+); D3 Shields (2+); D3 Auto/Las Carbines (5+); D3 Auto/Las Pistols (5+); a Plasma Pistol (5+)." },
+    { "id": "chrono-gladiator-pits", "kind": "sixOfAKind", "face": 5, "count": 6, "combination": "5 5 5 5 5 5", "name": "Chrono-Gladiator Pits", "effect": "You find a training manual: sell it for 100 Thrones, or a Hero reads it — he may henceforth choose from Combat skills, and his WS may be raised one point above his racial maximum." },
+    { "id": "merchant-princelings-manor", "kind": "sixOfAKind", "face": 6, "count": 6, "combination": "6 6 6 6 6 6", "name": "Merchant Princeling's Manor", "effect": "Roll a D6: 1-2 D6x10 Thrones of items and money; 3-4 D6 vials of Crimson Shade; 5-6 a hidden Archaeotech Device." }
+  ],
+  "handOfFate": {
+    "combination": "1 2 3 4 5 6",
+    "name": "Hand of Fate",
+    "effect": "If your final six dice are 1, 2, 3, 4, 5 and 6, roll another die. On a 4-6 you may select any location above to explore. On a 1-3 you gain no refined diamantine at all this phase."
+  }
+}

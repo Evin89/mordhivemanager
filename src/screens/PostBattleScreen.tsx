@@ -19,9 +19,23 @@ import {
   advancesEarned,
 } from '../lib/postBattle';
 import { BattleResult } from '../types';
+import ExplorationRoll from '../components/ExplorationRoll';
 
 const { terms } = strings;
 const STEPS = ['Battle Info', 'Injuries', 'Experience', 'Advances', 'Income', 'Confirm'] as const;
+
+const EXPLORATION_PREFIX = 'Exploration —';
+/** Drops any prior auto-added exploration line so a re-roll replaces it. */
+function stripLocationLine(notes: string): string {
+  return notes
+    .split('\n')
+    .filter((l) => !l.startsWith(EXPLORATION_PREFIX))
+    .join('\n')
+    .trim();
+}
+function appendLine(notes: string, line: string): string {
+  return notes ? `${notes}\n${line}` : line;
+}
 
 function NumField({ value, onChange, min = 0 }: { value: number; onChange: (n: number) => void; min?: number }) {
   return (
@@ -276,20 +290,36 @@ export default function PostBattleScreen() {
           </section>
         )}
 
-        {/* Step 5 — Income */}
+        {/* Step 5 — Income (Exploration) */}
         {step === 4 && (
           <section className="space-y-3">
-            <BannerHeader>Income</BannerHeader>
+            <BannerHeader>Exploration</BannerHeader>
             <p className="font-body text-ink-faded text-xs px-1">
-              Enter the {terms.salvageResource} shards found and any thrones gained (from selling shards or exploration). The full Exploration chart is a later addition — for now record the totals.
+              Roll the Exploration chart for {terms.salvageResource}. The shards from the total are filled in below
+              automatically; add any thrones or note gear a location yields.
             </p>
+            <Plate className="p-3">
+              <ExplorationRoll
+                survivingHeroes={heroList.filter((h) => !draft.heroes[h.id].outOfAction && !draft.heroes[h.id].dies).length}
+                won={draft.result === 'win'}
+                onResult={(shards, location) => {
+                  const cleaned = stripLocationLine(draft.notes);
+                  patch({
+                    diamantineFound: shards,
+                    notes: location
+                      ? appendLine(cleaned, `${EXPLORATION_PREFIX} ${location.combination} ${location.name}: ${location.effect}`)
+                      : cleaned,
+                  });
+                }}
+              />
+            </Plate>
             <Plate className="p-3 space-y-2">
               <label className="flex items-center justify-between gap-2">
                 <span className="font-body text-ink text-body-min">{terms.salvageResource} shards found</span>
                 <NumField value={draft.diamantineFound} onChange={(n) => patch({ diamantineFound: n })} />
               </label>
               <label className="flex items-center justify-between gap-2">
-                <span className="font-body text-ink text-body-min">{terms.currency} gained</span>
+                <span className="font-body text-ink text-body-min">{terms.currency} gained (loot sold, etc.)</span>
                 <NumField value={draft.goldFound} onChange={(n) => patch({ goldFound: n })} />
               </label>
             </Plate>
