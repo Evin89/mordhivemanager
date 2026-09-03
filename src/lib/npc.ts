@@ -1,6 +1,43 @@
 import { WarbandDefinition } from '../data/types';
-import { Warband, StatLine } from '../types';
+import { Warband, StatLine, EquipmentItem } from '../types';
 import { createWarband, createHeroFromSlot, createHenchmenGroupFromType } from './warbandFactory';
+import { resolveEquipmentItem, ResolvedEquipmentItem } from './equipmentLookup';
+import { generateId } from './id';
+
+/**
+ * Picks a sensible loadout for an AI model from its unit's own equipment lists —
+ * a real weapon (and armour) so the opponent is a threat and its wargear is
+ * something the solo player can see and run. App-original choices, drawn only
+ * from sourced items; every model keeps its free dagger on top of these.
+ *
+ * A shooter (BS at least its WS, and 3+) also takes a missile weapon. Deliberately
+ * modest: one melee weapon capped at 30 tn where possible, the cheapest missile,
+ * the cheapest armour — enough to fight, not a gilded elite.
+ */
+function equipNpcModel(def: WarbandDefinition, equipmentOptions: string[], stats: StatLine): EquipmentItem[] {
+  const ids = new Set<string>();
+  for (const listId of equipmentOptions) for (const id of def.equipmentLists[listId] ?? []) ids.add(id);
+  const items = [...ids]
+    .map((id) => resolveEquipmentItem(id, def))
+    .filter((i): i is ResolvedEquipmentItem => !!i && i.cost !== null);
+
+  const isDagger = (i: ResolvedEquipmentItem) => i.name.trim().toLowerCase() === 'dagger';
+  const byCostAsc = (a: ResolvedEquipmentItem, b: ResolvedEquipmentItem) => (a.cost ?? 0) - (b.cost ?? 0);
+  const melee = items.filter((i) => i.category === 'melee' && !isDagger(i));
+  const missile = items.filter((i) => i.category === 'missile');
+  const armour = items.filter((i) => i.category === 'armour');
+
+  const chosen: ResolvedEquipmentItem[] = [];
+  const pickMelee =
+    [...melee].filter((i) => (i.cost ?? 0) <= 30).sort((a, b) => (b.cost ?? 0) - (a.cost ?? 0))[0] ??
+    [...melee].sort(byCostAsc)[0];
+  if (pickMelee) chosen.push(pickMelee);
+  const shooter = stats.BS >= stats.WS && stats.BS >= 3;
+  if (shooter && missile.length) chosen.push([...missile].sort(byCostAsc)[0]);
+  if (armour.length) chosen.push([...armour].sort(byCostAsc)[0]);
+
+  return chosen.map((i) => ({ id: generateId(), name: i.name, category: i.category, cost: i.cost ?? 0, notes: i.notes }));
+}
 
 // The app-built AI opponent for a solo game (spec §6). Everything here — how the
 // enemy warband is composed and how it behaves — is APP-ORIGINAL, not part of
@@ -12,8 +49,8 @@ import { createWarband, createHeroFromSlot, createHenchmenGroupFromType } from '
  * thrones budget: the mandatory leader, then one of each other Hero it can
  * afford, then the cheapest henchmen filled toward the size cap. Deterministic
  * enough to be fair, fuller than the player's "quick start" since an opponent
- * should be a real threat. Names are auto-assigned; models carry only the free
- * dagger (their loadout is abstract for the tracker).
+ * should be a real threat. Names are auto-assigned; each model is armed from its
+ * own equipment list (see equipNpcModel) so it can actually fight.
  */
 export function buildNpcWarband(def: WarbandDefinition, budget = 500): Warband {
   const warband = createWarband(def, `${def.name} (AI)`);
@@ -23,7 +60,9 @@ export function buildNpcWarband(def: WarbandDefinition, budget = 500): Warband {
 
   const leaderSlot = def.heroSlots.find((s) => s.isLeader);
   if (leaderSlot) {
-    warband.heroes.push(createHeroFromSlot(leaderSlot, leaderSlot.unitType));
+    const hero = createHeroFromSlot(leaderSlot, leaderSlot.unitType);
+    hero.equipment.push(...equipNpcModel(def, leaderSlot.equipmentOptions, hero.stats));
+    warband.heroes.push(hero);
     gold = Math.max(0, gold - (leaderSlot.cost ?? 0));
     size += 1;
   }
@@ -36,7 +75,9 @@ export function buildNpcWarband(def: WarbandDefinition, budget = 500): Warband {
     if (size >= sizeCap) break;
     const cost = slot.cost ?? 0;
     if (cost > gold - 40) continue;
-    warband.heroes.push(createHeroFromSlot(slot, slot.unitType));
+    const hero = createHeroFromSlot(slot, slot.unitType);
+    hero.equipment.push(...equipNpcModel(def, slot.equipmentOptions, hero.stats));
+    warband.heroes.push(hero);
     gold -= cost;
     size += 1;
   }
@@ -54,14 +95,15 @@ export function buildNpcWarband(def: WarbandDefinition, budget = 500): Warband {
       size += 1;
       n += 1;
     }
-    // Split into groups of 5, as the rules recruit henchmen.
+    // Split into groups of 5, as the rules recruit henchmen. Each group shares a
+    // loadout drawn from its own equipment list.
     let remaining = n;
     let groupIndex = 1;
     while (remaining > 0) {
       const g = Math.min(5, remaining);
-      warband.henchmenGroups.push(
-        createHenchmenGroupFromType(cheapest, `${cheapest.unitType} ${groupIndex}`, g),
-      );
+      const group = createHenchmenGroupFromType(cheapest, `${cheapest.unitType} ${groupIndex}`, g);
+      group.equipment.push(...equipNpcModel(def, cheapest.equipmentOptions, group.stats));
+      warband.henchmenGroups.push(group);
       remaining -= g;
       groupIndex += 1;
     }

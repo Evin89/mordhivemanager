@@ -239,6 +239,16 @@ export default function DuringBattleScreen() {
                           {down ? 'Out of action' : 'Mark OOA'}
                         </Button>
                       </div>
+                      {!down && (
+                        <>
+                          <ProfileBlock stats={h.stats} variant="collapsed" />
+                          {h.equipment.length > 0 && (
+                            <p className="font-body text-ink-faded text-xs pl-1">
+                              Wargear: {h.equipment.map((e) => e.name).join(', ')}
+                            </p>
+                          )}
+                        </>
+                      )}
                       {aiOpen && !down && (
                         <p className="font-body text-ink-faded text-xs pl-1">
                           ▸ {suggestNpcAction({ name: h.name, unitType: h.unitType, isLeader: h.isLeader, isAnimal: false, stats: h.stats }, session.turn, session.npcAgenda?.temperament)}
@@ -266,6 +276,16 @@ export default function DuringBattleScreen() {
                             <Button size="dense" variant="secondary" fullWidth={false} onClick={() => setNpcHenchCount(g.id, Math.min(g.count, n + 1))} aria-label="One more down">+</Button>
                           </span>
                         </div>
+                        {!wiped && (
+                          <>
+                            <ProfileBlock stats={g.stats} variant="collapsed" />
+                            {g.equipment.length > 0 && (
+                              <p className="font-body text-ink-faded text-xs pl-1">
+                                Wargear: {g.equipment.map((e) => e.name).join(', ')}
+                              </p>
+                            )}
+                          </>
+                        )}
                         {aiOpen && !wiped && (
                           <p className="font-body text-ink-faded text-xs pl-1">
                             ▸ {suggestNpcAction({ name: g.groupName, unitType: g.unitType, isLeader: false, isAnimal: g.isAnimal, stats: g.stats }, session.turn, session.npcAgenda?.temperament)}
