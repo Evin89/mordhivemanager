@@ -160,11 +160,6 @@
   .register th, .register td { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgb(var(--ink) / 0.35); font-variant-numeric: tabular-nums lining-nums; }
   .register th { font-family: Oxanium, system-ui, sans-serif; font-weight: 600; width: 3.2em; color: rgb(var(--ink-faded)); }
   .register tr:last-child th, .register tr:last-child td { border-bottom: 0; }
-  @media (min-width: 680px) {
-    .register-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  }
-  .register-cols .register + .register { margin-top: 12px; }
-  @media (min-width: 680px) { .register-cols .register + .register { margin-top: 0; } }
 
   /* Footer */
   footer { margin-top: 40px; padding: 20px 0 calc(24px + env(safe-area-inset-bottom)); border-top: 2px solid rgb(var(--steel)); }
@@ -252,24 +247,20 @@
 
   <section aria-labelledby="h-warbands">
     <div class="banner"><h2 id="h-warbands">The Twelve Warbands</h2><span class="chip">v0.5</span></div>
-    <div class="register-cols">
-      <table class="register" aria-label="Warbands I to VI">
-        <tr><th scope="row">I</th><td>Imperial Guard Remnants</td></tr>
-        <tr><th scope="row">II</th><td>Ordo Hereticus Retainers</td></tr>
-        <tr><th scope="row">III</th><td>Order of the Black Sepulchre</td></tr>
-        <tr><th scope="row">IV</th><td>Forsaken Astartes</td></tr>
-        <tr><th scope="row">V</th><td>Squat Strip Miners</td></tr>
-        <tr><th scope="row">VI</th><td>The Pox Cult</td></tr>
-      </table>
-      <table class="register" aria-label="Warbands VII to XII">
-        <tr><th scope="row">VII</th><td>The Lost and the Damned</td></tr>
-        <tr><th scope="row">VIII</th><td>Ork Mob</td></tr>
-        <tr><th scope="row">IX</th><td>Cult of the Four-Armed Emperor</td></tr>
-        <tr><th scope="row">X</th><td>Dark Eldar Coterie</td></tr>
-        <tr><th scope="row">XI</th><td>Eldar Wayward Host</td></tr>
-        <tr><th scope="row">XII</th><td>T'au Pathfinder Cadre</td></tr>
-      </table>
-    </div>
+    <table class="register" aria-label="The twelve warbands of Mord Hive v0.5">
+      <tr><th scope="row">I</th><td>Imperial Guard Remnants</td></tr>
+      <tr><th scope="row">II</th><td>Ordo Hereticus Retainers</td></tr>
+      <tr><th scope="row">III</th><td>Order of the Black Sepulchre</td></tr>
+      <tr><th scope="row">IV</th><td>Forsaken Astartes</td></tr>
+      <tr><th scope="row">V</th><td>Squat Strip Miners</td></tr>
+      <tr><th scope="row">VI</th><td>The Pox Cult</td></tr>
+      <tr><th scope="row">VII</th><td>The Lost and the Damned</td></tr>
+      <tr><th scope="row">VIII</th><td>Ork Mob</td></tr>
+      <tr><th scope="row">IX</th><td>Cult of the Four-Armed Emperor</td></tr>
+      <tr><th scope="row">X</th><td>Dark Eldar Coterie</td></tr>
+      <tr><th scope="row">XI</th><td>Eldar Wayward Host</td></tr>
+      <tr><th scope="row">XII</th><td>T'au Pathfinder Cadre</td></tr>
+    </table>
   </section>
 
   <section aria-labelledby="h-next">
