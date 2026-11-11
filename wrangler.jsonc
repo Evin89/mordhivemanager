@@ -1,0 +1,14 @@
+{
+  // The Mord Hive app itself — NOT live yet. The Worker "mordhivemanager"
+  // currently builds from root directory /landing (the landing page). To switch
+  // hive.mordheimmanager.net over to the app: in Cloudflare → mordhivemanager →
+  // Settings → Builds, set Root directory to "/" and Build command to
+  // "npm run build"; deploy command stays "npx wrangler deploy".
+  // Declared explicitly because wrangler's auto-config refuses Vite 5.
+  "name": "mordhivemanager",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

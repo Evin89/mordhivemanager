@@ -1,71 +1,59 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, ReactNode } from 'react';
 import { Warband } from '../types';
+import { computeWarbandRating } from '../lib/rating';
+import { RemoteCollection, useRemoteCollection } from './remoteCollection';
 
-// Local warband store. The Mordheim Manager build screens read/write through
-// TanStack Query hooks over Supabase; the fresh-standalone Mord Hive shell keeps
-// the same call shape (a lookup + a save mutation) but backs it with
-// localStorage, so the screens vendor across almost unchanged and the app boots
-// with no backend. Swapping in Supabase later is a matter of reimplementing this
-// module, not the screens.
+// Warband store, backed by Supabase (`mordhive.warbands`). The screens see the
+// same synchronous call shape they had over localStorage — a lookup plus
+// create/save/delete — so none of them changed when the backend arrived.
+// The roster lives in `data`; name, type and rating are lifted into columns so
+// lists and a future gallery never have to open the jsonb.
 
-const STORAGE_KEY = 'mordhive.warbands';
-
-function load(): Warband[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Warband[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(warbands: Warband[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(warbands));
-  } catch {
-    /* best-effort; state still lives in memory this session */
-  }
-}
+const LEGACY_KEY = 'mordhive.warbands';
 
 type WarbandsContextValue = {
   warbands: Warband[];
+  ready: boolean;
   getWarband: (id: string | undefined) => Warband | undefined;
   createWarband: (warband: Warband) => void;
   saveWarband: (warband: Warband) => void;
   deleteWarband: (id: string) => void;
+  sync: Pick<RemoteCollection<Warband>, 'error' | 'clearError' | 'pendingImport' | 'importLocal' | 'dismissImport'>;
 };
 
 const WarbandsContext = createContext<WarbandsContextValue | null>(null);
 
+function toRow(w: Warband) {
+  return {
+    id: w.id,
+    name: (w.name || 'Unnamed warband').slice(0, 120),
+    warband_type: w.warbandType,
+    rating: computeWarbandRating(w),
+    data: w,
+  };
+}
+
+function fromRow(row: { data: unknown }): Warband {
+  return row.data as Warband;
+}
+
 export function WarbandsProvider({ children }: { children: ReactNode }) {
-  const [warbands, setWarbands] = useState<Warband[]>(load);
+  const col = useRemoteCollection<Warband>({ table: 'warbands', legacyKey: LEGACY_KEY, toRow, fromRow });
+  const { items, ready, create, save, remove, error, clearError, pendingImport, importLocal, dismissImport } = col;
 
-  useEffect(() => {
-    persist(warbands);
-  }, [warbands]);
+  const getWarband = useCallback((id: string | undefined) => items.find((w) => w.id === id), [items]);
 
-  const getWarband = useCallback(
-    (id: string | undefined) => warbands.find((w) => w.id === id),
-    [warbands],
-  );
-
-  const createWarband = useCallback((warband: Warband) => {
-    setWarbands((prev) => [...prev, warband]);
-  }, []);
-
-  const saveWarband = useCallback((warband: Warband) => {
-    setWarbands((prev) => prev.map((w) => (w.id === warband.id ? warband : w)));
-  }, []);
-
-  const deleteWarband = useCallback((id: string) => {
-    setWarbands((prev) => prev.filter((w) => w.id !== id));
-  }, []);
-
-  const value = useMemo(
-    () => ({ warbands, getWarband, createWarband, saveWarband, deleteWarband }),
-    [warbands, getWarband, createWarband, saveWarband, deleteWarband],
+  const value = useMemo<WarbandsContextValue>(
+    () => ({
+      warbands: items,
+      ready,
+      getWarband,
+      createWarband: create,
+      saveWarband: save,
+      deleteWarband: remove,
+      sync: { error, clearError, pendingImport, importLocal, dismissImport },
+    }),
+    [items, ready, getWarband, create, save, remove, error, clearError, pendingImport, importLocal, dismissImport],
   );
 
   return <WarbandsContext.Provider value={value}>{children}</WarbandsContext.Provider>;
