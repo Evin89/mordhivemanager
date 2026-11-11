@@ -1,6 +1,6 @@
 # Mord Hive — landing page
 
-Static landing page for `hive.mordheimmanager.net`, deployed as its own assets-only Cloudflare Worker (`mordhive-landing`). No build step, no Worker code: `wrangler.jsonc` serves `public/` as-is.
+Static landing page for `hive.mordheimmanager.net`, deployed as its own assets-only Cloudflare Worker (`mordhivemanager`). No build step, no Worker code: `wrangler.jsonc` serves `public/` as-is.
 
 - `public/index.html` — the page (Codex skin, tokens copied from `src/index.css`)
 - `public/404.html` — same page, served for unknown paths

@@ -1,6 +1,6 @@
 {
   // Static landing page for hive.mordheimmanager.net — assets only, no Worker code.
-  "name": "mordhive-landing",
+  "name": "mordhivemanager",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./public",
