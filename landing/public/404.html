@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="paper">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mord Hive — warband &amp; campaign bookkeeping for the hive</title>
+<meta name="description" content="An unofficial fan tool for Mord Hive (v0.5 WIP), the fan-made Warhammer 40,000 conversion of Mordheim. Build your warband to 500 tn, run games end to end, or fight alone against an app-built opponent." />
+<meta name="theme-color" content="#E9E9E6" />
+<meta property="og:title" content="Mord Hive — unofficial companion app" />
+<meta property="og:description" content="Warband &amp; campaign bookkeeping for the hive. From the maker of Mordheim Manager." />
+<meta property="og:url" content="https://hive.mordheimmanager.net/" />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<script>
+  // Same key and default as the app (src/lib/theme.ts): Paper unless the user chose Plated.
+  (function () {
+    try {
+      var t = localStorage.getItem('mordhive.theme');
+      if (t !== 'paper' && t !== 'plated') t = 'paper';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<style>
+  /* Codex tokens, verbatim from mordhivemanager/src/index.css (§2.1). */
+  :root, [data-theme="paper"] {
+    --page: 233 233 230; --plate: 250 250 249;
+    --banner: 17 18 21; --on-banner: 241 241 238;
+    --steel-d: 66 69 74; --steel: 118 122 128; --steel-l: 174 176 181; --bolt: 44 46 50;
+    --ink: 20 21 24; --ink-faded: 91 92 96;
+  }
+  [data-theme="plated"] {
+    --page: 22 23 25; --plate: 31 33 36;
+    --banner: 12 13 15; --on-banner: 230 227 219;
+    --steel-d: 42 44 48; --steel: 110 113 118; --steel-l: 60 62 66; --bolt: 32 34 38;
+    --ink: 230 227 219; --ink-faded: 154 156 158;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: rgb(var(--page));
+    color: rgb(var(--ink));
+    font-family: Spectral, Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, button, .ui { font-family: Oxanium, system-ui, sans-serif; }
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: 0.01em; }
+  p { margin: 0 0 0.9em; }
+  p:last-child { margin-bottom: 0; }
+  a { color: inherit; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid rgb(var(--ink)); outline-offset: 3px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  .faded { color: rgb(var(--ink-faded)); }
+  .stack > * + * { margin-top: 32px; }
+
+  /* ---------- §2.5 devices ---------- */
+  .banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: rgb(var(--banner)); color: rgb(var(--on-banner));
+    padding: 8px 16px;
+  }
+  .banner h1, .banner h2 { text-transform: uppercase; letter-spacing: 0.06em; font-size: 1.125rem; line-height: 1.25; }
+  .banner h1 { font-size: 1.5rem; font-weight: 700; }
+
+  .plate {
+    position: relative;
+    background-color: rgb(var(--plate));
+    border: 2px solid rgb(var(--steel));
+    box-shadow: inset 0 0 0 1px rgb(var(--steel-l) / 0.5), 0 1px 0 0 rgb(var(--steel-d) / 0.35);
+    background-image:
+      radial-gradient(circle at 9px 9px, rgb(var(--bolt)) 2px, transparent 2.6px),
+      radial-gradient(circle at calc(100% - 9px) 9px, rgb(var(--bolt)) 2px, transparent 2.6px),
+      radial-gradient(circle at 9px calc(100% - 9px), rgb(var(--bolt)) 2px, transparent 2.6px),
+      radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), rgb(var(--bolt)) 2px, transparent 2.6px);
+    background-repeat: no-repeat;
+    padding: 18px 20px;
+  }
+  .banner + .plate, .banner + .grid, .banner + .note, .banner + p, .banner + .register { margin-top: 12px; }
+
+  /* Slim, fixed 10px — never flexes (the §2.5 scar). */
+  .chevron-rail {
+    height: 10px;
+    background-image: repeating-linear-gradient(-45deg, rgb(var(--steel-d)) 0 8px, rgb(var(--steel)) 8px 16px);
+    border-top: 1px solid rgb(var(--steel-d)); border-bottom: 1px solid rgb(var(--steel-d));
+  }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgb(var(--steel)); background: rgb(var(--plate));
+    padding: 2px 8px; font-family: Oxanium, system-ui, sans-serif; font-size: 0.875rem;
+    color: rgb(var(--ink)); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: rgb(var(--bolt)); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+  .note {
+    border: 2px solid rgb(var(--steel)); background: rgb(var(--plate));
+    padding: 12px 16px;
+  }
+  .note .title {
+    font-family: Oxanium, system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 0.875rem; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- Header ---------- */
+  .top { padding: 12px 0; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand svg { width: 36px; height: 36px; flex: none; }
+  .brand b { font-family: Oxanium, system-ui, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.05rem; display: block; line-height: 1.1; }
+  .brand small { font-family: Oxanium, system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(var(--ink-faded)); }
+
+  .toggle { display: inline-flex; border: 1px solid rgb(var(--steel)); background: rgb(var(--plate)); }
+  .toggle button {
+    border: 0; background: transparent; color: rgb(var(--ink)); cursor: pointer;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em;
+    min-height: 44px; padding: 0 12px;
+  }
+  .toggle button[aria-pressed="true"] { background: rgb(var(--banner)); color: rgb(var(--on-banner)); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding-top: 24px; }
+  .hero .lead { font-size: 1.125rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 18px;
+    font-family: Oxanium, system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.95rem;
+    text-decoration: none; border: 2px solid rgb(var(--banner));
+  }
+  .btn-primary { background: rgb(var(--banner)); color: rgb(var(--on-banner)); }
+  .btn-primary[aria-disabled="true"] { cursor: default; }
+  .btn-ghost { background: transparent; color: rgb(var(--ink)); border-color: rgb(var(--steel)); }
+  .status { margin-top: 10px; font-size: 0.9rem; }
+
+  /* ---------- Feature grid ---------- */
+  .grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 680px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .grid h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; padding-right: 18px; }
+  .grid p { font-size: 1rem; }
+
+  /* Solo list */
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: grid; grid-template-columns: 2.4em 1fr; gap: 8px; padding: 12px 0; border-bottom: 1px solid rgb(var(--steel-l)); }
+  .list li:first-child { padding-top: 0; }
+  .list li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .list .n { font-family: Oxanium, system-ui, sans-serif; font-variant-numeric: tabular-nums lining-nums; color: rgb(var(--ink-faded)); padding-top: 1px; }
+  .list strong { font-family: Oxanium, system-ui, sans-serif; font-weight: 600; }
+
+  /* Warband register — black-ruled like the datasheet tables */
+  .register { width: 100%; border-collapse: collapse; background: rgb(var(--plate)); border: 2px solid rgb(var(--banner)); }
+  .register th, .register td { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgb(var(--ink) / 0.35); font-variant-numeric: tabular-nums lining-nums; }
+  .register th { font-family: Oxanium, system-ui, sans-serif; font-weight: 600; width: 3.2em; color: rgb(var(--ink-faded)); }
+  .register tr:last-child th, .register tr:last-child td { border-bottom: 0; }
+  @media (min-width: 680px) {
+    .register-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  }
+  .register-cols .register + .register { margin-top: 12px; }
+  @media (min-width: 680px) { .register-cols .register + .register { margin-top: 0; } }
+
+  /* Footer */
+  footer { margin-top: 40px; padding: 20px 0 calc(24px + env(safe-area-inset-bottom)); border-top: 2px solid rgb(var(--steel)); }
+  footer p { font-size: 0.9rem; color: rgb(var(--ink-faded)); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Mord Hive, home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" fill="#111215"/>
+        <rect x="8" y="8" width="48" height="48" fill="none" stroke="#767A80" stroke-width="3"/>
+        <g fill="#AEB0B5"><circle cx="14" cy="14" r="2.6"/><circle cx="50" cy="14" r="2.6"/><circle cx="14" cy="50" r="2.6"/><circle cx="50" cy="50" r="2.6"/></g>
+        <g fill="none" stroke="#F1F1EE" stroke-width="3.5" stroke-linecap="square"><polyline points="22,26 32,34 42,26"/><polyline points="22,36 32,44 42,36"/></g>
+      </svg>
+      <span><b>Mord Hive</b><small>Unofficial fan tool</small></span>
+    </a>
+    <div class="toggle" role="group" aria-label="Appearance">
+      <button type="button" data-t="paper" title="The printed page — light.">Paper</button>
+      <button type="button" data-t="plated" title="The metal, lit low — dark.">Plated</button>
+    </div>
+  </div>
+</header>
+<div class="chevron-rail" aria-hidden="true"></div>
+
+<main class="wrap stack hero">
+
+  <section aria-labelledby="h-hero">
+    <div class="banner"><h1 id="h-hero">Mord Hive</h1><span class="chip">v0.5 WIP</span></div>
+    <div class="plate">
+      <p class="lead"><strong>Warband &amp; campaign bookkeeping for the hive.</strong> A mobile companion for Mord Hive, the fan-made Warhammer 40,000 conversion of Mordheim. Build a warband, play a game from the first turn to the Exploration Phase, and let the app keep the books while you keep the dice.</p>
+      <div class="chips">
+        <span class="chip">Build to 500 tn</span>
+        <span class="chip">Min 3 models</span>
+        <span class="chip">Up to 6 Heroes</span>
+        <span class="chip">12 warbands</span>
+      </div>
+      <div class="actions">
+        <span class="btn btn-primary" role="link" aria-disabled="true">Opening soon</span>
+        <a class="btn btn-ghost" href="https://mordheimmanager.net/">Mordheim Manager</a>
+      </div>
+      <p class="status faded">The app is being readied for the hive. This page will open it when it's live.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-setting">
+    <div class="banner"><h2 id="h-setting">The Setting</h2></div>
+    <p>Hive World <strong>Reyklund</strong> (Vagorn Sector, Ultima Segmentum) was an Imperial diamantine-mining world; <strong>Mord Hive</strong> was its capital. After the fighting, an immense Space Hulk burst into realspace above the hive, dooming it. The abandoned hive is now fought over by isolated warbands, xenos, heretics and scavengers for caches of refined <strong>diamantine</strong> — the price of a berth on the last warp-capable ships.</p>
+    <aside class="note">
+      <p class="title ui">Designer's Note</p>
+      <p>Setting from the Mord Hive v0.5 rulebook by Nick. Every statline, cost and rule in the app is transcribed from that book; anything the book doesn't settle shows as a visible TODO, never a guess.</p>
+    </aside>
+  </section>
+
+  <section aria-labelledby="h-app">
+    <div class="banner"><h2 id="h-app">In the App</h2></div>
+    <div class="grid">
+      <div class="plate"><h3>Warband build</h3><p>Pick any of the twelve warbands, recruit Heroes and Henchmen within the book's limits, and watch your Thrones and warband rating update as you go.</p></div>
+      <div class="plate"><h3>Datasheets</h3><p>Every model as a datasheet: profile, skills from its own lists, and wargear held to the two close-combat, two missile weapon limit.</p></div>
+      <div class="plate"><h3>Trading Post</h3><p>Buy Common and warband-exclusive gear into the treasury, sell it back at half price, laid out under the price chart's own headings.</p></div>
+      <div class="plate"><h3>Battle tracker</h3><p>Roll or pick a scenario, then count turns, log events and tally who went out of action. A refresh at the table loses nothing.</p></div>
+      <div class="plate"><h3>After the battle</h3><p>Serious injuries, experience, advances and income in one guided sequence. Nothing changes until you confirm it.</p></div>
+      <div class="plate"><h3>Rules reference</h3><p>Skill lists, the wargear chart, psyker powers, prayers and each warband's special rules, searchable and built from the same data as your roster.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-solo">
+    <div class="banner"><h2 id="h-solo">Fight Alone</h2><span class="chip">Solo</span></div>
+    <div class="plate">
+      <ol class="list">
+        <li><span class="n">01</span><span><strong>An app-built opponent.</strong> An enemy warband generated from any of the lists at the strength you choose, with its own casualty tally and suggestions for each activation.</span></li>
+        <li><span class="n">02</span><span><strong>Temperament and a hidden agenda.</strong> Aggressive, Cautious, Cunning or Frenzied, and a secret objective you only see when the battle ends.</span></li>
+        <li><span class="n">03</span><span><strong>The Oracle.</strong> Yes-or-no questions with a likelihood, a 2D6 reaction roll and a D66 hive-event table, dropped straight into the battle log.</span></li>
+        <li><span class="n">04</span><span><strong>A generated battlefield.</strong> A seeded, re-rollable ruin layout shaped to the scenario.</span></li>
+        <li><span class="n">05</span><span><strong>A solo campaign.</strong> An enemy agenda that runs across linked games, revealed act by act.</span></li>
+      </ol>
+    </div>
+    <aside class="note">
+      <p class="title ui">Designer's Note</p>
+      <p>The solo opponent, the Oracle and the battlefield generator are the app's own additions. They are not part of the Mord Hive ruleset and are marked as such in the app.</p>
+    </aside>
+  </section>
+
+  <section aria-labelledby="h-warbands">
+    <div class="banner"><h2 id="h-warbands">The Twelve Warbands</h2><span class="chip">v0.5</span></div>
+    <div class="register-cols">
+      <table class="register" aria-label="Warbands I to VI">
+        <tr><th scope="row">I</th><td>Imperial Guard Remnants</td></tr>
+        <tr><th scope="row">II</th><td>Ordo Hereticus Retainers</td></tr>
+        <tr><th scope="row">III</th><td>Order of the Black Sepulchre</td></tr>
+        <tr><th scope="row">IV</th><td>Forsaken Astartes</td></tr>
+        <tr><th scope="row">V</th><td>Squat Strip Miners</td></tr>
+        <tr><th scope="row">VI</th><td>The Pox Cult</td></tr>
+      </table>
+      <table class="register" aria-label="Warbands VII to XII">
+        <tr><th scope="row">VII</th><td>The Lost and the Damned</td></tr>
+        <tr><th scope="row">VIII</th><td>Ork Mob</td></tr>
+        <tr><th scope="row">IX</th><td>Cult of the Four-Armed Emperor</td></tr>
+        <tr><th scope="row">X</th><td>Dark Eldar Coterie</td></tr>
+        <tr><th scope="row">XI</th><td>Eldar Wayward Host</td></tr>
+        <tr><th scope="row">XII</th><td>T'au Pathfinder Cadre</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-next">
+    <div class="banner"><h2 id="h-next">Still in the Forge</h2></div>
+    <div class="plate">
+      <ol class="list">
+        <li><span class="n">—</span><span><strong>Campaigns with your group.</strong> Standings, a shared battle log and game nights, as in Mordheim Manager.</span></li>
+        <li><span class="n">—</span><span><strong>Accounts and sync.</strong> Your warbands on every device, not just this browser.</span></li>
+        <li><span class="n">—</span><span><strong>Print sheets.</strong> A clean roster for the table.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-credits">
+    <div class="banner"><h2 id="h-credits">Credits</h2></div>
+    <div class="grid">
+      <div class="plate"><h3>The game</h3><p>Mord Hive is a fan-made ruleset by <strong>Nick</strong>, built on Mordheim by Tuomas Pirinen, Rick Priestley and Alessio Cavatore. The rules, the setting and the warbands are his work; you need his rulebook to play.</p></div>
+      <div class="plate"><h3>This tool</h3><p>An unofficial companion made by the developer of <a href="https://mordheimmanager.net/">Mordheim Manager</a>. It is not the official Mord Hive site and does not replace the rulebook.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>An unofficial fan tool for Mord Hive (v0.5 WIP), a fan-made ruleset. Not affiliated with or endorsed by Games Workshop. Warhammer 40,000, Mordheim and associated names are trademarks of Games Workshop Limited, used without permission and with no challenge to their status intended.</p>
+    <p>A companion by <a href="https://mordheimmanager.net/">mordheimmanager.net</a></p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var buttons = document.querySelectorAll('.toggle button');
+    function apply(t) {
+      root.setAttribute('data-theme', t);
+      if (meta) meta.setAttribute('content', t === 'plated' ? '#161719' : '#E9E9E6');
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.t === t)); });
+      try { localStorage.setItem('mordhive.theme', t); } catch (e) {}
+    }
+    buttons.forEach(function (b) { b.addEventListener('click', function () { apply(b.dataset.t); }); });
+    apply(root.getAttribute('data-theme') === 'plated' ? 'plated' : 'paper');
+  })();
+</script>
+</body>
+</html>
