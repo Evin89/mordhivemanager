@@ -84,10 +84,19 @@ Manager now; defer the true `/packages` monorepo split to later).
   The opponent's rosters draw on sourced data, but all AI behaviour, the oracle, and the map are
   **app-original and badged in-app as not part of the ruleset**. Still to come: a solo *campaign*
   with an agenda that carries across linked games.
-- ◻️ **App shell + deploy (step 4)** — Cloudflare Worker `wrangler.toml`, manifest polish, a
-  smoke-test deploy at the TBD domain.
-- ◻️ **Supabase backend** — swap the local store for Supabase (the store module is the only seam
-  the screens touch), for accounts and multi-device sync.
+- ✅ **Landing page live** — `landing/` on `hive.mordheimmanager.net` (Worker `mordhivemanager`).
+- ✅ **Supabase backend (built, not yet switched on)** — accounts and multi-device sync on Mordheim
+  Manager's Supabase project, in Mord Hive's **own `mordhive` schema** so MM's tables are never
+  touched (`supabase/migrations/mh_0001_mordhive_schema.sql`; RLS matrix: `npm run db:test`). One
+  account works in both apps. Warbands and solo campaigns are Supabase-backed behind the same store
+  interface the screens already used (`src/store/remoteCollection.ts`); the battle session stays in
+  `localStorage` per device. Sign in / create account / reset password screens; warbands built
+  before accounts existed are offered for import once after sign-in. To switch on: apply the
+  migration, add `mordhive` to *Settings → API → Exposed schemas*, and allow
+  `https://hive.mordheimmanager.net/**` as an Auth redirect URL.
+- ◻️ **Deploy the app** — `wrangler.jsonc` at the root serves `dist/` as an SPA. The live Worker
+  `mordhivemanager` still builds `landing/` (the landing page on `hive.mordheimmanager.net`); switch
+  its root directory to `/` and build command to `npm run build` when the app should replace it.
 - ✅ **Post-battle wizard** — the guided end-of-game sequence (Battle Info → Injuries → Experience
   → Advances → Income → Confirm), consuming the battle tracker's out-of-action tally. Heroes out of
   action roll the **D66 Serious Injury chart** (converted from v0.5, `src/data/injuries.json`);
@@ -120,6 +129,7 @@ npm install
 npm run dev      # http://localhost:5174  (see /design for the component sandbox)
 npm run build    # tsc -b && vite build
 npm run lint     # tsc --noEmit
+npm run db:test  # RLS matrix for the mordhive schema (in-process Postgres)
 ```
 
 ## Layout

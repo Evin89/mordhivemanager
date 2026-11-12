@@ -2,6 +2,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { strings } from './strings';
 import ThemeToggle from './components/ThemeToggle';
 import ChevronRail from './components/ChevronRail';
+import { AuthProvider, useAuth } from './store/auth';
 import { WarbandsProvider } from './store/warbands';
 import { SoloCampaignsProvider } from './store/soloCampaign';
 import Landing from './screens/Landing';
@@ -20,6 +21,10 @@ import PostBattleScreen from './screens/PostBattleScreen';
 import SoloCampaignsScreen from './screens/SoloCampaignsScreen';
 import SoloCampaignScreen from './screens/SoloCampaignScreen';
 import RulesScreen from './screens/RulesScreen';
+import SignInScreen from './screens/SignInScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import RequireAuth from './components/RequireAuth';
+import SyncBanner from './components/SyncBanner';
 
 /**
  * App shell for the slice 1–4 standalone (spec §9). Two routes for now: the
@@ -30,29 +35,33 @@ import RulesScreen from './screens/RulesScreen';
 export default function App() {
   return (
     <BrowserRouter>
+      <AuthProvider>
       <WarbandsProvider>
         <SoloCampaignsProvider>
         <div className="min-h-full flex flex-col">
           <TopBar />
           <ChevronRail />
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+            <SyncBanner />
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/design" element={<DesignSandbox />} />
-              <Route path="/warbands" element={<WarbandsListScreen />} />
-              <Route path="/warbands/new" element={<NewWarbandScreen />} />
-              <Route path="/warbands/:warbandId" element={<RosterScreen />} />
-              <Route path="/warbands/:warbandId/add-hero" element={<AddHeroScreen />} />
-              <Route path="/warbands/:warbandId/add-henchmen" element={<AddHenchmenScreen />} />
-              <Route path="/warbands/:warbandId/hero/:heroId" element={<HeroDetailScreen />} />
-              <Route path="/warbands/:warbandId/henchmen/:groupId" element={<HenchmenDetailScreen />} />
-              <Route path="/warbands/:warbandId/trading" element={<TradingPostScreen />} />
-              <Route path="/warbands/:warbandId/pre-battle" element={<PreBattleScreen />} />
-              <Route path="/warbands/:warbandId/battle" element={<DuringBattleScreen />} />
-              <Route path="/warbands/:warbandId/post-battle" element={<PostBattleScreen />} />
-              <Route path="/solo" element={<SoloCampaignsScreen />} />
-              <Route path="/solo/:campaignId" element={<SoloCampaignScreen />} />
+              <Route path="/warbands" element={<RequireAuth><WarbandsListScreen /></RequireAuth>} />
+              <Route path="/warbands/new" element={<RequireAuth><NewWarbandScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId" element={<RequireAuth><RosterScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/add-hero" element={<RequireAuth><AddHeroScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/add-henchmen" element={<RequireAuth><AddHenchmenScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/hero/:heroId" element={<RequireAuth><HeroDetailScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/henchmen/:groupId" element={<RequireAuth><HenchmenDetailScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/trading" element={<RequireAuth><TradingPostScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/pre-battle" element={<RequireAuth><PreBattleScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/battle" element={<RequireAuth><DuringBattleScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/post-battle" element={<RequireAuth><PostBattleScreen /></RequireAuth>} />
+              <Route path="/solo" element={<RequireAuth><SoloCampaignsScreen /></RequireAuth>} />
+              <Route path="/solo/:campaignId" element={<RequireAuth><SoloCampaignScreen /></RequireAuth>} />
               <Route path="/rules" element={<RulesScreen />} />
+              <Route path="/sign-in" element={<SignInScreen />} />
+              <Route path="/reset-password" element={<ResetPasswordScreen />} />
               <Route path="*" element={<Landing />} />
             </Routes>
           </main>
@@ -65,6 +74,7 @@ export default function App() {
         </div>
         </SoloCampaignsProvider>
       </WarbandsProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
@@ -86,7 +96,7 @@ function TopBar() {
 
   return (
     <header className="bg-banner">
-      <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+      <div className="max-w-4xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <div className="flex items-center gap-2">
           {/* Wordmark — the app's own bolt sigil beside the name. */}
           <span
@@ -102,17 +112,38 @@ function TopBar() {
             {strings.appName}
           </span>
         </div>
-        <nav className="flex items-center gap-1">
+        <nav className="flex flex-wrap items-center gap-1">
           {link('/', strings.nav.home)}
           {link('/warbands', strings.nav.warbands)}
           {link('/solo', 'Solo')}
           {link('/rules', strings.nav.rules)}
           {link('/design', strings.nav.design)}
+          <AccountLink />
           <div className="pl-2">
             <ThemeToggle />
           </div>
         </nav>
       </div>
     </header>
+  );
+}
+
+/** Sign in when signed out; sign out (with the account's email as a hint) when signed in. */
+function AccountLink() {
+  const { user, loading, signOut } = useAuth();
+  if (loading) return null;
+  const cls =
+    'px-3 py-1.5 font-display uppercase tracking-[0.06em] text-sm min-h-[44px] flex items-center text-on-banner/75 hover:text-on-banner';
+  if (!user) {
+    return (
+      <NavLink to="/sign-in" className={cls}>
+        {strings.nav.signIn}
+      </NavLink>
+    );
+  }
+  return (
+    <button type="button" className={cls} title={user.email ?? undefined} onClick={() => void signOut()}>
+      {strings.nav.signOut}
+    </button>
   );
 }

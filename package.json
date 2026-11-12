@@ -2,7 +2,7 @@
   "name": "mordhivemanager",
   "version": "0.1.0",
   "private": true,
-  "description": "Mord Hive — gang & campaign manager for the Necromunda/40K-on-Mordheim fan ruleset. Sibling app to Mordheim Manager.",
+  "description": "Mord Hive \u2014 gang & campaign manager for the Necromunda/40K-on-Mordheim fan ruleset. Sibling app to Mordheim Manager.",
   "license": "ISC",
   "author": "E.D. Wijninga",
   "type": "module",
@@ -11,14 +11,17 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "db:test": "node supabase/tests/rls.test.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.4"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.16",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.2",
