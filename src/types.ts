@@ -157,6 +157,8 @@ export type Warband = {
   henchmenGroups: HenchmenGroup[];
   hiredSwords: HiredSword[];
   notes: string;
+  /** Who outside its campaign may read this roster; missing means private. */
+  visibility?: WarbandVisibility;
 };
 
 export type BattleResult = 'win' | 'loss' | 'draw';

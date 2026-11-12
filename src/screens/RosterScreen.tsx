@@ -19,7 +19,7 @@ export default function RosterScreen() {
   const { warbandId } = useParams<{ warbandId: string }>();
   const navigate = useNavigate();
   const warband = useWarbandLookup(warbandId);
-  const { deleteWarband } = useWarbands();
+  const { deleteWarband, saveWarband } = useWarbands();
 
   if (!warband) return <Navigate to="/warbands" replace />;
 
@@ -81,6 +81,40 @@ export default function RosterScreen() {
             {hasActiveBattle(warband.id) ? 'Resume battle' : 'Battle'}
           </Link>
         </div>
+
+        {/* Sharing + print */}
+        <Plate className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-display uppercase tracking-[0.06em] text-ink text-sm">
+                {warband.visibility === 'public' ? 'Public — in the gallery' : 'Private'}
+              </p>
+              <p className="font-body text-ink-faded text-sm">
+                {warband.visibility === 'public'
+                  ? 'Anyone with the link can read this roster.'
+                  : 'Only you, and players in a campaign it is linked to.'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="dense"
+                variant="secondary"
+                fullWidth={false}
+                onClick={() =>
+                  saveWarband({ ...warband, visibility: warband.visibility === 'public' ? 'private' : 'public' })
+                }
+              >
+                {warband.visibility === 'public' ? 'Make private' : 'Make public'}
+              </Button>
+              <Link
+                to={`/warbands/${warband.id}/print`}
+                className="bg-plate text-ink border-2 border-steel font-display uppercase tracking-[0.06em] text-sm px-3 py-1.5 min-h-[44px] inline-flex items-center"
+              >
+                Print sheet
+              </Link>
+            </div>
+          </div>
+        </Plate>
 
         {/* Heroes */}
         <section className="space-y-3">

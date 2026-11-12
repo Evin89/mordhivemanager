@@ -50,6 +50,8 @@ export const strings = {
     battle: 'Battle',
     trading: 'Trading',
     campaign: 'Campaign',
+    campaigns: 'Campaigns',
+    gallery: 'Gallery',
     rules: 'Rules',
     settings: 'Account',
     design: 'Design',

@@ -22,6 +22,12 @@ import SoloCampaignsScreen from './screens/SoloCampaignsScreen';
 import SoloCampaignScreen from './screens/SoloCampaignScreen';
 import RulesScreen from './screens/RulesScreen';
 import SignInScreen from './screens/SignInScreen';
+import AccountScreen from './screens/AccountScreen';
+import CampaignsScreen from './screens/CampaignsScreen';
+import CampaignScreen from './screens/CampaignScreen';
+import PrintRosterScreen from './screens/PrintRosterScreen';
+import GalleryScreen from './screens/GalleryScreen';
+import GalleryRosterScreen from './screens/GalleryRosterScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import RequireAuth from './components/RequireAuth';
 import SyncBanner from './components/SyncBanner';
@@ -60,13 +66,19 @@ export default function App() {
               <Route path="/solo" element={<RequireAuth><SoloCampaignsScreen /></RequireAuth>} />
               <Route path="/solo/:campaignId" element={<RequireAuth><SoloCampaignScreen /></RequireAuth>} />
               <Route path="/rules" element={<RulesScreen />} />
+              <Route path="/warbands/:warbandId/print" element={<RequireAuth><PrintRosterScreen /></RequireAuth>} />
+              <Route path="/campaigns" element={<RequireAuth><CampaignsScreen /></RequireAuth>} />
+              <Route path="/campaigns/:campaignId" element={<RequireAuth><CampaignScreen /></RequireAuth>} />
+              <Route path="/account" element={<RequireAuth><AccountScreen /></RequireAuth>} />
+              <Route path="/gallery" element={<GalleryScreen />} />
+              <Route path="/gallery/:warbandId" element={<GalleryRosterScreen />} />
               <Route path="/sign-in" element={<SignInScreen />} />
               <Route path="/reset-password" element={<ResetPasswordScreen />} />
               <Route path="*" element={<Landing />} />
             </Routes>
           </main>
           <ChevronRail />
-          <footer className="bg-plate border-t-2 border-steel">
+          <footer className="no-print bg-plate border-t-2 border-steel">
             <div className="max-w-4xl mx-auto px-4 py-3 font-body text-ink-faded text-sm">
               {strings.fanNotice}
             </div>
@@ -95,10 +107,10 @@ function TopBar() {
   );
 
   return (
-    <header className="bg-banner">
+    <header className="no-print bg-banner">
       <div className="max-w-4xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <div className="flex items-center gap-2">
-          {/* Wordmark — the app's own bolt sigil beside the name. */}
+        <NavLink to="/" className="flex items-center gap-2 min-h-[44px]" aria-label={`${strings.appName}, home`}>
+          {/* Wordmark — the app's own bolt sigil beside the name. Doubles as the Home link. */}
           <span
             className="inline-block h-6 w-6 border-2 border-on-banner"
             style={{
@@ -111,13 +123,13 @@ function TopBar() {
           <span className="font-display uppercase tracking-[0.1em] text-on-banner text-lg">
             {strings.appName}
           </span>
-        </div>
+        </NavLink>
         <nav className="flex flex-wrap items-center gap-1">
-          {link('/', strings.nav.home)}
           {link('/warbands', strings.nav.warbands)}
           {link('/solo', 'Solo')}
+          {link('/campaigns', strings.nav.campaigns)}
+          {link('/gallery', strings.nav.gallery)}
           {link('/rules', strings.nav.rules)}
-          {link('/design', strings.nav.design)}
           <AccountLink />
           <div className="pl-2">
             <ThemeToggle />
@@ -128,9 +140,9 @@ function TopBar() {
   );
 }
 
-/** Sign in when signed out; sign out (with the account's email as a hint) when signed in. */
+/** Sign in when signed out; the account page (under the player's Mord Hive name) when signed in. */
 function AccountLink() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, displayName } = useAuth();
   if (loading) return null;
   const cls =
     'px-3 py-1.5 font-display uppercase tracking-[0.06em] text-sm min-h-[44px] flex items-center text-on-banner/75 hover:text-on-banner';
@@ -142,8 +154,8 @@ function AccountLink() {
     );
   }
   return (
-    <button type="button" className={cls} title={user.email ?? undefined} onClick={() => void signOut()}>
-      {strings.nav.signOut}
-    </button>
+    <NavLink to="/account" className={cls} title={user.email ?? undefined}>
+      {displayName || strings.nav.settings}
+    </NavLink>
   );
 }

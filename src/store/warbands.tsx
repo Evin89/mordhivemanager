@@ -29,6 +29,7 @@ function toRow(w: Warband) {
     name: (w.name || 'Unnamed warband').slice(0, 120),
     warband_type: w.warbandType,
     rating: computeWarbandRating(w),
+    visibility: w.visibility ?? 'private',
     data: w,
   };
 }
