@@ -20,6 +20,8 @@ import {
   renameCampaign,
   tally,
 } from '../lib/campaigns';
+import { CampaignEvent, EventInput, EventRsvp, RsvpStatus, saveCampaignText, listEvents, loadEventRsvps, createEvent, updateEvent, deleteEvent, setEventRsvp } from '../lib/campaigns';
+import { buildIcs, downloadIcs } from '../lib/ics';
 import { BattleResult } from '../types';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
@@ -45,7 +47,7 @@ function ErrorLine({ children }: { children: string | null }) {
 /**
  * One campaign: join code, standings, who's in it, linking your warband, and
  * the shared battle log. Mirrors Mordheim Manager's campaign screen, smaller:
- * no territories, awards or events yet.
+ * no territories or awards yet.
  */
 export default function CampaignScreen() {
   const { campaignId } = useParams<{ campaignId: string }>();
@@ -143,6 +145,10 @@ export default function CampaignScreen() {
       <div className="py-6 space-y-6">
         <ErrorLine>{error}</ErrorLine>
 
+        <nav aria-label="Campaign sections" className="flex flex-wrap gap-3 font-display text-ink underline">
+          {['Announcement', 'Events', 'Standings', 'Battle log', 'House rules', 'Players'].map((name) =>
+            <a key={name} href={`#${name.toLowerCase().replace(/ /g, '-')}`} className="min-h-[44px] py-2">{name}</a>)}
+        </nav>
         {/* Join code */}
         <Plate className="p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -194,8 +200,11 @@ export default function CampaignScreen() {
           </div>
         </Plate>
 
+        <CampaignText campaign={campaign} field="announcement" leader={isLeader} reload={reload} />
+        <CampaignEvents campaign={campaign} userId={user?.id ?? ''} />
+
         {/* Standings */}
-        <section className="space-y-3">
+        <section id="standings" className="space-y-3">
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{standings.length}</PageChip>}>
             Standings
           </BannerHeader>
@@ -275,7 +284,7 @@ export default function CampaignScreen() {
         </section>
 
         {/* Battle log */}
-        <section className="space-y-3">
+        <section id="battle-log" className="space-y-3">
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{battles.length}</PageChip>}>
             Battle log
           </BannerHeader>
@@ -385,8 +394,10 @@ export default function CampaignScreen() {
           )}
         </section>
 
+        <CampaignText campaign={campaign} field="house_rules" leader={isLeader} reload={reload} />
+
         {/* Players */}
-        <section className="space-y-3">
+        <section id="players" className="space-y-3">
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{members.length}</PageChip>}>
             Players
           </BannerHeader>
@@ -471,4 +482,130 @@ export default function CampaignScreen() {
       </div>
     </div>
   );
+}
+
+const textareaClass = 'w-full bg-plate text-ink border border-steel p-3 font-body';
+
+function CampaignText({ campaign, field, leader, reload }: {
+  campaign: CampaignDetail; field: 'announcement' | 'house_rules'; leader: boolean; reload: () => Promise<void>;
+}) {
+  const value = field === 'announcement' ? campaign.announcement : campaign.houseRules;
+  const title = field === 'announcement' ? 'Announcement' : 'House rules';
+  const [draft, setDraft] = useState(value);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => setDraft(value), [value]);
+  async function save(text: string) {
+    setBusy(true);
+    const err = await saveCampaignText(campaign.id, { [field]: text });
+    setError(err);
+    if (!err) await reload();
+    setBusy(false);
+  }
+  return <section id={field === 'announcement' ? 'announcement' : 'house-rules'} className="space-y-3">
+    {(value || leader || field === 'house_rules') && <>
+      <BannerHeader>{title}</BannerHeader>
+      <Plate className="p-4 space-y-3">
+        {value && <p className="font-body text-ink whitespace-pre-wrap">{value}</p>}
+        {field === 'announcement' && value && campaign.announcementAt && <p className="text-sm text-ink-faded">posted {new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(campaign.announcementAt))}</p>}
+        {!value && field === 'house_rules' && <p className="text-ink-faded">No house rules posted.</p>}
+        {leader && <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); void save(draft); }}>
+          <label className={label} htmlFor={`${field}-edit`}>Edit {title.toLowerCase()}</label>
+          <textarea id={`${field}-edit`} className={textareaClass} rows={4} maxLength={field === 'announcement' ? 2000 : 8000} value={draft} onChange={(e) => setDraft(e.target.value)} />
+          <div className="flex gap-2"><Button type="submit" fullWidth={false} disabled={busy}>Save</Button>
+            {field === 'announcement' && <Button type="button" variant="secondary" fullWidth={false} disabled={busy} onClick={() => { setDraft(''); void save(''); }}>Clear</Button>}</div>
+        </form>}
+        <ErrorLine>{error}</ErrorLine>
+      </Plate>
+    </>}
+  </section>;
+}
+
+function CampaignEvents({ campaign, userId }: { campaign: CampaignDetail; userId: string }) {
+  const [events, setEvents] = useState<CampaignEvent[]>([]);
+  const [rsvps, setRsvps] = useState<EventRsvp[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState<CampaignEvent | 'new' | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [now, setNow] = useState(Date.now());
+  const reload = useCallback(async () => {
+    const res = await listEvents(campaign.id);
+    const replies = await loadEventRsvps(res.data.map((e) => e.id));
+    setEvents(res.data); setRsvps(replies.data); setError(res.error ?? replies.error);
+  }, [campaign.id]);
+  useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 60000); return () => clearInterval(timer); }, []);
+  async function mutate(action: () => Promise<string | null>) {
+    setBusy(true);
+    const err = await action();
+    setError(err);
+    if (!err) { setEditing(null); setDeleting(null); await reload(); }
+    setBusy(false);
+  }
+  const format = (date: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date));
+  function card(event: CampaignEvent) {
+    const replies = rsvps.filter((r) => r.event_id === event.id);
+    const own = replies.find((r) => r.user_id === userId)?.status;
+    return <Plate key={event.id} className="p-4 space-y-3">
+      <h3 className="font-display text-ink text-xl">{event.title}</h3>
+      <p className="text-ink">{format(event.starts_at)}{event.ends_at && ` – ${format(event.ends_at)}`}</p>
+      {event.location && <p className="text-ink">{event.location}</p>}
+      {event.notes && <p className="font-body text-ink whitespace-pre-wrap">{event.notes}</p>}
+      {(['going', 'maybe', 'no'] as RsvpStatus[]).map((status) => {
+        const group = replies.filter((r) => r.status === status);
+        return <p key={status} className="text-ink-faded capitalize">{status} ({group.length}): {group.map((r) => r.displayName).join(', ') || '—'}</p>;
+      })}
+      <div className="flex flex-wrap gap-2" role="group" aria-label={`RSVP for ${event.title}`}>
+        {(['going', 'maybe', 'no'] as RsvpStatus[]).map((status) => <Button key={status} fullWidth={false} variant={own === status ? 'primary' : 'secondary'} aria-pressed={own === status} disabled={busy} onClick={() => void mutate(() => setEventRsvp(event.id, userId, own === status ? null : status))}>{status === 'going' ? 'Going' : status === 'maybe' ? 'Maybe' : 'No'}</Button>)}
+        <Button variant="secondary" fullWidth={false} onClick={() => downloadIcs(`campaign-event-${event.id}.ics`, buildIcs(event, campaign.name))}>Add to calendar</Button>
+      </div>
+      {campaign.myRole === 'leader' && <div className="flex flex-wrap gap-2 items-center">
+        <Button variant="secondary" fullWidth={false} disabled={busy} onClick={() => setEditing(event)}>Edit</Button>
+        {deleting === event.id ? <><span className="text-ink">Delete?</span><Button variant="danger" fullWidth={false} disabled={busy} onClick={() => void mutate(() => deleteEvent(event.id))}>Yes</Button><Button variant="secondary" fullWidth={false} onClick={() => setDeleting(null)}>No</Button></> : <Button variant="danger" fullWidth={false} onClick={() => setDeleting(event.id)}>Delete</Button>}
+      </div>}
+    </Plate>;
+  }
+  const upcoming = events.filter((e) => new Date(e.starts_at).getTime() >= now - 6 * 3600000);
+  const past = events.filter((e) => new Date(e.starts_at).getTime() < now - 6 * 3600000);
+  return <section id="events" className="space-y-3">
+    <BannerHeader>Events</BannerHeader><ErrorLine>{error}</ErrorLine>
+    {campaign.myRole === 'leader' && <Button fullWidth={false} onClick={() => setEditing('new')}>Create event</Button>}
+    {editing && <EventForm key={typeof editing === 'string' ? editing : editing.id} event={editing === 'new' ? null : editing} busy={busy} cancel={() => setEditing(null)} save={(input) => mutate(() => editing === 'new' ? createEvent(campaign.id, input) : updateEvent(editing.id, input))} />}
+    {!upcoming.length && <p className="text-ink-faded">No upcoming events.</p>}
+    {upcoming.map(card)}
+    {!!past.length && <details className="space-y-3"><summary className="font-display text-ink cursor-pointer min-h-[44px]">Past events ({past.length})</summary>{past.map(card)}</details>}
+  </section>;
+}
+
+function EventForm({ event, busy, save, cancel }: { event: CampaignEvent | null; busy: boolean; save: (input: EventInput) => Promise<void>; cancel: () => void }) {
+  const local = (value: string) => { const d = new Date(value); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
+  const start = event ? local(event.starts_at) : '';
+  const [title, setTitle] = useState(event?.title ?? '');
+  const [date, setDate] = useState(start.slice(0, 10));
+  const [time, setTime] = useState(start.slice(11));
+  const [end, setEnd] = useState(event?.ends_at ? local(event.ends_at).slice(11) : '');
+  const [endDate, setEndDate] = useState(event?.ends_at ? local(event.ends_at).slice(0, 10) : '');
+  const [location, setLocation] = useState(event?.location ?? '');
+  const [notes, setNotes] = useState(event?.notes ?? '');
+  const [error, setError] = useState<string | null>(null);
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    const startsAt = new Date(`${date}T${time}`);
+    const endsAt = end ? new Date(`${endDate || date}T${end}`) : null;
+    if (!title.trim() || !Number.isFinite(startsAt.getTime()) || (endsAt && (!Number.isFinite(endsAt.getTime()) || endsAt <= startsAt))) { setError('Enter a title and valid times; the end must be after the start.'); return; }
+    setError(null);
+    await save({ title: title.trim(), starts_at: startsAt.toISOString(), ends_at: endsAt?.toISOString() ?? null, location, notes });
+  }
+  return <Plate className="p-4"><form onSubmit={submit} className="space-y-3">
+    <h3 className="font-display text-ink">{event ? 'Edit event' : 'Create event'}</h3>
+    <label className={label}>Title<TextField required maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)} /></label>
+    <label className={label}>Date<TextField required type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
+    <label className={label}>Start time<TextField required type="time" value={time} onChange={(e) => setTime(e.target.value)} /></label>
+    <label className={label}>End time (optional)<TextField type="time" value={end} onChange={(e) => setEnd(e.target.value)} /></label>
+    <label className={label}>End date (defaults to start date)<TextField type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></label>
+    <label className={label}>Location<TextField maxLength={120} value={location} onChange={(e) => setLocation(e.target.value)} /></label>
+    <label className={label}>Notes<textarea className={textareaClass} rows={3} maxLength={2000} value={notes} onChange={(e) => setNotes(e.target.value)} /></label>
+    <ErrorLine>{error}</ErrorLine><div className="flex gap-2"><Button type="submit" fullWidth={false} disabled={busy}>Save event</Button><Button type="button" variant="secondary" fullWidth={false} onClick={cancel}>Cancel</Button></div>
+  </form></Plate>;
 }

@@ -90,12 +90,12 @@ export async function recordBattle(args: {
       const { data: oppLink } = await supabase.from('warbands').select('campaign_id').eq('id', opp.id).maybeSingle();
       if (oppLink?.campaign_id === campaignId) participants.push({ warbandId: opp.id, name: opp.name, result: flip(draft.result) });
     }
-    const { error: logErr } = await supabase.from('campaign_battles').insert({
-      campaign_id: campaignId,
-      played_on: record.date,
-      scenario: record.scenario.slice(0, 64),
-      participants,
-      notes: opponent && !opp ? `vs ${opponent}` : '',
+    const { error: logErr } = await supabase.rpc('report_campaign_battle', {
+      p_campaign: campaignId,
+      p_played_on: record.date,
+      p_scenario: record.scenario.slice(0, 64),
+      p_participants: participants,
+      p_notes: opponent && !opp ? `vs ${opponent}` : '',
     });
     if (logErr) return `Saved to your history, but not to the campaign log: ${logErr.message}`;
   }

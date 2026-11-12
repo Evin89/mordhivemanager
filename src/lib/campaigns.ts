@@ -21,6 +21,9 @@ export type CampaignDetail = {
   joinCode: string;
   createdAt: string;
   myRole: CampaignRole;
+  announcement: string;
+  announcementAt: string | null;
+  houseRules: string;
 };
 
 export type CampaignMember = {
@@ -121,7 +124,7 @@ export async function removeMember(campaignId: string, userId: string) {
 /** Everything the campaign screen shows, in one go. */
 export async function loadCampaign(id: string, userId: string) {
   const [campRes, memRes, wbRes, batRes] = await Promise.all([
-    supabase.from('campaigns').select('id, name, join_code, created_at').eq('id', id).maybeSingle(),
+    supabase.from('campaigns').select('id, name, join_code, created_at, announcement, announcement_at, house_rules').eq('id', id).maybeSingle(),
     supabase.from('campaign_members').select('user_id, role, joined_at').eq('campaign_id', id),
     supabase.from('warbands').select('id, name, warband_type, rating, owner_id').eq('campaign_id', id),
     supabase
@@ -151,6 +154,9 @@ export async function loadCampaign(id: string, userId: string) {
     joinCode: campRes.data.join_code as string,
     createdAt: campRes.data.created_at as string,
     myRole,
+    announcement: campRes.data.announcement as string,
+    announcementAt: campRes.data.announcement_at as string | null,
+    houseRules: campRes.data.house_rules as string,
   };
   const members: CampaignMember[] = memberRows
     .map((m) => ({
@@ -215,4 +221,55 @@ export function tally(battles: CampaignBattle[]): Map<string, { w: number; d: nu
     }
   }
   return t;
+}
+
+export type CampaignEvent = {
+  id: string;
+  campaign_id: string;
+  title: string;
+  starts_at: string;
+  ends_at: string | null;
+  location: string;
+  notes: string;
+};
+export type EventInput = Omit<CampaignEvent, 'id' | 'campaign_id'>;
+export type RsvpStatus = 'going' | 'maybe' | 'no';
+export type EventRsvp = { event_id: string; user_id: string; status: RsvpStatus; displayName: string };
+
+export async function saveCampaignText(id: string, fields: { announcement?: string; house_rules?: string }) {
+  const { error } = await supabase.from('campaigns').update(fields).eq('id', id);
+  return campaignError(error);
+}
+
+export async function listEvents(campaignId: string): Promise<{ data: CampaignEvent[]; error: string | null }> {
+  const { data, error } = await supabase.from('campaign_events').select('id, campaign_id, title, starts_at, ends_at, location, notes')
+    .eq('campaign_id', campaignId).order('starts_at');
+  return { data: (data ?? []) as CampaignEvent[], error: campaignError(error) };
+}
+
+export async function createEvent(campaignId: string, event: EventInput) {
+  const { error } = await supabase.from('campaign_events').insert({ ...event, campaign_id: campaignId });
+  return campaignError(error);
+}
+export async function updateEvent(id: string, event: EventInput) {
+  const { error } = await supabase.from('campaign_events').update(event).eq('id', id);
+  return campaignError(error);
+}
+export async function deleteEvent(id: string) {
+  const { error } = await supabase.from('campaign_events').delete().eq('id', id);
+  return campaignError(error);
+}
+export async function setEventRsvp(eventId: string, userId: string, status: RsvpStatus | null) {
+  const result = status
+    ? await supabase.from('campaign_event_rsvps').upsert({ event_id: eventId, user_id: userId, status })
+    : await supabase.from('campaign_event_rsvps').delete().eq('event_id', eventId).eq('user_id', userId);
+  return campaignError(result.error);
+}
+export async function loadEventRsvps(eventIds: string[]): Promise<{ data: EventRsvp[]; error: string | null }> {
+  if (!eventIds.length) return { data: [], error: null };
+  const { data, error } = await supabase.from('campaign_event_rsvps').select('event_id, user_id, status').in('event_id', eventIds);
+  if (error) return { data: [], error: campaignError(error) };
+  const ids = [...new Set((data ?? []).map((r) => r.user_id as string))];
+  const profiles = ids.length ? await supabase.from('profiles').select('id, display_name').in('id', ids) : { data: [], error: null };
+  return { data: (data ?? []).map((r) => ({ ...r, displayName: profiles.data?.find((p) => p.id === r.user_id)?.display_name || 'Unnamed player' })) as EventRsvp[], error: campaignError(profiles.error) };
 }

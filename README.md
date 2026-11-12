@@ -166,3 +166,16 @@ src/
   strings.ts   §4 per-system label table
   index.css    Codex theme tokens (Paper / Plated) + §2.5 device classes
 ```
+
+### Campaigns II
+
+Campaign leaders can post announcements, maintain house rules, and create, edit
+or delete events. Members can RSVP Going, Maybe or No; tap the selected response
+again to clear it. Events show reply counts and names, local dates and times,
+and an Add to calendar download (.ics). Calendar exports use UTC and default to
+three hours without an end time. Past events remain in a collapsed list.
+
+Automatic campaign battle reports merge with a different player's report when
+the campaign, date and scenario (ignoring case and surrounding spaces) match,
+the existing report has fewer than two participants, and the new warbands do
+not overlap. Repeated reports from the same player remain separate games.
