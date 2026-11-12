@@ -1,6 +1,5 @@
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { strings } from './strings';
-import ThemeToggle from './components/ThemeToggle';
 import ChevronRail from './components/ChevronRail';
 import { AuthProvider, useAuth } from './store/auth';
 import { WarbandsProvider } from './store/warbands';
@@ -131,9 +130,6 @@ function TopBar() {
           {link('/gallery', strings.nav.gallery)}
           {link('/rules', strings.nav.rules)}
           <AccountLink />
-          <div className="pl-2">
-            <ThemeToggle />
-          </div>
         </nav>
       </div>
     </header>

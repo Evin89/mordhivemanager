@@ -14,7 +14,7 @@ import { sampleUnits } from '../data/sampleDatasheet';
  * wired to a page-level toggle, against both) before it migrates. This is the
  * proof that the Codex skin (§2) works before any v0.5 content lands.
  *
- * Swap the whole page between Paper and Plated with the theme toggle in the top
+ * (The theme toggle was removed 2026-11-12: the app is Plated-only.) Formerly: swap the whole page between Paper and Plated with the theme toggle in the top
  * bar — every component here re-themes through the CSS variables with no
  * per-component branch.
  */
@@ -28,7 +28,7 @@ export default function DesignSandbox() {
         <p className="mt-3 font-body text-ink text-body-min leading-relaxed">
           The industrial "hive manual" look, grounded in the v0.5 rulebook: monochrome black / white /
           gunmetal, black banner headers, riveted steel frames, Oxanium display over Spectral body.
-          Toggle Paper / Plated in the top bar to see both themes.
+          The app ships in Plated only; Paper survives as the print-sheet palette.
         </p>
       </div>
 

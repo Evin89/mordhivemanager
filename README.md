@@ -17,6 +17,8 @@ Manager now; defer the true `/packages` monorepo split to later).
 
 - ✅ **App shell standing** — Vite + React + TS + Tailwind, boots with no backend. Type-checks,
   builds, runs. Landing + `/design` routes.
+- ✅ **Plated only (2026-11-12)** — the app ships in the dark Plated theme; the Paper/Plated toggle
+  is gone and Paper's tokens remain only as the print-sheet palette.
 - ✅ **Codex theme + sandbox (step 3)** — both themes as `data-theme` token sets: **Paper** (light,
   default — the printed page) and **Plated** (dark — the metal). The signature **datasheet**
   reskin (black banner + black-ruled statline + wargear line in a riveted plate) and every §2.5
@@ -146,7 +148,7 @@ npm run db:test  # RLS matrix for the mordhive schema (in-process Postgres)
 
 ```
 src/
-  lib/         engine primitives — statLine, rating, theme (shared shape, mordhive values)
+  lib/         engine primitives — statLine, rating (shared shape, mordhive values)
   components/  Codex kit — Plate, BannerHeader, ChevronRail, DesignerNote, PageChip,
                ProfileBlock (statline), Datasheet, ThemeToggle
   screens/     Landing, DesignSandbox

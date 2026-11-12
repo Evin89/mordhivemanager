@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="plated" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <!-- §2.6: Paper (light) is the default and drives the manifest theme colour. -->
-    <meta name="theme-color" content="#E9E9E6" />
+    <!-- The app ships in Plated (dark) only; Paper stays in the CSS for the print sheet. -->
+    <meta name="theme-color" content="#161719" />
     <meta
       name="description"
       content="Gang and campaign manager for Mord Hive — a fan-made Necromunda/40K-on-Mordheim ruleset. Unofficial fan tool."
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Mord Hive" />
     <link rel="manifest" href="/manifest.webmanifest" />
 
@@ -27,26 +27,6 @@
     />
 
     <title>Mord Hive</title>
-    <script>
-      // Runs before first paint so a Plated (dark) user never sees a flash of
-      // Paper, and vice-versa. Duplicates the key from src/lib/theme.ts on
-      // purpose: importing a module here would defer it past the first paint.
-      // Default is 'paper' (§2.6) — the one place Mord Hive diverges from
-      // Mordheim's dark-default choice.
-      (function () {
-        try {
-          var t = localStorage.getItem('mordhive.theme');
-          if (t !== 'paper' && t !== 'plated') t = 'paper';
-          document.documentElement.setAttribute('data-theme', t);
-          if (t === 'plated') document.documentElement.classList.add('dark');
-          else document.documentElement.classList.remove('dark');
-          var m = document.querySelector('meta[name="theme-color"]');
-          if (m) m.setAttribute('content', t === 'plated' ? '#161719' : '#E9E9E6');
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'paper');
-        }
-      })();
-    </script>
   </head>
   <body class="bg-page text-ink">
     <div id="root"></div>
