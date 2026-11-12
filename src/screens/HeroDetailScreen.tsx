@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import Portrait from '../components/Portrait';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
@@ -49,12 +50,25 @@ export default function HeroDetailScreen() {
     <div>
       <BackHeader title={hero.name} to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
+        <div><Portrait large /><div className="hero-sheet">
+          {hero.isLeader && <><img className="leader-seal" src="/img/seal.png" alt="" aria-hidden="true" /><p className="font-ui">Leader</p></>}
+          <h1>{hero.name}</h1><p className="italic mb-5">{hero.unitType}</p>
+            <ProfileBlock
+              stats={hero.stats}
+              maximums={hero.statMaximums}
+              showMaximums={hero.statMaximums && Object.values(hero.statMaximums).some((v) => v > 0) ? true : false}
+              onStatChange={(key: keyof StatLine, val) =>
+                patchHero((h) => ({ ...h, stats: { ...h.stats, [key]: val } }))
+              }
+            />
+          <p className="mt-2 text-base">Edit a value to record an advance or correction.</p>
+        </div></div>
         {/* Identity */}
         <Plate className="p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <PageChip>{hero.unitType}</PageChip>
             {hero.isLeader && <PageChip>Leader</PageChip>}
-            <PageChip>{hero.xp} XP</PageChip>
+            <PageChip>{hero.xp} XP</PageChip><span className={`status-chip status-${hero.status}`}>{STATUS_LABELS[hero.status]}</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block">
@@ -93,22 +107,6 @@ export default function HeroDetailScreen() {
             </label>
           </div>
         </Plate>
-
-        {/* Profile */}
-        <section className="space-y-3">
-          <BannerHeader>Profile</BannerHeader>
-          <Plate className="p-4">
-            <ProfileBlock
-              stats={hero.stats}
-              maximums={hero.statMaximums}
-              showMaximums={hero.statMaximums && Object.values(hero.statMaximums).some((v) => v > 0) ? true : false}
-              onStatChange={(key: keyof StatLine, val) =>
-                patchHero((h) => ({ ...h, stats: { ...h.stats, [key]: val } }))
-              }
-            />
-            <p className="mt-2 font-body text-ink-faded text-xs">Edit a value to record an advance or correction.</p>
-          </Plate>
-        </section>
 
         {/* Skills */}
         <section className="space-y-3">
@@ -176,7 +174,7 @@ export default function HeroDetailScreen() {
               value={hero.notes}
               onChange={(e) => patchHero((h) => ({ ...h, notes: e.target.value }))}
               rows={4}
-              className="w-full bg-plate px-3 py-2 text-ink font-body focus:outline-none resize-y"
+              className="ruled-notes w-full px-3 py-2 font-body focus:outline-none resize-y"
               placeholder="Unit rules, injuries, story…"
             />
           </Plate>

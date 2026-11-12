@@ -3,7 +3,6 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
-import PageChip from '../components/PageChip';
 import { Button, Select } from '../components/ui';
 import { strings } from '../strings';
 import { useWarbands, useWarbandLookup } from '../store/warbands';
@@ -120,17 +119,17 @@ export default function PostBattleScreen() {
     <div>
       <BackHeader title="Post-Battle" to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
+        <div className="dossier-band"><p className="italic text-brass-text">After {loadBattleSession(warband.id)?.scenario || 'the battle'}</p><h1>{STEPS[step]}</h1></div><div className="rail" />
         {/* Stepper */}
-        <div className="flex flex-wrap gap-1">
+        <div className="stepper" role="group" aria-label="Post-battle progress">
           {STEPS.map((s, i) => (
             <button
               key={s}
               onClick={() => setStep(i)}
-              className={`font-display uppercase tracking-[0.04em] text-xs px-2 py-1 min-h-[36px] border ${
-                i === step ? 'bg-banner text-on-banner border-banner' : 'bg-plate text-ink-faded border-steel'
-              }`}
+              aria-current={i === step ? 'step' : undefined}
+              className={i < step ? 'done' : ''}
             >
-              {i + 1}. {s}
+              <span className="pip">{i + 1}</span>{s}
             </button>
           ))}
         </div>
@@ -184,13 +183,13 @@ export default function PostBattleScreen() {
                   {pb.outOfAction && (
                     <>
                       <div className="flex flex-wrap gap-2 items-center">
-                        <Button size="dense" fullWidth={false} onClick={() => {
+                        <Button size="dense" variant="secondary" fullWidth={false} onClick={() => {
                           const inj = rollInjury();
                           patchHero(h.id, { injury: inj, dies: inj.name === 'Dead' });
                         }}>
                           Roll D66
                         </Button>
-                        {pb.injury && <PageChip>{pb.injury.roll} · {pb.injury.name}</PageChip>}
+                        {pb.injury && <div className="injury-result"><strong>{pb.injury.roll}</strong><span>{pb.injury.name}</span></div>}
                         {pb.injury && (
                           <label className="flex items-center gap-1 font-body text-ink text-sm">
                             <input type="checkbox" checked={pb.dies} onChange={(e) => patchHero(h.id, { dies: e.target.checked })} /> Dies
@@ -314,7 +313,7 @@ export default function PostBattleScreen() {
                 <Plate key={h.id} className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{h.name}</span>
-                    <Button size="dense" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHero(h.id, { advances: [...pb.advances, rollHeroAdvance(h.stats)] })}>
+                    <Button size="dense" variant="secondary" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHero(h.id, { advances: [...pb.advances, rollHeroAdvance(h.stats)] })}>
                       Roll advance ({pb.advances.length}/{earned})
                     </Button>
                   </div>
@@ -332,7 +331,7 @@ export default function PostBattleScreen() {
                 <Plate key={g.id} className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{g.groupName}</span>
-                    <Button size="dense" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHench(g.id, { advances: [...pb.advances, rollHenchmenAdvance(g.stats)] })}>
+                    <Button size="dense" variant="secondary" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHench(g.id, { advances: [...pb.advances, rollHenchmenAdvance(g.stats)] })}>
                       Roll advance ({pb.advances.length}/{earned})
                     </Button>
                   </div>
@@ -352,7 +351,7 @@ export default function PostBattleScreen() {
                 <Plate key={h.id} className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{h.name}</span>
-                    <Button size="dense" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHired(h.id, { advances: [...pb.advances, rollHeroAdvance(h.stats)] })}>
+                    <Button size="dense" variant="secondary" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHired(h.id, { advances: [...pb.advances, rollHeroAdvance(h.stats)] })}>
                       Roll advance ({pb.advances.length}/{earned})
                     </Button>
                   </div>
@@ -466,7 +465,7 @@ export default function PostBattleScreen() {
         )}
 
         {/* Nav */}
-        <div className="flex justify-between gap-2 pt-2">
+        <div className="grid grid-cols-[1fr_2fr] gap-3 pt-2">
           <Button variant="secondary" fullWidth={false} disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
           {step < STEPS.length - 1 && (
             <Button fullWidth={false} onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}>Next</Button>

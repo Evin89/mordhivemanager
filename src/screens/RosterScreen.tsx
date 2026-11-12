@@ -1,4 +1,5 @@
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
+import ChevronRail from '../components/ChevronRail';
 import BattleHistory from '../components/BattleHistory';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
@@ -47,88 +48,7 @@ export default function RosterScreen() {
             {notice}
           </p>
         )}
-        {/* Treasury / rating summary */}
-        <Plate className="p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="font-display uppercase tracking-[0.05em] text-ink text-lg">{warband.name}</p>
-              <p className="font-body text-ink-faded text-sm">{getWarbandTypeName(warband.warbandType)}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <PageChip>Rating {computeWarbandRating(warband)}</PageChip>
-              <PageChip>{warband.gold} {terms.currencyAbbr}</PageChip>
-              <PageChip>{countModels(warband)} models</PageChip>
-            </div>
-          </div>
-        </Plate>
-
-        {/* Recruit + shop controls */}
-        <div className="flex flex-wrap gap-2">
-          <Link
-            to={`/warbands/${warband.id}/add-hero`}
-            className="bg-banner text-on-banner font-display uppercase tracking-[0.06em] px-4 py-2 min-h-[48px] inline-flex items-center"
-          >
-            + {terms.hero}
-          </Link>
-          <Link
-            to={`/warbands/${warband.id}/add-henchmen`}
-            className="bg-banner text-on-banner font-display uppercase tracking-[0.06em] px-4 py-2 min-h-[48px] inline-flex items-center"
-          >
-            + {terms.henchmanPlural}
-          </Link>
-          <Link
-            to={`/warbands/${warband.id}/add-hired-gun`}
-            className="bg-banner text-on-banner font-display uppercase tracking-[0.06em] px-4 py-2 min-h-[48px] inline-flex items-center"
-          >
-            + Hired Gun
-          </Link>
-          <Link
-            to={`/warbands/${warband.id}/trading`}
-            className="bg-plate text-ink border-2 border-steel font-display uppercase tracking-[0.06em] px-4 py-2 min-h-[48px] inline-flex items-center"
-          >
-            Trading Post
-          </Link>
-          <Link
-            to={`/warbands/${warband.id}/${hasActiveBattle(warband.id) ? 'battle' : 'pre-battle'}`}
-            className="bg-banner text-on-banner font-display uppercase tracking-[0.06em] px-4 py-2 min-h-[48px] inline-flex items-center"
-          >
-            {hasActiveBattle(warband.id) ? 'Resume battle' : 'Battle'}
-          </Link>
-        </div>
-
-        {/* Sharing + print */}
-        <Plate className="p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-display uppercase tracking-[0.06em] text-ink text-sm">
-                {warband.visibility === 'public' ? 'Public — in the gallery' : 'Private'}
-              </p>
-              <p className="font-body text-ink-faded text-sm">
-                {warband.visibility === 'public'
-                  ? 'Anyone with the link can read this roster.'
-                  : 'Only you, and players in a campaign it is linked to.'}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                size="dense"
-                variant="secondary"
-                fullWidth={false}
-                onClick={() =>
-                  saveWarband({ ...warband, visibility: warband.visibility === 'public' ? 'private' : 'public' })
-                }
-              >
-                {warband.visibility === 'public' ? 'Make private' : 'Make public'}
-              </Button>
-              <Link
-                to={`/warbands/${warband.id}/print`}
-                className="bg-plate text-ink border-2 border-steel font-display uppercase tracking-[0.06em] text-sm px-3 py-1.5 min-h-[44px] inline-flex items-center"
-              >
-                Print sheet
-              </Link>
-            </div>
-          </div>
-        </Plate>
+        <div><div className="roster-band"><h1>{warband.name}</h1><p className="type">{getWarbandTypeName(warband.warbandType)}, {warband.visibility === 'public' ? 'public' : 'private'}</p><div className="metrics"><div><strong>{computeWarbandRating(warband)}</strong><span>Rating</span></div><div><strong>{warband.gold} tn</strong><span>Thrones</span></div><div><strong>{warband.wyrdstoneShards}</strong><span>Diamantine</span></div><div><strong>{countModels(warband)}</strong><span>Models</span></div></div><div className="grid grid-cols-2 gap-3 mt-5"><Link className="btn btn-p" to={`/warbands/${warband.id}/${hasActiveBattle(warband.id) ? 'battle' : 'pre-battle'}`}>{hasActiveBattle(warband.id) ? 'Resume battle' : 'Battle'}</Link><Link className="btn btn-s" to={`/warbands/${warband.id}/trading`}>Trading Post</Link></div></div><ChevronRail /></div>
 
         {/* Heroes */}
         <section className="space-y-3">
@@ -142,8 +62,9 @@ export default function RosterScreen() {
               {activeHeroes.map((h) => (
                 <Link key={h.id} to={`/warbands/${warband.id}/hero/${h.id}`} className="block hover:opacity-90">
                   <Datasheet
+                    hero leader={h.isLeader} xp={h.xp}
                     name={h.name}
-                    subtitle={`${h.unitType}${h.isLeader ? ' · Leader' : ''} · ${h.xp} XP`}
+                    subtitle={h.unitType}
                     stats={h.stats}
                     maximums={h.statMaximums}
                     wargear={equipList(h.equipment)}
@@ -205,10 +126,61 @@ export default function RosterScreen() {
           </section>
         )}
 
+        <div className="roster-recruit"><Link
+            to={`/warbands/${warband.id}/add-hero`}
+            className="btn btn-s"
+          >
+            + {terms.hero}
+          </Link><Link
+            to={`/warbands/${warband.id}/add-henchmen`}
+            className="btn btn-s"
+          >
+            + {terms.henchmanPlural}
+          </Link><Link
+            to={`/warbands/${warband.id}/add-hired-gun`}
+            className="btn btn-s"
+          >
+            + Hired Gun
+          </Link></div>
+        {/* Sharing + print */}
+        <Plate className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-display uppercase tracking-[0.06em] text-ink text-sm">
+                {warband.visibility === 'public' ? 'Public — in the gallery' : 'Private'}
+              </p>
+              <p className="font-body text-ink-faded text-sm">
+                {warband.visibility === 'public'
+                  ? 'Anyone with the link can read this roster.'
+                  : 'Only you, and players in a campaign it is linked to.'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="dense"
+                variant="secondary"
+                fullWidth={false}
+                onClick={() =>
+                  saveWarband({ ...warband, visibility: warband.visibility === 'public' ? 'private' : 'public' })
+                }
+              >
+                {warband.visibility === 'public' ? 'Make private' : 'Make public'}
+              </Button>
+              <Link
+                to={`/warbands/${warband.id}/print`}
+                className="btn btn-s"
+              >
+                Print sheet
+              </Link>
+            </div>
+          </div>
+        </Plate>
+
+
         <BattleHistory warbandId={warband.id} />
 
         <div className="pt-4">
-          <Button variant="danger" fullWidth={false} onClick={handleDelete}>
+          <Button variant="danger" className="!bg-transparent !border-transparent !text-danger-link" fullWidth={false} onClick={handleDelete}>
             Delete {terms.roster.toLowerCase()}
           </Button>
         </div>

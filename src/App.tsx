@@ -45,10 +45,10 @@ export default function App() {
       <AuthProvider>
       <WarbandsProvider>
         <SoloCampaignsProvider>
-        <div className="min-h-full flex flex-col">
+        <div className="app-shell min-h-full flex flex-col">
           <TopBar />
           <ChevronRail />
-          <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+          <main className="app-main flex-1 w-full max-w-4xl mx-auto px-4 py-6">
             <SyncBanner />
             <Routes>
               <Route path="/" element={<Landing />} />
@@ -80,10 +80,12 @@ export default function App() {
               <Route path="*" element={<Landing />} />
             </Routes>
           </main>
+          <BottomTabs />
           <ChevronRail />
-          <footer className="no-print bg-plate border-t-2 border-steel">
+          <footer className="app-footer no-print border-t border-steel-d">
             <div className="max-w-4xl mx-auto px-4 py-3 font-body text-ink-faded text-sm">
-              {strings.fanNotice}
+              An unofficial fan tool for Mord Hive (v0.5 WIP), a fan-made ruleset. Not affiliated with or endorsed by Games Workshop. Warhammer 40,000, Mordheim and associated names are trademarks of Games Workshop Limited, used without permission and with no challenge to their status intended.
+              <a className="block mt-4 font-ui text-brass-text" href="https://mordheimmanager.net/">Mordheim Manager</a>
             </div>
           </footer>
         </div>
@@ -100,7 +102,7 @@ function TopBar() {
       to={to}
       end={to === '/'}
       className={({ isActive }) =>
-        `px-3 py-1.5 font-display uppercase tracking-[0.06em] text-sm min-h-[44px] flex items-center ${
+        `px-3 py-1.5 font-ui uppercase tracking-[0.06em] text-base min-h-[44px] flex items-center ${
           isActive ? 'text-on-banner underline underline-offset-4 decoration-2' : 'text-on-banner/75 hover:text-on-banner'
         }`
       }
@@ -111,30 +113,18 @@ function TopBar() {
 
   return (
     <header className="no-print bg-banner">
-      <div className="max-w-4xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+      <div className="max-w-[1240px] mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <NavLink to="/" className="flex items-center gap-2 min-h-[44px]" aria-label={`${strings.appName}, home`}>
-          {/* Wordmark — the app's own bolt sigil beside the name. Doubles as the Home link. */}
-          <span
-            className="inline-block h-6 w-6 border-2 border-on-banner"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 4px 4px, rgb(var(--color-on-banner)) 1.4px, transparent 1.8px),' +
-                'radial-gradient(circle at calc(100% - 4px) calc(100% - 4px), rgb(var(--color-on-banner)) 1.4px, transparent 1.8px)',
-            }}
-            aria-hidden="true"
-          />
-          <span className="font-display uppercase tracking-[0.1em] text-on-banner text-lg">
-            {strings.appName}
-          </span>
+          <span className="wordmark">Mord Hive</span>
         </NavLink>
-        <nav className="flex flex-wrap items-center gap-1">
+        <nav aria-label="Main" className="desktop-nav flex flex-wrap items-center gap-1">
           {link('/warbands', strings.nav.warbands)}
           {link('/solo', 'Solo')}
           {link('/campaigns', strings.nav.campaigns)}
           {link('/gallery', strings.nav.gallery)}
           {link('/rules', strings.nav.rules)}
-          <AccountLink />
         </nav>
+        <AccountLink />
       </div>
     </header>
   );
@@ -145,7 +135,7 @@ function AccountLink() {
   const { user, loading, displayName } = useAuth();
   if (loading) return null;
   const cls =
-    'px-3 py-1.5 font-display uppercase tracking-[0.06em] text-sm min-h-[44px] flex items-center text-on-banner/75 hover:text-on-banner';
+    'px-3 py-1.5 font-ui uppercase tracking-[0.06em] text-base min-h-[44px] flex items-center text-on-banner/75 hover:text-on-banner';
   if (!user) {
     return (
       <NavLink to="/sign-in" className={cls}>
@@ -158,4 +148,15 @@ function AccountLink() {
       {displayName || strings.nav.settings}
     </NavLink>
   );
+}
+
+function BottomTabs() {
+  const tabs = [
+    ['/warbands', 'Warbands', 'M3 20v-9l9-7 9 7v9H3 M9 20v-7h6v7'],
+    ['/solo', 'Solo', 'M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M4 21v-3a8 8 0 0 1 16 0v3'],
+    ['/campaigns', 'Campaigns', 'M4 3v18 M4 4h15l-4 5 4 5H4'],
+    ['/gallery', 'Gallery', 'M3 3h18v18H3V3 M3 17l6-6 4 4 3-3 5 5 M16 7h.01'],
+    ['/rules', 'Rules', 'M12 5C8 2 4 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-4-2-7-1-10 1v16'],
+  ];
+  return <nav className="mobile-tabs no-print" aria-label="Mobile main">{tabs.map(([to, label, path]) => <NavLink key={to} to={to}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg><span>{label}</span></NavLink>)}</nav>;
 }

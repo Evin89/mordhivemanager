@@ -21,13 +21,13 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const base =
-    'font-display uppercase tracking-[0.06em] inline-flex items-center justify-center border-2 disabled:opacity-40 disabled:cursor-not-allowed';
+    'ordo-button font-ui uppercase tracking-[0.06em] inline-flex items-center justify-center border-2 disabled:opacity-40 disabled:cursor-not-allowed';
   const sizing = size === 'dense' ? 'px-3 py-1.5 min-h-[44px] text-sm' : 'px-4 py-2 min-h-[48px]';
   const width = fullWidth ? 'w-full' : '';
   const variants: Record<string, string> = {
-    primary: 'bg-banner text-on-banner border-banner hover:opacity-90',
-    secondary: 'bg-plate text-ink border-steel hover:bg-page',
-    danger: 'bg-plate text-ink border-steel hover:bg-page',
+    primary: 'bg-brass text-page border-brass hover:opacity-90',
+    secondary: 'bg-transparent text-brass-text border-brass hover:bg-brass/10',
+    danger: 'bg-wax text-on-accent border-wax hover:opacity-90',
   };
   return (
     <button className={`${base} ${sizing} ${width} ${variants[variant]} ${className}`} {...rest}>
