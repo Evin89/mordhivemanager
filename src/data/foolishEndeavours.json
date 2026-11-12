@@ -1,0 +1,109 @@
+{
+  "_source": "Mord Hive – Foolish Endeavours tarot deck (Google Drive folder 'Mord Hive Foolish Endeavours', Tarot Deck_Page_01–16.png, 6 Sep). Text transcribed from the card images; obvious typos corrected (first, shard, die, one's, Heroes, missing quotes, consistent 'Experience Point').",
+  "howToUse": {
+    "title": "How to Use?",
+    "flavour": "These cards are intended to provide the players with a small twist or scheme within their games to work towards!",
+    "rules": "Both Players should each have their own deck. Decide how many endeavours will be used, we suggest D3 or 2D3. Each player draws that many random cards from their decks. Keep your endeavours secret from your opponent until they are completed or the end of the game.\n\nEach player may make a single 'mulligan' redraw per game if desired.",
+    "number": "000"
+  },
+  "cards": [
+    {
+      "id": "the-highest-spire",
+      "number": "01",
+      "title": "The Highest Spire",
+      "flavour": "\"I can see the hideout from here!\"",
+      "rules": "At the end of the game have at least one of your models in control of the tallest building on the board.\n\nIn order to control the building you must have at least one model in, or on, the building and no enemy models in, or on, it.\n\nThat model may be awarded +1 Experience Point."
+    },
+    {
+      "id": "down-but-not-out",
+      "number": "02",
+      "title": "Down but not Out",
+      "flavour": "Eventually even the slowest of learners will grasp the concept of not getting hit in the first place. But until then, as long as they survive the hit, they are better for it.",
+      "rules": "If one of your models is reduced to zero Wounds during the battle but is not taken Out of Action by the end of the game they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "early-corvid-gets-the-diamantine",
+      "number": "03",
+      "title": "Early Corvid gets the Diamantine",
+      "flavour": "\"In an' out, real quick like. They'll ne'er see us comin'!\"",
+      "rules": "If one of your models is the first to pick up a Refined Diamantine shard during the Scenario they may be awarded +1 Experience Point.\nNote that they do not need to keep the shard, but they do need to survive the game."
+    },
+    {
+      "id": "stolen-riches",
+      "number": "04",
+      "title": "Stolen Riches",
+      "flavour": "Why venture into the darkest depths to get the spoils when you can just hit someone else over the head and pilfer theirs?",
+      "rules": "If one of your models picks up a diamantine shard which an enemy model dropped and keeps it until the end of the game they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "know-no-fear",
+      "number": "05",
+      "title": "Know no Fear",
+      "flavour": "During their forays into the hive many a hero must confront their most dogged enemy of fear, only by overcoming it are they still alive today!",
+      "rules": "If one of your models successfully passes an All Alone or Fear test during the scenario they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "hold-the-centre",
+      "number": "06",
+      "title": "Hold the Centre!",
+      "flavour": "Controlling the central point of a conflict can give one's allies a strategic edge... unless they die.",
+      "rules": "At the end of the game have at least one of your models in control of the building closest to the centre of the board. In order to control the building you must have at least one model in, or on, the building and no enemy models in, or on, it.\n\nThat model may be awarded +1 Experience Point."
+    },
+    {
+      "id": "hero-killer",
+      "number": "07",
+      "title": "Hero Killer",
+      "flavour": "\"Take 'im out and the rest of 'em will run away like the whipped curs they are!\"",
+      "rules": "If one of your models takes an enemy Hero model Out of Action during the course of the scenario they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "kill-em-all",
+      "number": "08",
+      "title": "Kill 'em all!",
+      "flavour": "\"The best way to make sure that an enemy warband doesn't win the loot is to kill them all!\"",
+      "rules": "If, during the scenario, you put all the models in an enemy Henchmen Group Out of Action, then one of your models who took one of those Henchmen Out of Action may be awarded +1 Experience Point."
+    },
+    {
+      "id": "go-to-ground",
+      "number": "09",
+      "title": "Go to Ground!",
+      "flavour": "\"Keep your 'ead down lad, or you're likely to get it shot off!\"",
+      "rules": "If, during the scenario, one of your models is shot at by the enemy at least three times and survives the game, they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "brutal-charge",
+      "number": "10",
+      "title": "Brutal Charge!",
+      "flavour": "\"Not every fight needs to be a dance, just charge in, knock them dead then move on. Easy.\"",
+      "rules": "If one of your models charges an enemy model, which is not Knocked Down or Stunned, and takes them Out of Action that same turn they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "long-shot",
+      "number": "J",
+      "title": "Long Shot",
+      "flavour": "\"Killing from a distance saves a lot of time and effort!\"",
+      "rules": "If one of your models shoots an enemy model while suffering the Long Range to hit modifier and takes them Out of Action that same turn they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "mentor-and-student",
+      "number": "Q",
+      "title": "Mentor & Student",
+      "flavour": "\"Stick with me kid, I'll show you the ropes and before you know it you'll be leading this warband!\"",
+      "rules": "Secretly select one of your models as a Student. Then select one of your Heroes who has the highest Leadership as the Mentor. As long as the Student remains within 6\" of the Mentor the whole Scenario and both models survive the game, the Student may be awarded +1 Experience Point."
+    },
+    {
+      "id": "no-mercy",
+      "number": "K",
+      "title": "No Mercy!",
+      "flavour": "\"No Mercy, you let 'em live and they'll just stand up and stab ya in the back!\"",
+      "rules": "If one of your models takes an enemy Out of Action while they are Stunned or Knocked Down they may be awarded +1 Experience Point."
+    },
+    {
+      "id": "deal-with-death",
+      "number": "JOKER",
+      "title": "Deal with Death",
+      "flavour": "\"It's the enemy no one can defeat, but sometimes he can be parleyed with.\"",
+      "rules": "If one of your models was taken Out of Action during this scenario you may reveal this card. When you roll on the Heroes' Serious Injury Chart, treat a roll of an 11-15 as a 66 instead."
+    }
+  ]
+}

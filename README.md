@@ -179,3 +179,7 @@ Automatic campaign battle reports merge with a different player's report when
 the campaign, date and scenario (ignoring case and surrounding spaces) match,
 the existing report has fewer than two participants, and the new warbands do
 not overlap. Repeated reports from the same player remain separate games.
+
+## Scenario generator
+
+Open `/scenarios` to roll or choose a core or bonus scenario, read the full sourced rules, roll setup dice, and generate a suggested battlefield. Copy link preserves the scenario, map seed and setup dice (`r0`, `r1` are D3 faces). Foolish Endeavour hands are private local screen state and are excluded from links and printing. Rules are transcribed from `docs/source/scenarios-v0.5-source.txt`; map layouts are app suggestions.

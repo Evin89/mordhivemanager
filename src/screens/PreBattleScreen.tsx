@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
@@ -140,6 +140,7 @@ export default function PreBattleScreen() {
             {roll && <p className="font-body text-ink-faded text-sm">{roll}</p>}
             {scenario && (
               <Plate className="p-3 mt-2">
+                <Link className="inline-flex items-center min-h-[44px] underline" to={`/scenarios?s=${scenario.id}&seed=${session.battlefieldSeed ?? 0}`}>Open in scenario generator</Link>
                 <p className="font-body text-ink text-body-min leading-relaxed">{scenario.summary}</p>
                 <ul className="mt-2 space-y-1">
                   <li className="font-body text-ink-faded text-xs">

@@ -1,3 +1,4 @@
+import { mulberry32 } from './scenarioGen';
 // A generated battlefield for a solo scenario (spec §6: "generated scenario +
 // SVG map"). Deterministic from a seed so it survives reloads and can be
 // re-rolled; laid out to the scenario's own shape (deployment edges, a central
@@ -17,24 +18,15 @@ export type Battlefield = {
 };
 
 /** mulberry32 — a tiny seeded PRNG, so a given seed always draws the same board. */
-function rng(seed: number): () => number {
-  let a = seed >>> 0;
-  return function () {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 const overlaps = (a: Rect, b: Rect, pad = 3) =>
   a.x < b.x + b.w + pad && a.x + a.w + pad > b.x && a.y < b.y + b.h + pad && a.y + a.h + pad > b.y;
 
-const centralScenarios = new Set(['defend-the-find', 'occupy']);
+const centralScenarios = new Set(['defend-the-find', 'occupy', 'dont-wake-the-daemonhost']);
 const shardScenarios = new Set(['skirmish', 'diamantine-hunt', 'hidden-treasure']);
 
-export function generateBattlefield(seed: number, scenarioId: string): Battlefield {
-  const rand = rng(seed);
+export function generateBattlefield(seed: number, scenarioId: string, counts?: { counters?: number; buildings?: number }): Battlefield {
+  const rand = mulberry32(seed);
   const size = 100;
   const margin = 6;
   const buildings: Rect[] = [];
@@ -58,10 +50,16 @@ export function generateBattlefield(seed: number, scenarioId: string): Battlefie
   // Objective / diamantine markers.
   const markers: Marker[] = [];
   if (centralScenarios.has(scenarioId)) {
-    markers.push({ x: 50, y: 50, label: 'Objective', kind: 'objective' });
+    markers.push({ x: 50, y: 50, label: scenarioId === 'dont-wake-the-daemonhost' ? 'Lair' : 'Objective', kind: 'objective' });
+  }
+  if (scenarioId === 'dont-wake-the-daemonhost') markers.push({x: 44, y: 50, label: 'Chest', kind: 'objective'}, {x: 56, y: 50, label: 'Chest', kind: 'objective'});
+  if (scenarioId === 'occupy' && counts?.buildings) {
+    markers.length = 0;
+    [...buildings].sort((a,b)=>Math.hypot(a.x+a.w/2-50,a.y+a.h/2-50)-Math.hypot(b.x+b.w/2-50,b.y+b.h/2-50)).slice(0,counts.buildings).forEach(b=>markers.push({x:b.x+b.w/2,y:b.y+b.h/2,label:'Objective',kind:'objective'}));
   }
   if (shardScenarios.has(scenarioId)) {
-    const shards = 3 + Math.floor(rand() * 2); // D3+1-ish: 3–4
+    const defaultShards = 3 + Math.floor(rand() * 2);
+    const shards = scenarioId === 'diamantine-hunt' ? counts?.counters ?? defaultShards : defaultShards; // D3+1-ish: 3–4
     for (let i = 0; i < shards; i++) {
       markers.push({
         x: margin + Math.floor(rand() * (size - 2 * margin)),

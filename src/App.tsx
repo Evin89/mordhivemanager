@@ -19,6 +19,7 @@ import DuringBattleScreen from './screens/DuringBattleScreen';
 import PostBattleScreen from './screens/PostBattleScreen';
 import SoloCampaignsScreen from './screens/SoloCampaignsScreen';
 import SoloCampaignScreen from './screens/SoloCampaignScreen';
+import ScenarioGeneratorScreen from './screens/ScenarioGeneratorScreen';
 import RulesScreen from './screens/RulesScreen';
 import SignInScreen from './screens/SignInScreen';
 import AccountScreen from './screens/AccountScreen';
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/warbands/:warbandId/post-battle" element={<RequireAuth><PostBattleScreen /></RequireAuth>} />
               <Route path="/solo" element={<RequireAuth><SoloCampaignsScreen /></RequireAuth>} />
               <Route path="/solo/:campaignId" element={<RequireAuth><SoloCampaignScreen /></RequireAuth>} />
+              <Route path="/scenarios" element={<ScenarioGeneratorScreen />} />
               <Route path="/rules" element={<RulesScreen />} />
               <Route path="/warbands/:warbandId/add-hired-gun" element={<RequireAuth><AddHiredGunScreen /></RequireAuth>} />
               <Route path="/warbands/:warbandId/hired/:hiredId" element={<RequireAuth><HiredGunDetailScreen /></RequireAuth>} />
@@ -133,6 +135,7 @@ function TopBar() {
           {link('/campaigns', strings.nav.campaigns)}
           {link('/gallery', strings.nav.gallery)}
           {link('/rules', strings.nav.rules)}
+          {link('/scenarios', 'Scenarios')}
           <AccountLink />
         </nav>
       </div>

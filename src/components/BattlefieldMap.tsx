@@ -49,6 +49,7 @@ export default function BattlefieldMap({ field }: { field: Battlefield }) {
           />
         ),
       )}
+      {field.markers.map((m, i) => <text key={`label${i}`} x={m.x} y={m.y - 5} textAnchor="middle" fontSize={2.5} fill={c('ink')}>{m.label}</text>)}
     </svg>
   );
 }

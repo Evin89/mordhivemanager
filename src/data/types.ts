@@ -340,12 +340,22 @@ export type ScenarioAward = {
 export type ScenarioDefinition = {
   id: string;
   name: string;
+  summary: string;
+  number?: number;
+  bonus?: boolean;
+  story: string;
+  sections: { heading: string; text: string }[];
+  chestTable?: { item: string; needed: string }[];
+  profiles?: { name: string; quote: string; profile: Record<string, number>; equipment: string; specialRules: { name: string; text: string }[] }[];
   awards: ScenarioAward[];
 };
 
 export type ScenariosData = {
   schemaVersion: number;
   source: string;
+  preBattleSequence: { intro: string; steps: string[] };
+  designersNote: string;
+  rollTable: { roll: number; scenario: string | null; note?: string }[];
   universalAward: ScenarioAward; // the +1 Survives rule, common to every scenario
   scenarios: ScenarioDefinition[];
 };

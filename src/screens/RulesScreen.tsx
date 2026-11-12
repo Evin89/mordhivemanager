@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
@@ -91,6 +92,7 @@ export default function RulesScreen() {
   return (
     <div className="space-y-6">
       <BannerHeader as="h1">Rules Reference</BannerHeader>
+      <Link to="/scenarios" className="inline-flex items-center min-h-[44px] underline">Open scenario generator</Link>
       <p className="font-body text-ink text-body-min">
         Generated live from the app's own Mord Hive v0.5 data. Search skills, wargear, psychic
         powers and prayers, and every warband's special rules.

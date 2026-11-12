@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "source": "Mord Hive v0.5, Scenarios (pp.106-113). The nine core-book missions and the 2D6 Scenario Table (p.105). Each scenario grants the universal +1 Survives plus the awards listed; refined-diamantine amounts and terrain/deployment detail live in the book and the post-battle Income step. TODO: verify per-scenario diamantine amounts against the ruleset.",
+  "source": "Mord Hive v0.5, rulebook pp.106–114. Rules transcribed from docs/source/scenarios-v0.5-source.txt; PDF line wraps and extraction artefacts removed.",
   "universalAward": {
     "id": "survives",
     "label": "Survives",
@@ -8,17 +8,52 @@
     "note": "If a Hero or Henchman group survives the battle they gain +1 Experience."
   },
   "rollTable": [
-    { "roll": 2, "scenario": null, "note": "The player with the lower warband rating may choose which scenario is played." },
-    { "roll": 3, "scenario": "street-fight" },
-    { "roll": 4, "scenario": "hidden-treasure" },
-    { "roll": 5, "scenario": "diamantine-hunt" },
-    { "roll": 6, "scenario": "occupy" },
-    { "roll": 7, "scenario": "skirmish" },
-    { "roll": 8, "scenario": "breakthrough" },
-    { "roll": 9, "scenario": "surprise-attack" },
-    { "roll": 10, "scenario": "chance-encounter" },
-    { "roll": 11, "scenario": "defend-the-find" },
-    { "roll": 12, "scenario": null, "note": "The player with the lower warband rating may choose which scenario is played." }
+    {
+      "roll": 2,
+      "scenario": null,
+      "note": "The player with the lower warband rating may choose which scenario is played."
+    },
+    {
+      "roll": 3,
+      "scenario": "street-fight"
+    },
+    {
+      "roll": 4,
+      "scenario": "hidden-treasure"
+    },
+    {
+      "roll": 5,
+      "scenario": "diamantine-hunt"
+    },
+    {
+      "roll": 6,
+      "scenario": "occupy"
+    },
+    {
+      "roll": 7,
+      "scenario": "skirmish"
+    },
+    {
+      "roll": 8,
+      "scenario": "breakthrough"
+    },
+    {
+      "roll": 9,
+      "scenario": "surprise-attack"
+    },
+    {
+      "roll": 10,
+      "scenario": "chance-encounter"
+    },
+    {
+      "roll": 11,
+      "scenario": "defend-the-find"
+    },
+    {
+      "roll": 12,
+      "scenario": null,
+      "note": "The player with the lower warband rating may choose which scenario is played."
+    }
   ],
   "scenarios": [
     {
@@ -26,9 +61,52 @@
       "name": "Defend the Find",
       "summary": "A warband finds a hab-block full of diamantine, only to be challenged by a rival. The objective is the central building; the smaller warband defends it, the other attacks.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
-        { "id": "refinedDiamantine", "label": "Refined Diamantine", "amount": "shards", "note": "One shard of refined diamantine per Hero (see the book / Income step)." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "id": "refinedDiamantine",
+          "label": "Refined Diamantine",
+          "amount": "shards",
+          "note": "One shard of refined diamantine for each Hero of either warband who is inside the objective building at the end of the game (up to a maximum of three shards per warband)."
+        }
+      ],
+      "number": 1,
+      "story": "Often a warband finds a hab-block with a hoard of diamantine or other treasure inside, only to be challenged by a rival warband. This usually leads to conflict as it is unlikely that either side will be willing to give up the wealth easily.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'. The first building should be placed in the centre of the table, and the objective of the scenario is to take control of this building."
+        },
+        {
+          "heading": "Warbands",
+          "text": "The warband with the lowest number of warriors in it is automatically the defender. If both sides are equal, roll to decide. The defender is deployed first inside or within 6\" of the objective building. The attacking warband is deployed within 6\" of any table edge. Note that you can split the warband to enter from different edges if you wish."
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "The attacker has the first turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "If at the end of the defender’s turn the attacker has more standing models within 6\" of the objective than the defender, the attacker wins. Alternatively, when one of the warbands fails its Rout test the game ends."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "heading": "Refined Diamantine",
+          "text": "One shard of refined diamantine for each Hero of either warband who is inside the objective building at the end of the game (up to a maximum of three shards per warband)."
+        }
       ]
     },
     {
@@ -36,9 +114,42 @@
       "name": "Skirmish",
       "summary": "A straightforward clash over scattered shards of diamantine (D3+1 counters). Warriors carrying a counter at the end score extra.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perDiamantineCounter", "label": "Per Diamantine Counter", "amount": "+1", "note": "A warrior carrying a diamantine counter at the end of the battle receives +1 Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
+      ],
+      "number": 2,
+      "story": "In the vastness of the Mord Hive there is always the risk of running into a rival warband. While two groups sometimes pass each other without a fight, more often than not there is a vicious battle amongst the ruins. If a warband can drive their rivals away, they will have a larger area in which to search for diamantine.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Warbands",
+          "text": "Each player rolls a dice. Whoever rolls highest chooses who sets up first. The first player then chooses which table edge to set up on, placing all his warriors within 8\" of that edge. His opponent then sets up within 8\" of the opposite edge"
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Both players roll a D6. The higher scoring player takes the first turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
       ]
     },
     {
@@ -46,9 +157,62 @@
       "name": "Diamantine Hunt",
       "summary": "News of a huge deposit draws rival warbands to block each other and claim it all.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
-        { "id": "refinedDiamantine", "label": "Refined Diamantine", "amount": "shards", "note": "Your warriors earn one shard of diamantine for each (see the book / Income step)." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perDiamantineCounter",
+          "label": "per Diamantine Counter",
+          "amount": "+1",
+          "note": "If a Hero or Henchman is carrying a diamantine counter at the end of the battle he receives +1 Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "id": "refinedDiamantine",
+          "label": "Refined Diamantine",
+          "amount": "shards",
+          "note": "Your warriors earn one shard of diamantine for each counter still in their possession at the end of the battle."
+        }
+      ],
+      "number": 3,
+      "story": "Scattered in the ruins of Mord Hive are innumerable tiny shards of priceless refined diamantine. It often happens that two warbands come upon the same area and only a battle can determine who will pick the spoils.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Warbands",
+          "text": "Both players roll a D6 to see who deploys first. Whoever rolls highest sets up first, within 8\" of the table edge of his choice. His opponent then sets up within 8\" of the opposite edge"
+        },
+        {
+          "heading": "Special Rules",
+          "text": "Once you have placed the terrain, put some diamantine counters on the tabletop to represent where the shards are. There will be D3+1 counters in total. Each player takes it in turn to place a counter. Roll a D6 to see which player goes first. The counters must be placed more than 10\" from the edge of the table and at least 6\" away from each other. Note that counters are placed before deciding which edge the warbands will play from, so it is a good idea to put counters towards the middle of the table. Warriors can pick up the counters simply by moving into contact with them. A warrior can carry any amount of diamantine without any penalty. Warriors cannot transfer their diamantine to another warrior. If the warrior who is carrying a counter is taken out of action, place the counter on the table where he fell"
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Both players roll a D6. The highest scoring player takes the first turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "The game ends when one warband fails its Rout test. The routers automatically lose."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 per Diamantine Counter. If a Hero or Henchman is carrying a diamantine counter at the end of the battle he receives +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "heading": "Refined Diamantine",
+          "text": "Your warriors earn one shard of diamantine for each counter still in their possession at the end of the battle."
+        }
       ]
     },
     {
@@ -56,9 +220,48 @@
       "name": "Breakthrough",
       "summary": "One warband must break through the enemy's lines.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." },
-        { "id": "breakingThrough", "label": "Breaking Through", "amount": "+1", "note": "Any warrior earns +1 Experience for breaking through enemy lines (a whole Henchman group gains +1)." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "id": "breakingThrough",
+          "label": "Breaking Through",
+          "amount": "+1",
+          "note": "Any warrior earns +1 Experience for breaking through enemy lines. If the warrior is a Henchman, then the whole group gains +1 Experience"
+        }
+      ],
+      "number": 4,
+      "story": "When news of a huge deposit of diamantine starts circulating, warbands will mount expeditions to unearth the wealth. However, their rivals often try to block them, eager to claim all the diamantine for themselves.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Warbands",
+          "text": "Each player rolls a dice. Whoever scores higher decides which table edge the attacker sets up on. The attacker sets up first, within 8\" of his table edge. The defender sets up anywhere on the table as long as all his warriors are at least 14\" away from any attacker."
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "The attacker has the first turn"
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "If one of the warbands fails a Rout test, the game ends immediately and the routing warband loses. If the attacker manages to move two or more standing warriors to within 2\" of the defender’s table edge, they have broken through and he wins the game."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Breaking Through. Any warrior earns +1 Experience for breaking through enemy lines. If the warrior is a Henchman, then the whole group gains +1 Experience"
+        }
       ]
     },
     {
@@ -66,8 +269,52 @@
       "name": "Street Fight(er)",
       "summary": "A brutal running fight through the ruined streets of the hive.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "id": "escaping",
+          "label": "Escaping",
+          "amount": "+1",
+          "note": "The first Hero from either side (not both!) who exits via the opposing table edge gains +1 Experience."
+        }
+      ],
+      "number": 5,
+      "story": "Often two warbands will come face to face with each other in the narrow streets of Mord Hive. Sometimes they pass each other without incident but more often the meeting ends in bloodshed.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Set up all the buildings into a single street, with no gaps along the sides. Behind the buildings are impassable ruins, although the buildings themselves are still accessible. The only way out is along the street. The street may be as winding as you like and should not be too narrow to fight in, but can have narrow bottlenecks at some points. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Set-Up",
+          "text": "Both players roll a D6 to see who sets up first. Whoever rolls highest chooses whether to deploy first or second. The warbands are deployed within 6\" of opposite ends of the street."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "Neither warband can backtrack down the street to leave the battlefield via their own edge"
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Both players roll a D6. The higher scoring player selects first or second turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "When one of the warbands manages to move all its remaining warriors out of the street via the opposing edge, the game ends and that player is victorious. Alternatively a warband which fails a Rout test loses the game."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Escaping. The first Hero from either side (not both!) who exits via the opposing table edge gains +1 Experience."
+        }
       ]
     },
     {
@@ -75,8 +322,50 @@
       "name": "Chance Encounter",
       "summary": "Two warbands stumble into one another amid the ruins.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
+      ],
+      "number": 6,
+      "story": "Both warbands have completed their daily search of the ruins and are on their way back to their encampment when they run into each other. Neither side was expecting a fight, and the warband that reacts the quickest has the advantage.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Setup",
+          "text": "1. Each player rolls a D6. The player with the higher score can choose to deploy first or second.\n\n2. The first player to deploy sets up his entire warband in deployment zone A as shown below. He may choose which quarter of the table to nominate as deployment zone A.\n\n3. The second warband can then be set up in deployment zone B, but no model may be set up within 14\" of any enemy model."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "Each warband is carrying D3 shards of diamantine at the beginning of the battle. Mark down the number each warband has."
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Each player rolls a D6 and adds the normal Initiative of their leader. The player with the higher score goes first"
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "The game ends when one warband fails its Rout test. The routers automatically lose."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "heading": "Refined Diamantine",
+          "text": "Both warbands gain all the diamantine they were carrying at the beginning of the battle, minus the number of their own Heroes that were taken out of action during the game, down to a minimum of zero. In addition, they gain one extra shard of diamantine for each enemy Hero they take out of action, up to the maximum number of shards the opposing warband was carrying at the beginning of the battle."
+        }
       ]
     },
     {
@@ -84,8 +373,74 @@
       "name": "Hidden Treasure",
       "summary": "A cache of priceless refined diamantine lies hidden somewhere on the table.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 extra Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        },
+        {
+          "id": "findingChest",
+          "label": "For Finding the Chest",
+          "amount": "+2",
+          "note": "If a Hero finds the treasure chest he earns +2 Experience"
+        }
+      ],
+      "number": 7,
+      "story": "There is a rumour that one of the ruined buildings has a concealed cellar with a treasure chest hidden in it. Two rival warbands have heard about the cellar and are now searching the area. Who knows what they will find?",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Setup",
+          "text": "Both players roll a D6 and whoever rolls highest chooses which warband sets up first. This warband is deployed within 8\" of any table edge the player chooses. His opponent sets up within 8\" of the opposite side."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "All the warriors (not animals!) in each warband know roughly what they are looking for and must inspect the buildings to find the treasure. Each time a warrior enters a building which has not been previously searched by either side roll 2D6. On a score of 12, he has found the treasure. Buildings in the deployment zones are not searched (since they have already been thoroughly ransacked) and each building may only be searched once. If you have not scored 12 with any roll when there is only one building left to search, the treasure will automatically be found there. After finding the treasure chest, the warrior must then take it to safety via his own table edge. Carrying the treasure chest will slow the warrior carrying it to half speed. Two or more models may carry the chest without any penalty. You may use the treasure chest model to represent the chest. If the carrier is put out of action, place the treasure chest at the spot where he fell. Any man-sized model may pick it up by moving into base contact with it. Whoever recovers the chest may roll on the following chart after the game to see what the chest contains. Note that you roll for each item separately, apart from the gold crowns, which are always automatically found. For example, roll to see if you find any diamantine – you need a 5+ to find it. Then roll to see if you find the armour, and so on. This can make the chest a very valuable acquisition – however, it could also mean that your warband has risked death for only three gold crowns!"
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Roll a D6. The player rolling highest has the first turn"
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "When one warband gets the treasure to safety, or a warband fails a Rout test, the game ends. The victorious warband then gains the treasure chest."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+2 For Finding the Chest. If a Hero finds the treasure chest he earns +2 Experience"
+        }
+      ],
+      "chestTable": [
+        {
+          "item": "3D6 thrones",
+          "needed": "Auto"
+        },
+        {
+          "item": "D3 shards of diamantine",
+          "needed": "5+"
+        },
+        {
+          "item": "Suit of Light Armour",
+          "needed": "4+"
+        },
+        {
+          "item": "Sword",
+          "needed": "3+"
+        },
+        {
+          "item": "D3 gems worth 10 thrones each",
+          "needed": "5+"
+        }
       ]
     },
     {
@@ -93,8 +448,46 @@
       "name": "Occupy",
       "summary": "Hold more of the ruined buildings than your opponent. A warband occupies all buildings it has standing models in.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the warband who controls the highest number of buildings at the end of the battle gains +1 Experience. If both sides occupy the same number of buildings, then the battle is considered to be a draw and neither leader gains this bonus."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
+      ],
+      "number": 8,
+      "story": "This scenario takes place in a part of Mord Hive where the buildings are bursting with shards of diamantine and other wealth. Taking and holding these buildings means that your warband gains rich pickings. Unfortunately, your opponent has the same idea.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Warbands",
+          "text": "Each player rolls a D6. The player with the highest score decides which warband sets up first. The first player chooses the table edge he wants to set up on, and places all his warriors within 8\" of it. His opponent then sets up within 8\" of the opposite edge."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "The objective is to capture D3+2 of the buildings on the tabletop. Mark these buildings, starting with the one closest to the centre of the table, working your way outwards to the next nearest building. A building is occupied if at least one of your standing models is inside and no enemy models are inside the building."
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Both players roll a D6. The player with the higher score takes the first turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "There is no need to take any Rout tests – as the game lasts for a maximum of eight turns. If one warband voluntarily routs, the game ends and the winning warband is considered to occupy all of the buildings on the table"
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the warband who controls the highest number of buildings at the end of the battle gains +1 Experience. If both sides occupy the same number of buildings, then the battle is considered to be a draw and neither leader gains this bonus.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
       ]
     },
     {
@@ -102,9 +495,157 @@
       "name": "Surprise Attack",
       "summary": "One warband catches the other off guard.",
       "awards": [
-        { "id": "winningLeader", "label": "Winning Leader", "amount": "+1", "note": "The leader of the winning warband gains +1 extra Experience." },
-        { "id": "perEnemyOoa", "label": "Per Enemy Out of Action", "amount": "+1", "note": "Any Hero earns +1 Experience for each enemy he puts out of action." }
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out of Action",
+          "amount": "+1",
+          "note": "Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
+      ],
+      "number": 9,
+      "story": "One warband is out searching the ruins of Mord Hive for loot when it is attacked by an enemy warband. The defenders are spread thinly and must muster a defence quickly to drive off their attacker.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Setup",
+          "text": "1. The defending player rolls a D6 for each Hero and Henchman group in his warband, in any order he chooses. On a 1-3, they are elsewhere In the ruins and turn up later as reinforcements. On a 4-6 they are deployed at the start of the game. Note that at least one Hero or Henchmen group will be present at the start. If all roll 1-3, the last Hero or Henchmen group will automatically be deployed at the start of the battle.\n\n2. The defender deploys his available Heroes and Henchmen on the table. No model may be closer than 8\" to another model, as the warband is spread out wide to search the ruins. No model may be deployed closer than 8\" to a table edge.\n\n3. The attacker deploys his whole warband within 8\" of a random table edge, as shown below. He may choose which edge to nominate as ‘1’ before rolling to see where he deploys."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "The defender, at the start of his second and subsequent turns, may roll a D6 for each of his Henchmen groups or Heroes not yet on the table. On a 4+ they move on in the movement phase from a random table edge as shown below – roll a D6. All reinforcements for that turn arrive from the same edge and may charge on the turn in which they arrive."
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "The attacker always gets the first turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "The game ends when one warband fails a Rout test. The routing warband loses."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action."
+        }
+      ]
+    },
+    {
+      "id": "dont-wake-the-daemonhost",
+      "bonus": true,
+      "name": "Don't Wake the Daemonhost",
+      "summary": "",
+      "awards": [
+        {
+          "id": "winningLeader",
+          "label": "Winning Leader",
+          "amount": "+1",
+          "note": "The leader of the winning warband gains +1 Experience."
+        },
+        {
+          "id": "perEnemyOoa",
+          "label": "Per Enemy Out Of Action",
+          "amount": "+1",
+          "note": "A Hero earns +1 Experience for each enemy he puts Out Of Action."
+        },
+        {
+          "id": "ForGettingaChest",
+          "label": "For Getting a Chest",
+          "amount": "+1",
+          "note": "Any Hero or Henchman group that successfully gets a chest to safety receives +1 Experience."
+        },
+        {
+          "id": "ForKillingtheDaemonhost",
+          "label": "For Killing the Daemonhost",
+          "amount": "+2",
+          "note": "The Hero or Henchman group that lands the killing blow on the Daemonhost gets +2 Experience."
+        },
+        {
+          "id": "ForGettingPreciousMetalBindings",
+          "label": "For Getting Precious Metal Bindings",
+          "amount": "+2",
+          "note": "Any Hero or Henchman group that successfully gets the precious metal bindings to safety receives +2 Experience."
+        }
+      ],
+      "profiles": [
+        {
+          "name": "The Daemonhost",
+          "quote": "\"From the blasphemy of the Fallen our Emperor deliver us.\"",
+          "profile": {
+            "M": 6,
+            "WS": 5,
+            "BS": 2,
+            "S": 6,
+            "T": 6,
+            "W": 5,
+            "I": 4,
+            "A": 3,
+            "Ld": 8
+          },
+          "equipment": "The Daemonhost counts as being equipped with a pair of Axes (no off hand penalty) and Heavy Armour.",
+          "specialRules": [
+            {
+              "name": "Hard to Kill",
+              "text": "Is only taken Out of Action on a Injury roll of a 6+ instead of a 5-6."
+            },
+            {
+              "name": "No Pain",
+              "text": "Daemonhosts treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
+            },
+            {
+              "name": "Terrifying!",
+              "text": "The Daemonhost is terrifying. Models without the fear special rule must take a fear test at –1 Leadership. Model’s that cause fear must still take a fear check against the Daemonhost even though they would normally ignore it."
+            },
+            {
+              "name": "Of the Warp",
+              "text": "Daemonhosts nullify any psychic power targeting them on a 4+."
+            }
+          ]
+        }
+      ],
+      "story": "Your warband stumbles upon a stupefied man stumbling through the streets. When approached him mumbles something about a horde of treasure, watched over by some malevolent creature, Rumours spread quickly, and various warbands prepare to find this reported trove.",
+      "sections": [
+        {
+          "heading": "Terrain",
+          "text": "Place a large Sentral piece of terrain, a temple, blown out factory or something equally impressive, this is the Daemonhosts’ s lair. Continue setting up by having each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'."
+        },
+        {
+          "heading": "Setup",
+          "text": "The Each warband (4 max) must set-up on one edge, each at least 8 inches from another side of the table. Each warband rolls a d6, the highest roll gets to select what edge the want, the second highest may pick from the 3 remaining edges and so on."
+        },
+        {
+          "heading": "Special Rules",
+          "text": "Daemonhost: Each warband has located the lair and after seeing the Daemonhost, have decided to await it to enter a dormant state. Ironically enough, each leader has been so concerned about the Daemonhost that they failed to notice other warbands doing the same thing. The Daemonhost has two treasure chests in the building with him and is covered in all forms of wards and bindings, made from precious metals and psychoreactive ceramics. The dormant Daemonhost will only be awakened by the sound of close combat within 8” or weapons fire or use of Psychic Powers within 12” If roused it will charge the offending model that awoken it if able (it does not need LOS)"
+        },
+        {
+          "heading": "Starting The Game",
+          "text": "Each player rolls and adds their leader’s initiative. Turns go in order form highest to lowest. Do this at the start of each game turn."
+        },
+        {
+          "heading": "Ending The Game",
+          "text": "The game ends when all treasure has made it off the board, or all warbands have routed."
+        },
+        {
+          "heading": "Experience",
+          "text": "+1 Survives: If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader: The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out Of Action. A Hero earns +1 Experience for each enemy he puts Out Of Action.\n\n+1 For Getting a Chest. Any Hero or Henchman group that successfully gets a chest to safety receives +1 Experience.\n\n+2 For Killing the Daemonhost The Hero or Henchman group that lands the killing blow on the Daemonhost gets +2 Experience.\n\n+2 For Getting Precious Metal Bindings. Any Hero or Henchman group that successfully gets the precious metal bindings to safety receives +2 Experience."
+        }
       ]
     }
-  ]
+  ],
+  "preBattleSequence": {
+    "intro": "Although you can simply decide with your opponent which scenario you want to play, most players prefer to generate their scenarios randomly. To do this, work your way through the following sequence before the battle.",
+    "steps": [
+      "The player with the lowest warband rating rolls on the Scenario table to determine which scenario is played. In the scenarios where there is an attacker and a defender, the same player may choose which he is.",
+      "Roll for warriors with old battle wounds to see whether they can take part or not.",
+      "Set up the terrain and warbands according to the rules for the scenario you are playing. The more buildings the better, so you should place all the terrain you have"
+    ]
+  },
+  "designersNote": "While we have given the basic rulebook missions here to get people started, we heavily believe everyone should have a crack at the wealth of extra missions available over at Broheim! We will eventually get around to creating some extra, funky, bespoke missions based on some of the weirder ones, but as always, this is a WIP."
 }
