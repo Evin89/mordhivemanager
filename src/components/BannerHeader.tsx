@@ -18,11 +18,11 @@ export default function BannerHeader({ children, trailing, as = 'h2', className 
   const Tag = as;
   return (
     <div className={`flex items-stretch ${className}`}>
-      <div className="flex flex-1 items-center justify-between gap-3 bg-banner px-4 py-2">
-        <Tag className="font-display uppercase tracking-[0.06em] text-on-banner text-lg leading-tight">
+      <div className="flex flex-1 items-center justify-between gap-3 px-0 py-2">
+        <Tag style={{ fontSize: 30 }} className="font-display text-heading text-[30px] leading-tight">
           {children}
         </Tag>
-        {trailing && <div className="text-on-banner shrink-0">{trailing}</div>}
+        {trailing && <div className="font-ui text-ink-faded shrink-0">{trailing}</div>}
       </div>
     </div>
   );

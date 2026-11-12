@@ -51,7 +51,7 @@ export default function Oracle({ onLog }: { onLog?: (text: string) => void }) {
             Roll
           </Button>
         </div>
-        {answer && <p className="font-body text-ink text-body-min">{answer}</p>}
+        {answer && <p className="font-body text-ink text-body-min">&gt; {answer}</p>}
       </Plate>
 
       {/* Reaction */}
@@ -70,7 +70,7 @@ export default function Oracle({ onLog }: { onLog?: (text: string) => void }) {
         >
           Roll reaction
         </Button>
-        {reaction && <p className="font-body text-ink text-body-min">{reaction}</p>}
+        {reaction && <p className="font-body text-ink text-body-min">&gt; {reaction}</p>}
       </Plate>
 
       {/* Hive event */}
@@ -89,7 +89,7 @@ export default function Oracle({ onLog }: { onLog?: (text: string) => void }) {
         >
           Roll event
         </Button>
-        {event && <p className="font-body text-ink text-body-min">{event}</p>}
+        {event && <p className="font-body text-ink text-body-min">&gt; {event}</p>}
       </Plate>
     </div>
   );

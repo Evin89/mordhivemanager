@@ -61,17 +61,35 @@ export default {
           l: themed('steel-l'),
         },
         bolt: themed('bolt'),
+        'brass': themed('brass'),
+        'brass-text': themed('brass-text'),
+        'wax': themed('wax'),
+        'vellum': themed('vellum'),
+        'vellum-ink': themed('vellum-ink'),
+        'cog': themed('cog'),
+        'phosphor': themed('phosphor'),
+        'heading': themed('heading'),
+        'secondary': themed('secondary'),
+        'input': themed('input'),
+        'danger-link': themed('danger-link'),
+        'vellum-muted': themed('vellum-muted'),
+        'vellum-rule': themed('vellum-rule'),
+        'vellum-stat': themed('vellum-stat'),
+        'cog-border': themed('cog-border'),
+        'phosphor-dim': themed('phosphor-dim'),
+        'phosphor-faint': themed('phosphor-faint'),
       },
 
       // Spec §2.3: Oxanium (rounded techno) for all display/UI/data, Spectral
       // (serif) for running body prose. The generic family *roles* keep MM's
       // names so vendored `font-heading` / `font-display` classes resolve here.
       fontFamily: {
-        display: ['Oxanium', 'system-ui', 'sans-serif'],
-        heading: ['Oxanium', 'system-ui', 'sans-serif'],
-        'heading-sc': ['Oxanium', 'system-ui', 'sans-serif'],
-        body: ['Spectral', 'Georgia', 'serif'],
-        ui: ['Oxanium', 'system-ui', 'sans-serif'],
+        display: ['Grenze Gotisch', 'Georgia', 'serif'],
+        heading: ['Grenze Gotisch', 'Georgia', 'serif'],
+        'heading-sc': ['Grenze Gotisch', 'Georgia', 'serif'],
+        body: ['Libre Caslon Text', 'Georgia', 'serif'],
+        ui: ['Barlow Condensed', 'sans-serif'],
+        mono: ['Share Tech Mono', 'monospace'],
       },
 
       // §2.6 / MM §5.4 readability floors, as named sizes a screen can't undercut.

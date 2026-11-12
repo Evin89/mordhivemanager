@@ -7,12 +7,15 @@ import { Battlefield } from '../lib/battlefield';
  */
 export default function BattlefieldMap({ field }: { field: Battlefield }) {
   const s = field.size;
-  const c = (name: string) => `rgb(var(--color-${name}))`;
+  const c = (name: string) => {
+    const roles: Record<string, string> = { plate: 'cog', page: 'cog', steel: 'phosphor-faint', 'steel-l': 'cog-border', ink: 'phosphor', bolt: 'phosphor-dim', banner: 'phosphor' };
+    return `rgb(var(--color-${roles[name] ?? name}))`;
+  };
 
   return (
     <svg viewBox={`-2 -2 ${s + 4} ${s + 4}`} className="w-full h-auto" role="img" aria-label="Generated battlefield">
       {/* Board ground */}
-      <rect x={-2} y={-2} width={s + 4} height={s + 4} fill={c('plate')} />
+      <rect x={-2} y={-2} width={s + 4} height={s + 4} fill="transparent" />
       <rect x={0} y={0} width={s} height={s} fill="none" stroke={c('steel')} strokeWidth={0.8} />
 
       {/* Deployment zones */}

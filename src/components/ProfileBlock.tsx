@@ -44,7 +44,7 @@ export default function ProfileBlock({
   const editable = onStatChange !== undefined;
 
   return (
-    <div className={collapsed ? 'block' : 'w-full'}>
+    <div className={collapsed ? 'statline block' : 'statline w-full'}>
       {label && (
         <p className="font-display text-ink text-stat-min uppercase tracking-[0.08em] mb-1">{label}</p>
       )}
