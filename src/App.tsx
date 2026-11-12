@@ -87,7 +87,11 @@ export default function App() {
           <footer className="app-footer no-print border-t border-steel-d">
             <div className="max-w-4xl mx-auto px-4 py-3 font-body text-ink-faded text-sm">
               An unofficial fan tool for Mord Hive (v0.5 WIP), a fan-made ruleset. Not affiliated with or endorsed by Games Workshop. Warhammer 40,000, Mordheim and associated names are trademarks of Games Workshop Limited, used without permission and with no challenge to their status intended.
-              <a className="block mt-4 font-ui text-brass-text" href="https://mordheimmanager.net/">Mordheim Manager</a>
+              <nav aria-label="Links" className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-ui text-brass-text">
+                <a className="inline-flex items-center min-h-[44px]" href="https://www.reddit.com/r/MordHive/" target="_blank" rel="noopener noreferrer">Mord Hive on Reddit</a>
+                <a className="inline-flex items-center min-h-[44px]" href="https://linktr.ee/ThePaintingPrick" target="_blank" rel="noopener noreferrer">Nick (Mord Hive author)</a>
+                <a className="inline-flex items-center min-h-[44px]" href="https://mordheimmanager.net/">Mordheim Manager</a>
+              </nav>
             </div>
           </footer>
         </div>
