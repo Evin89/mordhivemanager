@@ -8,7 +8,7 @@ import ProfileBlock from '../components/ProfileBlock';
 import { Button, TextField } from '../components/ui';
 import { useWarbands, useWarbandLookup } from '../store/warbands';
 import { generateId } from '../lib/id';
-import { isInWarband } from '../lib/rating';
+import { countModels, isInWarband } from '../lib/rating';
 import { suggestNpcAction, TEMPERAMENT_LABELS, TEMPERAMENT_HINTS } from '../lib/npc';
 import { generateBattlefield } from '../lib/battlefield';
 import BattlefieldMap from '../components/BattlefieldMap';
@@ -112,20 +112,21 @@ export default function DuringBattleScreen() {
       <BackHeader title="Battle" to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
         {/* Turn + summary */}
-        <Plate className="p-4">
+        <Plate className="p-4 battle-summary">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="font-display uppercase tracking-[0.05em] text-ink text-lg">{session.scenario || 'Battle'}</p>
+              <p className="font-heading text-heading text-[42px]">{session.scenario || 'Battle'}</p>
               <p className="font-body text-ink-faded text-sm">
-                vs {session.opponentName || 'opponent'}
+                against {session.opponentName || 'opponent'}
               </p>
             </div>
             <div className="flex items-center gap-2">
               <Button size="dense" variant="secondary" fullWidth={false} onClick={() => stepTurn(-1)} aria-label="Previous turn">−</Button>
-              <PageChip>Turn {session.turn}</PageChip>
+              <div className="text-center min-w-20"><span className="font-ui text-ink-faded">Turn</span><p className="font-heading text-[56px] leading-none">{session.turn}</p></div>
               <Button size="dense" variant="secondary" fullWidth={false} onClick={() => stepTurn(1)} aria-label="Next turn">+</Button>
             </div>
           </div>
+          <p className="mt-4 font-ui">{totalOoa} of {countModels(warband)} out of action</p><div className="flex gap-1 mt-2" aria-hidden="true">{Array.from({ length: countModels(warband) }, (_, i) => <span key={i} className={`h-2 flex-1 ${i < totalOoa ? 'bg-wax' : 'bg-brass'}`} />)}</div>
         </Plate>
 
         {/* Casualties */}
@@ -149,11 +150,11 @@ export default function DuringBattleScreen() {
                         </span>
                         <Button
                           size="dense"
-                          variant={down ? 'primary' : 'secondary'}
+                          variant={down ? 'danger' : 'secondary'}
                           fullWidth={false}
                           onClick={() => toggleHero(h.id)}
                         >
-                          {down ? 'Out of action' : 'Mark OOA'}
+                          {down ? 'Out of action' : 'Standing'}
                         </Button>
                       </li>
                     );
@@ -235,8 +236,8 @@ export default function DuringBattleScreen() {
                         <span className={`font-body text-body-min ${down ? 'text-ink-faded line-through' : 'text-ink'}`}>
                           {h.unitType}{h.isLeader ? ' · Leader' : ''}
                         </span>
-                        <Button size="dense" variant={down ? 'primary' : 'secondary'} fullWidth={false} onClick={() => toggleNpcHero(h.id)}>
-                          {down ? 'Out of action' : 'Mark OOA'}
+                        <Button size="dense" variant={down ? 'danger' : 'secondary'} fullWidth={false} onClick={() => toggleNpcHero(h.id)}>
+                          {down ? 'Out of action' : 'Standing'}
                         </Button>
                       </div>
                       {!down && (
@@ -308,7 +309,7 @@ export default function DuringBattleScreen() {
               {mapOpen ? 'Hide map' : 'Show map'}
             </Button>
             {mapOpen && (
-              <Plate className="p-3">
+              <Plate className="cogitator map-grid p-3"><p className="mb-3">AUSPEX // SECTOR MAP <span className="text-phosphor-dim">// TURN {session.turn}</span></p>
                 <BattlefieldMap
                   field={generateBattlefield(
                     session.battlefieldSeed,
@@ -321,7 +322,7 @@ export default function DuringBattleScreen() {
         )}
 
         {/* Oracle (solo) */}
-        <section className="space-y-3">
+        <section className="cogitator space-y-3">
           <BannerHeader>Oracle</BannerHeader>
           <Button variant="secondary" onClick={() => setOracleOpen((o) => !o)}>
             {oracleOpen ? 'Hide the Oracle' : 'Consult the Oracle'}
@@ -344,7 +345,7 @@ export default function DuringBattleScreen() {
           {session.events.length === 0 ? (
             <p className="font-body text-ink-faded text-sm px-1">No events yet.</p>
           ) : (
-            <Plate className="p-3">
+            <Plate className="vellum-log p-3">
               <ul className="space-y-1.5">
                 {session.events.map((ev) => (
                   <li key={ev.id} className="flex items-start justify-between gap-2">
