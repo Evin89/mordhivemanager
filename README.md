@@ -85,18 +85,18 @@ Manager now; defer the true `/packages` monorepo split to later).
   **app-original and badged in-app as not part of the ruleset**. Still to come: a solo *campaign*
   with an agenda that carries across linked games.
 - ✅ **Landing page live** — `landing/` on `hive.mordheimmanager.net` (Worker `mordhivemanager`).
-- ✅ **Supabase backend (built, not yet switched on)** — accounts and multi-device sync on Mordheim
+- ✅ **Supabase backend (live)** — accounts and multi-device sync on Mordheim
   Manager's Supabase project, in Mord Hive's **own `mordhive` schema** so MM's tables are never
   touched (`supabase/migrations/mh_0001_mordhive_schema.sql`; RLS matrix: `npm run db:test`). One
   account works in both apps. Warbands and solo campaigns are Supabase-backed behind the same store
   interface the screens already used (`src/store/remoteCollection.ts`); the battle session stays in
   `localStorage` per device. Sign in / create account / reset password screens; warbands built
-  before accounts existed are offered for import once after sign-in. To switch on: apply the
-  migration, add `mordhive` to *Settings → API → Exposed schemas*, and allow
-  `https://hive.mordheimmanager.net/**` as an Auth redirect URL.
-- ◻️ **Deploy the app** — `wrangler.jsonc` at the root serves `dist/` as an SPA. The live Worker
-  `mordhivemanager` still builds `landing/` (the landing page on `hive.mordheimmanager.net`); switch
-  its root directory to `/` and build command to `npm run build` when the app should replace it.
+  before accounts existed are offered for import once after sign-in. Switched on 2026-11-12: `mh_0001` + `mh_0002`
+  applied, `mordhive` exposed in the Data API, `https://hive.mordheimmanager.net/**` allowed as a
+  redirect URL.
+- ✅ **App live on `hive.mordheimmanager.net`** — Worker `mordhivemanager` builds the repo root
+  (`npm run build`, root `/`) and serves `dist/` per `wrangler.jsonc`. `landing/` is the earlier
+  static landing page, kept for reference; it is no longer deployed.
 - ✅ **Post-battle wizard** — the guided end-of-game sequence (Battle Info → Injuries → Experience
   → Advances → Income → Confirm), consuming the battle tracker's out-of-action tally. Heroes out of
   action roll the **D66 Serious Injury chart** (converted from v0.5, `src/data/injuries.json`);
@@ -108,7 +108,7 @@ Manager now; defer the true `/packages` monorepo split to later).
   (`src/lib/postBattle.ts`). The advance tables and XP thresholds are the shared Mordheim mechanic
   the v0.5 book reuses. (Income is a totals entry for now; the full Exploration chart is a later
   addition.)
-- ✅ **Campaigns (built, waits on the backend switch-on)** — start a campaign, share a six-letter join
+- ✅ **Campaigns** — start a campaign, share a six-letter join
   code, link a warband, standings by rating with W-D-L from the shared battle log, log and remove
   battles, leader tools (rename, new code, remove players), leave (leadership passes on; the last
   one out deletes it). `mh_0002`, RPCs `create_campaign` / `join_campaign` / `leave_campaign` /
