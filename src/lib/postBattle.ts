@@ -1,4 +1,4 @@
-import { BattleResult, StatLine, Warband, Hero, HenchmenGroup } from '../types';
+import { BattleResult, StatLine, Warband, Hero, HenchmenGroup, HiredSword } from '../types';
 import { BattleSession } from '../store/battle';
 import { generateId } from './id';
 import injuriesData from '../data/injuries.json';
@@ -85,11 +85,23 @@ export type HenchPB = {
   advances: Advance[];
 };
 
+/** A Hired Gun's battle (v0.5 p.126): injuries as a Henchman (1-2 = Lost),
+ * XP as a Henchman, advances on the Heroes table, upkeep after every battle. */
+export type HiredPB = {
+  outOfAction: boolean;
+  lost: boolean;
+  xpGained: number;
+  advances: Advance[];
+  /** Pay his upkeep and keep him. Unpaid, he leaves and his XP is lost. */
+  keep: boolean;
+};
+
 export type PostBattleDraft = {
   result: BattleResult;
   enemiesTakenOut: number;
   heroes: Record<string, HeroPB>;
   henchmen: Record<string, HenchPB>;
+  hired: Record<string, HiredPB>;
   diamantineFound: number;
   goldFound: number;
   notes: string;
@@ -119,12 +131,17 @@ export function createDraft(warband: Warband, session: BattleSession | undefined
       advances: [],
     };
   }
+  const hired: Record<string, HiredPB> = {};
+  for (const h of warband.hiredSwords) {
+    if (h.status !== 'active' && h.status !== 'missNextGame') continue;
+    hired[h.id] = { outOfAction: false, lost: false, xpGained: 1, advances: [], keep: true };
+  }
   const enemiesTakenOut = session?.npcOutOfAction
     ? session.npcOutOfAction.heroIds.length +
       Object.values(session.npcOutOfAction.henchmenCounts).reduce((s, n) => s + n, 0)
     : 0;
 
-  return { result: win ? 'win' : 'draw', enemiesTakenOut, heroes, henchmen, diamantineFound: 0, goldFound: 0, notes: '' };
+  return { result: win ? 'win' : 'draw', enemiesTakenOut, heroes, henchmen, hired, diamantineFound: 0, goldFound: 0, notes: '' };
 }
 
 // Injury → concrete effects the app can apply. Anything not mapped is recorded
@@ -209,11 +226,37 @@ export function applyDraft(warband: Warband, draft: PostBattleDraft): Warband {
     });
   }
 
+  let upkeepPaid = 0;
+  const hiredSwords: HiredSword[] = warband.hiredSwords.map((h) => {
+    const pb = draft.hired?.[h.id];
+    if (!pb) return h;
+    if (pb.lost) return { ...h, status: 'dead' };
+    if (!pb.keep) return { ...h, status: 'left', xp: h.startingXp };
+    upkeepPaid += h.upkeep;
+    const adv = applyAdvances(h.stats, pb.advances);
+    return {
+      ...h,
+      xp: h.xp + pb.xpGained,
+      stats: adv.stats,
+      status: h.status === 'missNextGame' ? 'active' : h.status,
+      notes: [h.notes, ...adv.notes].filter(Boolean).join('\n'),
+    };
+  });
+
   return {
     ...warband,
     heroes,
     henchmenGroups,
+    hiredSwords,
     wyrdstoneShards: warband.wyrdstoneShards + draft.diamantineFound,
-    gold: warband.gold + draft.goldFound,
+    gold: warband.gold + draft.goldFound - upkeepPaid,
   };
+}
+
+/** Upkeep due for the Hired Guns the player is keeping (and who weren't lost). */
+export function upkeepDue(warband: Warband, draft: PostBattleDraft): number {
+  return warband.hiredSwords.reduce((sum, h) => {
+    const pb = draft.hired?.[h.id];
+    return pb && pb.keep && !pb.lost ? sum + h.upkeep : sum;
+  }, 0);
 }

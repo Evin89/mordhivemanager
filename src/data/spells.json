@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "source": "Mord Hive v0.5. Imperial Prayers (p.046). Psychic Powers (p.019) and other lists are added as their warbands are converted.",
+  "source": "Mord Hive v0.5. Imperial Prayers (p.046). Psychic Powers (p.019), Lesser Psy-Arcana (p.020) and other lists are added as their warbands are converted.",
   "difficultyNote": "Difficulty is the 2D6 the caster must equal or beat.",
   "lists": {
     "craftworldPowers": {
@@ -86,6 +86,23 @@
         { "id": "imperialPrayers.shieldOfFaith", "roll": 4, "name": "Shield of Faith", "difficulty": 6, "effect": "The Priest is immune to all psychic powers. Roll at the start of each turn in the recovery phase; on a 1 or 2 the shield disappears." },
         { "id": "imperialPrayers.healingHand", "roll": 5, "name": "Healing Hand", "difficulty": 5, "effect": "One model within 2\" (including himself) is restored to full Wounds. Friendly models within 2\" that are stunned or knocked down immediately stand and continue fighting." },
         { "id": "imperialPrayers.armourOfRighteousness", "roll": 6, "name": "Armour of Righteousness", "difficulty": 9, "effect": "The Priest gains a 2+ armour save (replacing his normal save) and causes fear (and is therefore immune to fear himself)." }
+      ]
+    },
+    "lesserPsyArcana": {
+      "id": "lesserPsyArcana",
+      "name": "Lesser Psy-Arcana",
+      "kind": "magic",
+      "die": "D6",
+      "usedBy": ["Unsanctioned Psyker"],
+      "notes": "Psykers, or even the slightly warp attuned can sometimes make use of some of these lesser Psy-Arcana. While these abilities pale in comparison to what trained Psykers may have access to, it is still no laughing matter to attempt these, or be on the receiving end.",
+      "source": "Mord Hive v0.5 p.020",
+      "spells": [
+        {"id": "lesserPsyArcana.warpFire", "roll": 1, "name": "Warp-Fire", "difficulty": 7, "effect": "The Psyker clicks psychoreactive sparks into life, before flinging them at their opponent. The warp-fire has a range of 18\" and causes one Strength 4 hit. It strikes the first model in its path. Armour saves are taken as normal."},
+        {"id": "lesserPsyArcana.levitation", "roll": 2, "name": "Levitation", "difficulty": 7, "effect": "The Psyker levitates into the air, floating to wherever they will. The psyker may immediately move anywhere within 12\", including into base contact with an enemy, in which case he counts as charging. If he engages a fleeing enemy in the close combat phase he will score 1 automatic hit and then his opponent will flee again (if he survives)."},
+        {"id": "lesserPsyArcana.glimpseTheVoid", "roll": 3, "name": "Glimpse the Void", "difficulty": 7, "effect": "The Psyker allows an unlucky opponent to see the merest glimpse of the warp. A single model within 12\" of the psyker must pass a Leadership test or flee 2D6\" directly away from him. If he flees, he must test at the start of each of his own movement phases and will continue to flee until he passes a test. Note that this power does not affect any model immune to fear."},
+        {"id": "lesserPsyArcana.psyResonantShards", "roll": 4, "name": "Psy-Resonant Shards", "difficulty": 7, "effect": "The Psyker summons up a handful of psy-resonant warp shards to encircle them, to be thrown at opponents. Unlike other powers, this cannot be manifested whilst in hand-to-hand combat. The power summons D6+2 shards which the psyker can use to shoot against one enemy model. The shards have a range of 24\". Use the psyker's own Ballistic Skill to determine whether he hits or not, but ignore movement, range and cover penalties. The shards cause one S3 hit each."},
+        {"id": "lesserPsyArcana.trickstersLuck", "roll": 5, "name": "Tricksters Luck", "difficulty": 6, "effect": "The Psyker taps into some skein of fate within the immaterium. The psyker may re-roll all his failed dice rolls, though the second results stand. The effect lasts until the beginning of his own next turn."},
+        {"id": "lesserPsyArcana.obsidianSword", "roll": 6, "name": "Obsidian Sword", "difficulty": 8, "effect": "The psyker pulls forth a sword from the ether. It is the most pure black, even light failing to escape its aura. The sword gives the psyker +1 Attack, +2 Strength and +2 Weapon Skill. Take a Leadership test at the beginning of each of the psyker's own turns. If the test fails, the sword disappears."}
       ]
     }
   }

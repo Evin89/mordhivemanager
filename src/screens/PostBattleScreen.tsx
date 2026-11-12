@@ -17,12 +17,15 @@ import {
   rollHeroAdvance,
   rollHenchmenAdvance,
   advancesEarned,
+  upkeepDue,
 } from '../lib/postBattle';
 import { BattleResult } from '../types';
 import ExplorationRoll from '../components/ExplorationRoll';
+import { recordBattle } from '../lib/battles';
+import { computeWarbandRating } from '../lib/rating';
 
 const { terms } = strings;
-const STEPS = ['Battle Info', 'Injuries', 'Experience', 'Advances', 'Income', 'Confirm'] as const;
+const STEPS = ['Battle Info', 'Injuries', 'Experience', 'Advances', 'Income', 'Upkeep', 'Confirm'] as const;
 
 const EXPLORATION_PREFIX = 'Exploration —';
 /** Drops any prior auto-added exploration line so a re-roll replaces it. */
@@ -56,7 +59,8 @@ export default function PostBattleScreen() {
   const { warbandId } = useParams<{ warbandId: string }>();
   const navigate = useNavigate();
   const warband = useWarbandLookup(warbandId);
-  const { saveWarband } = useWarbands();
+  const { saveWarband, warbands } = useWarbands();
+  const [saving, setSaving] = useState(false);
 
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<PostBattleDraft>(() =>
@@ -70,6 +74,8 @@ export default function PostBattleScreen() {
     setDraft((d) => ({ ...d, heroes: { ...d.heroes, [id]: { ...d.heroes[id], ...p } } }));
   const patchHench = (id: string, p: Partial<PostBattleDraft['henchmen'][string]>) =>
     setDraft((d) => ({ ...d, henchmen: { ...d.henchmen, [id]: { ...d.henchmen[id], ...p } } }));
+  const patchHired = (id: string, p: Partial<PostBattleDraft['hired'][string]>) =>
+    setDraft((d) => ({ ...d, hired: { ...d.hired, [id]: { ...d.hired[id], ...p } } }));
 
   function autoAwardXp() {
     setDraft((d) => {
@@ -80,18 +86,35 @@ export default function PostBattleScreen() {
       }
       const henchmen = { ...d.henchmen };
       for (const g of warband!.henchmenGroups) henchmen[g.id] = { ...henchmen[g.id], xpGained: 1 };
-      return { ...d, heroes, henchmen };
+      const hired = { ...d.hired };
+      for (const id of Object.keys(hired)) hired[id] = { ...hired[id], xpGained: 1 };
+      return { ...d, heroes, henchmen, hired };
     });
   }
 
-  function commit() {
-    const next = applyDraft(warband!, draft);
+  async function commit() {
+    if (saving) return;
+    setSaving(true);
+    const before = warband!;
+    const session = loadBattleSession(before.id);
+    const next = applyDraft(before, draft);
     saveWarband(next);
-    clearBattleSession(warband!.id);
-    navigate(`/warbands/${warband!.id}`, { replace: true });
+    const err = await recordBattle({
+      before,
+      after: next,
+      ratingAfter: computeWarbandRating(next),
+      draft,
+      session,
+      myWarbands: warbands,
+    });
+    clearBattleSession(before.id);
+    navigate(`/warbands/${before.id}`, { replace: true, state: err ? { notice: err } : undefined });
   }
 
   const heroList = warband.heroes.filter((h) => h.status === 'active' || h.status === 'missNextGame');
+  const hiredList = warband.hiredSwords.filter((h) => draft.hired?.[h.id]);
+  const due = upkeepDue(warband, draft);
+  const treasuryAfterIncome = warband.gold + draft.goldFound;
 
   return (
     <div>
@@ -205,6 +228,30 @@ export default function PostBattleScreen() {
                 </Plate>
               );
             })}
+            {hiredList.map((h) => {
+              const pb = draft.hired[h.id];
+              return (
+                <Plate key={h.id} className="p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{h.name} <span className="text-ink-faded text-xs">(Hired Gun)</span></span>
+                    <label className="flex items-center gap-2 font-body text-ink text-sm">
+                      <input type="checkbox" checked={pb.outOfAction} onChange={(e) => patchHired(h.id, { outOfAction: e.target.checked, lost: e.target.checked ? pb.lost : false })} />
+                      Out of action
+                    </label>
+                  </div>
+                  {pb.outOfAction && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button size="dense" variant="secondary" fullWidth={false} onClick={() => patchHired(h.id, { lost: rollHenchmanRemoval() })}>
+                        Roll D6 (1-2 lost)
+                      </Button>
+                      <label className="flex items-center gap-1 font-body text-ink text-sm">
+                        <input type="checkbox" checked={pb.lost} onChange={(e) => patchHired(h.id, { lost: e.target.checked })} /> Lost
+                      </label>
+                    </div>
+                  )}
+                </Plate>
+              );
+            })}
           </section>
         )}
 
@@ -233,6 +280,18 @@ export default function PostBattleScreen() {
                 <Plate key={g.id} className="p-3 flex items-center justify-between gap-2">
                   <span className="font-body text-ink text-body-min">{g.groupName} <span className="text-ink-faded text-xs">({g.xp} → {g.xp + pb.xpGained} XP each)</span></span>
                   <span className="flex items-center gap-2"><span className="font-body text-ink-faded text-xs">+</span><NumField value={pb.xpGained} onChange={(n) => patchHench(g.id, { xpGained: n })} /></span>
+                </Plate>
+              );
+            })}
+            {hiredList.map((h) => {
+              const pb = draft.hired[h.id];
+              if (pb.lost) return (
+                <Plate key={h.id} className="p-3"><span className="font-body text-ink-faded text-sm line-through">{h.name} — lost</span></Plate>
+              );
+              return (
+                <Plate key={h.id} className="p-3 flex items-center justify-between gap-2">
+                  <span className="font-body text-ink text-body-min">{h.name} <span className="text-ink-faded text-xs">({h.xp} → {h.xp + pb.xpGained} XP, as a Henchman)</span></span>
+                  <span className="flex items-center gap-2"><span className="font-body text-ink-faded text-xs">+</span><NumField value={pb.xpGained} onChange={(n) => patchHired(h.id, { xpGained: n })} /></span>
                 </Plate>
               );
             })}
@@ -283,6 +342,26 @@ export default function PostBattleScreen() {
                 </Plate>
               );
             })}
+            {hiredList.map((h) => {
+              const pb = draft.hired[h.id];
+              if (pb.lost) return null;
+              // XP as a Henchman, advances on the Heroes table (v0.5 p.126).
+              const earned = advancesEarned(h.xp, h.xp + pb.xpGained, false);
+              if (earned === 0) return null;
+              return (
+                <Plate key={h.id} className="p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{h.name}</span>
+                    <Button size="dense" fullWidth={false} disabled={pb.advances.length >= earned} onClick={() => patchHired(h.id, { advances: [...pb.advances, rollHeroAdvance(h.stats)] })}>
+                      Roll advance ({pb.advances.length}/{earned})
+                    </Button>
+                  </div>
+                  {pb.advances.map((a, i) => (
+                    <p key={i} className="font-body text-ink-faded text-xs">2D6={a.roll}: {a.stat ? `+1 ${a.stat}` : a.skill ? 'New Skill (pick on his card)' : a.text}</p>
+                  ))}
+                </Plate>
+              );
+            })}
             {heroList.every((h) => advancesEarned(h.xp, h.xp + draft.heroes[h.id].xpGained, true) === 0) &&
               warband.henchmenGroups.every((g) => advancesEarned(g.xp, g.xp + draft.henchmen[g.id].xpGained, false) === 0) && (
                 <p className="font-body text-ink-faded text-sm px-1">No advances earned this battle.</p>
@@ -326,8 +405,43 @@ export default function PostBattleScreen() {
           </section>
         )}
 
-        {/* Step 6 — Confirm */}
+        {/* Step 6 — Upkeep (Hired Guns) */}
         {step === 5 && (
+          <section className="space-y-3">
+            <BannerHeader>Upkeep</BannerHeader>
+            {hiredList.length === 0 ? (
+              <p className="font-body text-ink-faded text-sm px-1">No Hired Guns — nothing to pay.</p>
+            ) : (
+              <>
+                <p className="font-body text-ink-faded text-xs px-1">
+                  After each battle he fights, including the first, pay a Hired Gun's upkeep to keep him. Unpaid, he leaves and his experience is lost.
+                </p>
+                {hiredList.map((h) => {
+                  const pb = draft.hired[h.id];
+                  if (pb.lost) return (
+                    <Plate key={h.id} className="p-3"><span className="font-body text-ink-faded text-sm">{h.name} was lost — no upkeep.</span></Plate>
+                  );
+                  return (
+                    <Plate key={h.id} className="p-3 flex items-center justify-between gap-2">
+                      <span className="font-body text-ink text-body-min">{h.name} <span className="text-ink-faded text-xs">({h.upkeep} {terms.currencyAbbr})</span></span>
+                      <label className="flex items-center gap-2 font-body text-ink text-sm">
+                        <input type="checkbox" checked={pb.keep} onChange={(e) => patchHired(h.id, { keep: e.target.checked })} />
+                        Pay and keep
+                      </label>
+                    </Plate>
+                  );
+                })}
+                <p className={`font-body text-sm px-1 ${due > treasuryAfterIncome ? 'text-ink' : 'text-ink-faded'}`}>
+                  Upkeep {due} {terms.currencyAbbr} · treasury after income {treasuryAfterIncome} {terms.currencyAbbr}
+                  {due > treasuryAfterIncome && ' — not enough: let someone go.'}
+                </p>
+              </>
+            )}
+          </section>
+        )}
+
+        {/* Step 7 — Confirm */}
+        {step === 6 && (
           <section className="space-y-3">
             <BannerHeader>Confirm</BannerHeader>
             <Plate className="p-4 space-y-2 font-body text-ink text-body-min">
@@ -338,9 +452,16 @@ export default function PostBattleScreen() {
               <p>Advances: {heroList.reduce((s, h) => s + draft.heroes[h.id].advances.length, 0) + warband.henchmenGroups.reduce((s, g) => s + draft.henchmen[g.id].advances.length, 0)} rolled</p>
               <p>Henchmen removed: {warband.henchmenGroups.reduce((s, g) => s + draft.henchmen[g.id].diedCount, 0)}</p>
               <p>Income: +{draft.diamantineFound} {terms.salvageResource}, +{draft.goldFound} {terms.currencyAbbr}</p>
+              {hiredList.length > 0 && (
+                <p>
+                  Hired Guns: upkeep −{due} {terms.currencyAbbr}
+                  {hiredList.some((h) => draft.hired[h.id].lost) && ` · lost: ${hiredList.filter((h) => draft.hired[h.id].lost).map((h) => h.name).join(', ')}`}
+                  {hiredList.some((h) => !draft.hired[h.id].lost && !draft.hired[h.id].keep) && ` · leaving: ${hiredList.filter((h) => !draft.hired[h.id].lost && !draft.hired[h.id].keep).map((h) => h.name).join(', ')}`}
+                </p>
+              )}
             </Plate>
-            <p className="font-body text-ink-faded text-xs px-1">Applying commits these changes to the warband and ends the battle.</p>
-            <Button onClick={commit}>Apply &amp; finish</Button>
+            <p className="font-body text-ink-faded text-xs px-1">Applying commits these changes to the warband, adds the battle to its history (and to its campaign's log, if it's in one) and ends the battle.</p>
+            <Button onClick={commit} disabled={saving}>{saving ? 'Saving…' : 'Apply & finish'}</Button>
           </section>
         )}
 

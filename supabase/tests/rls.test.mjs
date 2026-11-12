@@ -103,6 +103,20 @@ check("A's warband was unlinked on leaving", await user(A, `select campaign_id f
 check('B leaves last: campaign is gone', await user(B, `select mordhive.leave_campaign('${camp}')`), rows(1));
 check('…and its battle log with it', (await db.query(`select count(*)::int n from mordhive.campaign_battles`)).rows, (v) => v[0]?.n === 0);
 
+// --- mh_0003: battle history ---------------------------------------------
+check('A records a private battle', await user(A, `insert into mordhive.battles (warband_id, result, scenario, rating_after) values ('w1','win','Skirmish',120) returning id`), rows(1));
+check("C can't read A's battles", await user(C, `select id from mordhive.battles`), rows(0));
+check("C can't record a battle for A's warband", await user(C, `insert into mordhive.battles (warband_id, result) values ('w1','loss')`), denied);
+const c3 = (await user(A, `select mordhive.create_campaign('Third') as id`))[0]?.id;
+const code3 = (await user(A, `select join_code from mordhive.campaigns where id='${c3}'`))[0]?.join_code;
+await user(B, `select mordhive.join_campaign('${code3}')`);
+check('A records a campaign battle', await user(A, `insert into mordhive.battles (warband_id, campaign_id, result, rating_after) values ('w2','${c3}','draw',90) returning id`), rows(1));
+check('B (campaign-mate) reads only the campaign battle', await user(B, `select result from mordhive.battles`), (v) => Array.isArray(v) && v.length === 1 && v[0].result === 'draw');
+check('C creates a warband of its own', await user(C, `insert into mordhive.warbands (id,name,warband_type,data) values ('c9','x','y','{}')`), rows(0));
+check("…nor insert one there", await user(C, `insert into mordhive.battles (warband_id, campaign_id, result) values ('c9','${c3}','win')`), denied);
+check('deleting a warband deletes its battles', await user(A, `delete from mordhive.warbands where id='w1' returning id`), rows(1));
+check("…so A's private battle is gone", (await db.query(`select count(*)::int n from mordhive.battles where warband_id='w1'`)).rows, (v) => v[0]?.n === 0);
+
 // --- mh_0002: delete my data -------------------------------------------------
 const c2 = (await user(A, `select mordhive.create_campaign('Second') as id`))[0]?.id;
 await user(C, `select mordhive.join_campaign((select join_code from mordhive.campaigns where id='${c2}'))`);

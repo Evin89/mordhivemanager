@@ -111,8 +111,12 @@ export type HiredSword = {
   name: string;
   nickname?: string;
   type: string;
+  /** Id of the Hired Gun's entry in src/data/hiredGuns.json (absent on older data). */
+  definitionId?: string;
   hireFee: number;
   upkeep: number;
+  /** The flat part of the book's rating line ("+55 points, plus 2 per XP"). */
+  ratingBase?: number;
   isLeader: false;
   isLargeCreature: boolean;
   countsTowardMax: boolean;

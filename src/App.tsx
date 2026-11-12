@@ -25,6 +25,8 @@ import AccountScreen from './screens/AccountScreen';
 import CampaignsScreen from './screens/CampaignsScreen';
 import CampaignScreen from './screens/CampaignScreen';
 import PrintRosterScreen from './screens/PrintRosterScreen';
+import AddHiredGunScreen from './screens/AddHiredGunScreen';
+import HiredGunDetailScreen from './screens/HiredGunDetailScreen';
 import GalleryScreen from './screens/GalleryScreen';
 import GalleryRosterScreen from './screens/GalleryRosterScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
@@ -65,6 +67,8 @@ export default function App() {
               <Route path="/solo" element={<RequireAuth><SoloCampaignsScreen /></RequireAuth>} />
               <Route path="/solo/:campaignId" element={<RequireAuth><SoloCampaignScreen /></RequireAuth>} />
               <Route path="/rules" element={<RulesScreen />} />
+              <Route path="/warbands/:warbandId/add-hired-gun" element={<RequireAuth><AddHiredGunScreen /></RequireAuth>} />
+              <Route path="/warbands/:warbandId/hired/:hiredId" element={<RequireAuth><HiredGunDetailScreen /></RequireAuth>} />
               <Route path="/warbands/:warbandId/print" element={<RequireAuth><PrintRosterScreen /></RequireAuth>} />
               <Route path="/campaigns" element={<RequireAuth><CampaignsScreen /></RequireAuth>} />
               <Route path="/campaigns/:campaignId" element={<RequireAuth><CampaignScreen /></RequireAuth>} />

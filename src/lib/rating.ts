@@ -71,7 +71,9 @@ export function computeWarbandRating(warband: Warband): number {
 
   for (const sword of warband.hiredSwords) {
     if (!ACTIVE_STATUSES.has(sword.status)) continue;
-    rating += swordThrones(sword) + sword.xp * 2;
+    // Hired Guns carry their own rating line in the book ("+55 points, plus 2
+    // points for each Experience Point"), so that is used where known.
+    rating += (sword.ratingBase ?? swordThrones(sword)) + sword.xp * 2;
   }
 
   return rating;

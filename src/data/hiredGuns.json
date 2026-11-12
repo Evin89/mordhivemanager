@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "source": "Mord Hive v0.5, Hired Guns (pp.127-130 / PDF pp.132-135). Rules text copied from the rulebook; the `allowedWarbands` / `excludedWarbands` lists encode only restrictions the book states by name (see each entry's notes).",
+  "rules": {
+    "recruiting": "A player can recruit Hired Guns when he creates his warband, or during the campaign phase after a game. Hired Guns do not count towards the maximum number of warriors or Heroes a warband may have on its roster and don't affect your income from selling refined diamantine. However, Hired Guns do count as part of the warband for purposes of Rout tests, etc whilst in battle. A player cannot buy extra weapons or equipment for a Hired Gun, and he cannot sell the Hired Gun's weapons or equipment. To reflect their rarity, you can only have one of each type of Hired Gun in your warband. You may not use the Leadership of any of the Hired Gun for Rout tests.",
+    "hireFee": "When a warband recruits a Hired Gun, you must pay his hire fee. Subsequently, after each battle he fights, including the first, you must pay his upkeep fee if you want him to remain with the warband. If the Hired Gun is killed, or you no longer require his services, you don't have to pay any upkeep! If you don't have enough thrones to pay for the Hired Gun, or want to spend it on other things, he leaves the warband. Any experience he has gained will be lost, even if you hire a new Henchman of the same type.",
+    "injuries": "If a Hired Gun goes out of action during the game, roll for his injuries as you would roll for a Henchman after a battle (i.e., 1-2 = Lost; 3-6 = Survives).",
+    "experience": "Hired Guns gain experience in exactly the same way as Henchmen. Once the Hired Gun gains enough experience for an advance, roll on the Heroes Advancement table (as opposed to Henchmen) to determine which advance he gains."
+  },
+  "hiredGuns": [
+    {
+      "id": "chronoGladiator",
+      "name": "Chrono-Gladiator",
+      "hireFee": 70,
+      "upkeep": 25,
+      "mayBeHiredBy": "Any Warband may hire a Chrono-Gladiator, they care not for who their employer is, as long as they fight!",
+      "ratingBonus": "A Chrono-Gladiator increases the warband's rating by +55 points, plus 2 points for each Experience Point he has.",
+      "ratingBase": 55,
+      "statLine": { "M": 4, "WS": 4, "BS": 3, "S": 4, "T": 4, "W": 1, "I": 4, "A": 2, "Ld": 5 },
+      "equipment": "A Chrono-Gladiator is equipped with a Helmet, Light Armour, a Chain Sword and a Chain Axe.",
+      "skillLists": ["combat", "strength"],
+      "isLargeCreature": false,
+      "specialRules": "Inbuilt Weapons: A Chrono-Gladiator's weapons are grafted into his body. He doesn't receive the to-hit penalty for an 'off hand' weapon. | Death-Clock: A Chrono-Gladiator must engage in combat lest the Death-Clock in his heart detonates. At the start of the battle place a D6, with the 5 up next to the Chrono-Gladiator showing his Leadership, use this dice to track it over the coarse of the game. -At the Start of every game turn a Chrono-Gladiator's leadership will go down 1 point. -At the start of every combat-phase that he is engaged with one or more enemy models he increases his leadership by +1 point. If for any reason his leadership reaches 2 or below, all models will count as enemy models, meaning he will charge the closest model to try and slow his Death-Clock running down. If for whatever reason his Death-Clock reaches 0 he is killed and removed from the roster. | Immune to Psychology: The Chrono-Gladiator's mind has been scrubbed of all sense or reason. He is immune to all psychology and is presumed to automatically pass all leadership checks. | \"For Those About to Die..\": A Chrono-Gladiator will always charge an enemy model if he is aware of them and in range.",
+      "source": "Mord Hive v0.5 p.127"
+    },
+    {
+      "id": "ogrynBodyguard",
+      "name": "Ogryn Bodyguard",
+      "hireFee": 80,
+      "upkeep": 30,
+      "mayBeHiredBy": "Any Warband may hire a Ogryn Bodyguard, Ogryns are not the best judge of characters and even less so in times of need.",
+      "ratingBonus": "An Ogryn Bodyguard increases the warband's rating by +50 points, plus 2 points for each Experience Point he has.",
+      "ratingBase": 50,
+      "statLine": { "M": 6, "WS": 3, "BS": 2, "S": 4, "T": 4, "W": 3, "I": 3, "A": 2, "Ld": 7 },
+      "equipment": "An Ogryn Bodyguard is equipped with either: Two Swords, axes or clubs (or any mix of two), Or a double-handed weapon (choose which type), or a either a Sword, Axe or Club and a shield. Ogryns wear heavy armour.",
+      "skillLists": ["combat", "strength"],
+      "isLargeCreature": true,
+      "specialRules": "Fear: Ogryns are large, threatening creatures that cause fear. | Large Target: Ogryns are Large Targets as defined in the shooting rules.",
+      "source": "Mord Hive v0.5 p.127"
+    },
+    {
+      "id": "ratlingScout",
+      "name": "Ratling Scout",
+      "hireFee": 15,
+      "upkeep": 5,
+      "mayBeHiredBy": "A Ratling Scout can be hired by any 'Imperial' warband.",
+      "ratingBonus": "A Ratling Scout increases the warband rating by +10 points plus 2 points for each Experience point he has.",
+      "ratingBase": 10,
+      "statLine": { "M": 4, "WS": 2, "BS": 4, "S": 2, "T": 2, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "equipment": "A Ratling Scout has a Lasgun (or Autogun), a dagger and a helmet.",
+      "skillLists": ["speed", "shooting"],
+      "isLargeCreature": false,
+      "imperialOnly": true,
+      "specialRules": "Cook: Ratlings are renowned for their cooking skills. A warband with a Ratling Scout may increase its maximum size by +1, as warriors from all around are attracted by the smell of great food! Note that this does not increase the maximum number of Heroes you may have.",
+      "source": "Mord Hive v0.5 p.128"
+    },
+    {
+      "id": "unsanctionedPsyker",
+      "name": "Unsanctioned Psyker",
+      "hireFee": 35,
+      "upkeep": 15,
+      "mayBeHiredBy": "Any Warband but Ordo-Hereticus Retainers may hire an unsanctioned Psyker.",
+      "ratingBonus": "An Unsanctioned Psyker increases the warband's rating by + 25 points plus 2 points for each Experience point he has.",
+      "ratingBase": 25,
+      "statLine": { "M": 4, "WS": 2, "BS": 2, "S": 3, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "equipment": "The Unsanctioned Psyker carries a club.",
+      "skillLists": ["academic"],
+      "spellLists": ["lesserPsyArcana"],
+      "startingSpells": 2,
+      "isLargeCreature": false,
+      "excludedWarbands": ["ordo-hereticus-retainers"],
+      "specialRules": "Skills: An Unsanctioned Psyker may choose skills from Academic skills list or they may randomly determine a new power from the Lesser Psy-Arcana power list. | Psyker: Unsanctioned Psykers are (oh wow, plot twist..) Psykers and have two powers generated at random from the Lesser Psy-Arcana list. | Unsanctioned: If an Unsanctioned Psyker rolls either double 1's or double 6's on his Psychic Power check. Roll another dice, if the result of this dice is a 1, a Daemon has used the Unsanctioned Psyker to manifest into the physical realm. The Unsanctioned Psyker is dead (remove him from the controlling players warband roster), in his place, place a Lesser Daemon (use the rules for a Plague Bearer in the Pox-Cult Warband Entry). It treats every model on the board as an enemy, and will charge the closest enemy model if able to. If it cannot charge, it will run toward the nearest enemy model in it's line of sight. It moves and charges at the start of each player turn. It involves itself it combat as per usual in each players combat phase.",
+      "source": "Mord Hive v0.5 p.128"
+    },
+    {
+      "id": "freelancerGuardsman",
+      "name": "Freelancer Guardsman",
+      "hireFee": 40,
+      "upkeep": 15,
+      "mayBeHiredBy": "Any 'Imperial' Warband may hire a Freelancer Guardsman.",
+      "ratingBonus": "A Freelancer Guardsman increases the warband rating by + 25 points plus 2 points for each Experience Point he has.",
+      "ratingBase": 25,
+      "statLine": { "M": 4, "WS": 4, "BS": 4, "S": 3, "T": 3, "W": 1, "I": 4, "A": 1, "Ld": 8 },
+      "equipment": "A Freelancer Guardsman has Heavy Armour, Helmet, Lasgun , Axe and a Lamp Pack.",
+      "skillLists": ["shooting", "strength"],
+      "isLargeCreature": false,
+      "imperialOnly": true,
+      "upkeepOverrides": { "imperial-guard-remnants": 10, "forsaken-astartes": 10 },
+      "specialRules": "\"I fought with your lot on ….\": A Freelance Guardsman's upkeep is only 10 if he is hired by a Imperial Guard Remnants or a Forsaken Astartes warband.",
+      "source": "Mord Hive v0.5 p.129"
+    },
+    {
+      "id": "krootRanger",
+      "name": "Kroot Ranger",
+      "hireFee": 50,
+      "upkeep": 15,
+      "mayBeHiredBy": "Any Warband may hire a Kroot Ranger, they will gladly work for pay or flesh.",
+      "ratingBonus": "A Kroot Tracker increases the warband's rating by +35 points, plus 2 points for each Experience Point he has.",
+      "ratingBase": 35,
+      "statLine": { "M": 5, "WS": 4, "BS": 4, "S": 4, "T": 3, "W": 1, "I": 3, "A": 1, "Ld": 8 },
+      "equipment": "Kroot Rifle, Club and a Cameoline Cloak,",
+      "skillLists": ["shooting", "speed"],
+      "isLargeCreature": false,
+      "xenos": true,
+      "specialRules": "Seeker: When rolling on the Exploration chart, the Kroot Tracker allows you to modify one dice roll by-1/+1. | Excellent Smell: A Kroots olfactory receptors are the stuff of legend. The Kroot 'spots' hidden enemies from two times as far away as other warriors (ie, twice his Initiative value in inches). | Voracious Appetite: Kroot are well known, and often vilified for eating their fallen enemies, but it is well ensconced within their nature and culture that they find it near impossible to hold it back. If a warband containing a Kroot Tracker finds any of the following locations, their results are instead as below: (3 3) - Corpse. The Kroot Loots and Eats the corpse before any other warband members can reach it. The Kroot Tracker gains 2XP. The Warband Gets nothing. (4 4 4 4 4 4) - Slaughtered Warband Again the Kroot rifles through and partially consumes some of the corpses before the rest of the warband's members can appear. The Kroot Gains 4 XP and may increase any 1 stat by +1. Due to the Kroots rifling, it is harder for warband to find anything of use amongst the half devoured bodies. Every D6 roll is at a –1 to find items (e.g. D3 suits of light armour, you would need a 5+ instead of a 4+ to find these items).",
+      "source": "Mord Hive v0.5 p.129"
+    }
+  ],
+  "startingEquipment": {
+    "chronoGladiator": {
+      "fixed": [
+        { "name": "Helmet", "category": "armour" },
+        { "name": "Light Armour", "category": "armour" },
+        { "name": "Chain Sword", "category": "melee", "notes": "Inbuilt." },
+        { "name": "Chain Axe", "category": "melee", "notes": "Inbuilt." }
+      ]
+    },
+    "ogrynBodyguard": {
+      "fixed": [{ "name": "Heavy Armour", "category": "armour" }],
+      "choice": [
+        { "label": "Two Swords", "items": [{ "name": "Sword", "category": "melee", "count": 2 }] },
+        { "label": "Two Axes", "items": [{ "name": "Axe", "category": "melee", "count": 2 }] },
+        { "label": "Two Clubs", "items": [{ "name": "Club", "category": "melee", "count": 2 }] },
+        { "label": "Sword and Axe", "items": [{ "name": "Sword", "category": "melee" }, { "name": "Axe", "category": "melee" }] },
+        { "label": "Sword and Club", "items": [{ "name": "Sword", "category": "melee" }, { "name": "Club", "category": "melee" }] },
+        { "label": "Axe and Club", "items": [{ "name": "Axe", "category": "melee" }, { "name": "Club", "category": "melee" }] },
+        { "label": "Double-Handed Weapon", "items": [{ "name": "Double-Handed Weapon", "category": "melee", "notes": "Choose which type." }] },
+        { "label": "Sword and Shield", "items": [{ "name": "Sword", "category": "melee" }, { "name": "Shield", "category": "armour" }] },
+        { "label": "Axe and Shield", "items": [{ "name": "Axe", "category": "melee" }, { "name": "Shield", "category": "armour" }] },
+        { "label": "Club and Shield", "items": [{ "name": "Club", "category": "melee" }, { "name": "Shield", "category": "armour" }] }
+      ]
+    },
+    "ratlingScout": {
+      "fixed": [
+        { "name": "Dagger", "category": "melee" },
+        { "name": "Helmet", "category": "armour" }
+      ],
+      "choice": [
+        { "label": "Lasgun", "items": [{ "name": "Lasgun", "category": "missile" }] },
+        { "label": "Autogun", "items": [{ "name": "Autogun", "category": "missile" }] }
+      ]
+    },
+    "unsanctionedPsyker": {
+      "fixed": [{ "name": "Club", "category": "melee" }]
+    },
+    "freelancerGuardsman": {
+      "fixed": [
+        { "name": "Heavy Armour", "category": "armour" },
+        { "name": "Helmet", "category": "armour" },
+        { "name": "Lasgun", "category": "missile" },
+        { "name": "Axe", "category": "melee" },
+        { "name": "Lamp Pack", "category": "misc" }
+      ]
+    },
+    "krootRanger": {
+      "fixed": [
+        { "name": "Kroot Rifle", "category": "missile" },
+        { "name": "Club", "category": "melee" },
+        { "name": "Cameoline Cloak", "category": "misc" }
+      ]
+    }
+  }
+}

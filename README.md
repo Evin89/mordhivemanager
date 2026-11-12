@@ -115,6 +115,16 @@ Manager now; defer the true `/packages` monorepo split to later).
   battles, leader tools (rename, new code, remove players), leave (leadership passes on; the last
   one out deletes it). `mh_0002`, RPCs `create_campaign` / `join_campaign` / `leave_campaign` /
   `regenerate_join_code`. Not yet: game nights, territories, awards.
+- ✅ **Hired Guns** — all six from v0.5 (pp.127-130: Chrono-Gladiator, Ogryn Bodyguard, Ratling
+  Scout, Unsanctioned Psyker, Freelancer Guardsman, Kroot Ranger) in `src/data/hiredGuns.json`, rules
+  text 1:1. Hire screen (one of each type; the bans warbands state by name are enforced, "Imperial"
+  and "Abhuman" are shown as checks), fixed starting gear incl. the Ogryn's loadout choice, two
+  random Lesser Psy-Arcana powers for the Psyker (list added to `spells.json`, p.020), a detail
+  screen without a shop, and post-battle injuries (1-2 lost), XP as a Henchman, advances on the
+  Heroes table and an Upkeep step. Rating uses each entry's own line (+N, +2 per XP).
+- ✅ **Battle history + rating over time** — `mh_0003` `mordhive.battles`, written when the
+  post-battle sequence is confirmed; the roster shows W-D-L, a rating line and the battles. A
+  battle by a campaign-linked warband also lands in that campaign's log.
 - ✅ **Account** — Mord Hive display name (own `mordhive.profiles`, separate from Mordheim
   Manager's), change password, sign out, and *remove my Mord Hive data* (`delete_my_data`). No
   account deletion here: the login is shared with Mordheim Manager.
