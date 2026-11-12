@@ -108,11 +108,21 @@ Manager now; defer the true `/packages` monorepo split to later).
   (`src/lib/postBattle.ts`). The advance tables and XP thresholds are the shared Mordheim mechanic
   the v0.5 book reuses. (Income is a totals entry for now; the full Exploration chart is a later
   addition.)
-- ◻️ **Campaigns** — standings, shared battle log, game nights — from Mordheim Manager, reskinned.
+- ✅ **Campaigns (built, waits on the backend switch-on)** — start a campaign, share a six-letter join
+  code, link a warband, standings by rating with W-D-L from the shared battle log, log and remove
+  battles, leader tools (rename, new code, remove players), leave (leadership passes on; the last
+  one out deletes it). `mh_0002`, RPCs `create_campaign` / `join_campaign` / `leave_campaign` /
+  `regenerate_join_code`. Not yet: game nights, territories, awards.
+- ✅ **Account** — Mord Hive display name (own `mordhive.profiles`, separate from Mordheim
+  Manager's), change password, sign out, and *remove my Mord Hive data* (`delete_my_data`). No
+  account deletion here: the login is shared with Mordheim Manager.
+- ✅ **Print sheet + public gallery** — `RosterSheet` prints ink-on-white from either theme
+  (`/warbands/:id/print`); warbands can be made public from the roster and appear in `/gallery`,
+  readable signed out, keyset-paged, filterable by list.
 - ◻️ **Remaining data TODOs** — verify skill-table access per warband; source the non-Human racial
   maximums; transcribe the Lost and the Damned ritual sub-lists and Weapons & Armour profiles;
   reconcile the handful of per-warband price differences the shared chart can't hold.
-- ◻️ **Solo mode (step 6)**, **print sheet + rules browser codex layouts (step 7)**.
+- ◻️ **Rules browser codex layout (step 7)**.
 
 ## The two hard lines (spec §8)
 

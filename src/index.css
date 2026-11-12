@@ -204,6 +204,9 @@ body,
  * ink on white.
  */
 .print-sheet {
+  /* Keep the black banners black on paper: browsers drop backgrounds by default. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   --color-page: 255 255 255;
   --color-plate: 255 255 255;
   --color-banner: 0 0 0;
@@ -218,4 +221,28 @@ body,
   --color-steel: 0 0 0;
   --color-steel-l: 120 120 120;
   --color-bolt: 0 0 0;
+}
+
+/* Printing (§5): only the sheet goes on paper — app chrome, the chevron rails
+   and the print button itself stay on screen. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  /* White paper whatever the theme: the page behind the sheet prints white. */
+  html,
+  html[data-theme] {
+    --color-page: 255 255 255;
+  }
+  .no-print,
+  .chevron-rail {
+    display: none !important;
+  }
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  .print-sheet {
+    padding: 0 !important;
+  }
 }
