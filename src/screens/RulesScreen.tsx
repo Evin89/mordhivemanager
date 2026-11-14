@@ -12,6 +12,18 @@ import { EQUIPMENT_CATEGORY_LABELS, groupByCategory } from '../lib/equipmentCate
 import { EquipmentCategory } from '../types';
 import { SkillList, SpellList } from '../data/types';
 
+/** Official Mord Hive links, as published by its author (Nick) in the v0.5 rulebook and his announcement post. */
+const RESOURCES = [
+  {
+    label: 'Mord Hive v0.5 rulebook (PDF)',
+    href: 'https://drive.google.com/drive/folders/1rSFnIEstQpbZh11AdRdanLLqK31RwCsF?usp=sharing',
+    note: "the author's Google Drive folder with the full rules",
+  },
+  { label: 'Feedback form', href: 'https://forms.gle/voZxiSghBGDbFAB79', note: 'send rules feedback to the author' },
+  { label: 'Mord Hive on Reddit', href: 'https://www.reddit.com/r/MordHive/', note: 'r/MordHive' },
+  { label: 'Mord Hive on Facebook', href: 'https://www.facebook.com/share/g/1EbEMuzzpb/', note: 'the Facebook group' },
+];
+
 type Entry = { title: string; body: string; sub?: string };
 type Section = { id: string; heading: string; entries: Entry[] };
 
@@ -97,6 +109,22 @@ export default function RulesScreen() {
         Generated live from the app's own Mord Hive v0.5 data. Search skills, wargear, psychic
         powers and prayers, and every warband's special rules.
       </p>
+      <section aria-label="Resources" className="space-y-3">
+        <BannerHeader as="h2">Resources</BannerHeader>
+        <Plate className="p-3">
+          <ul className="space-y-1 font-body text-ink text-body-min">
+            {RESOURCES.map((r) => (
+              <li key={r.href}>
+                <a className="inline-flex items-center min-h-[44px] underline text-brass-text" href={r.href} target="_blank" rel="noopener noreferrer">
+                  {r.label}
+                </a>
+                <span className="text-ink-faded"> — {r.note}</span>
+              </li>
+            ))}
+          </ul>
+        </Plate>
+      </section>
+
       <TextField
         value={query}
         onChange={(e) => setQuery(e.target.value)}
