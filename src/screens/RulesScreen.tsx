@@ -24,8 +24,9 @@ const RESOURCES = [
   { label: 'Mord Hive on Facebook', href: 'https://www.facebook.com/share/g/1EbEMuzzpb/', note: 'the Facebook group' },
 ];
 
-type Entry = { title: string; body: string; sub?: string };
-type Section = { id: string; heading: string; entries: Entry[] };
+type Entry = { title: string; body: string; sub?: string; group?: string };
+/** `grouped`: render one dropdown per `entry.group` (e.g. each psychic discipline) instead of one flat list. */
+type Section = { id: string; heading: string; entries: Entry[]; grouped?: boolean };
 
 /**
  * A searchable, offline rules reference generated from the app's own data, so a
@@ -69,10 +70,12 @@ export default function RulesScreen() {
     out.push({
       id: 'powers',
       heading: 'Psychic Powers & Prayers',
+      grouped: true,
       entries: spellLists.flatMap((list) =>
         list.spells.map((sp) => ({
           title: sp.name,
-          sub: `${list.name}${sp.difficulty !== null ? ` · Difficulty ${sp.difficulty}` : ''}`,
+          group: list.name,
+          sub: sp.difficulty !== null ? `Difficulty ${sp.difficulty}` : undefined,
           body: sp.effect,
         })),
       ),
@@ -95,7 +98,7 @@ export default function RulesScreen() {
       .map((s) => ({
         ...s,
         entries: s.entries.filter((e) =>
-          `${e.title} ${e.sub ?? ''} ${e.body}`.toLowerCase().includes(q),
+          `${e.title} ${e.group ?? ''} ${e.sub ?? ''} ${e.body}`.toLowerCase().includes(q),
         ),
       }))
       .filter((s) => s.entries.length > 0);
@@ -139,24 +142,55 @@ export default function RulesScreen() {
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{section.entries.length}</PageChip>}>
             {section.heading}
           </BannerHeader>
-          {/* Collapsed by default when not searching, so the page opens as a chapter list. */}
-          <details open={!!q || section.entries.length <= 12}>
-            <summary className="cursor-pointer font-display uppercase tracking-[0.05em] text-ink-faded text-sm px-1 py-1 select-none">
-              {q ? 'Matches' : 'Show entries'}
-            </summary>
-            <div className="mt-2 space-y-2">
-              {section.entries.map((e, i) => (
-                <Plate key={`${e.title}-${i}`} className="p-3">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{e.title}</span>
-                    {e.sub && <span className="font-body text-ink-faded text-xs shrink-0">{e.sub}</span>}
-                  </div>
-                  <p className="mt-1 font-body text-ink text-body-min leading-relaxed">{e.body}</p>
-                </Plate>
+          {section.grouped ? (
+            /* One dropdown per discipline; all closed until you open one or search. */
+            <div className="space-y-2">
+              {groupEntries(section.entries).map(([group, entries]) => (
+                <details key={group} open={!!q}>
+                  <summary className="cursor-pointer flex items-center justify-between gap-2 min-h-[44px] px-3 bg-plate border border-steel-d font-display uppercase tracking-[0.05em] text-ink text-sm select-none">
+                    <span>{group}</span>
+                    <PageChip>{entries.length}</PageChip>
+                  </summary>
+                  <EntryList entries={entries} />
+                </details>
               ))}
             </div>
-          </details>
+          ) : (
+            /* Collapsed by default when not searching, so the page opens as a chapter list. */
+            <details open={!!q || section.entries.length <= 12}>
+              <summary className="cursor-pointer font-display uppercase tracking-[0.05em] text-ink-faded text-sm px-1 py-1 select-none">
+                {q ? 'Matches' : 'Show entries'}
+              </summary>
+              <EntryList entries={section.entries} />
+            </details>
+          )}
         </section>
+      ))}
+    </div>
+  );
+}
+
+/** Groups entries by `group`, keeping the order in which groups first appear. */
+function groupEntries(entries: Entry[]): [string, Entry[]][] {
+  const map = new Map<string, Entry[]>();
+  for (const e of entries) {
+    const key = e.group ?? 'Other';
+    map.set(key, [...(map.get(key) ?? []), e]);
+  }
+  return [...map.entries()];
+}
+
+function EntryList({ entries }: { entries: Entry[] }) {
+  return (
+    <div className="mt-2 space-y-2">
+      {entries.map((e, i) => (
+        <Plate key={`${e.title}-${i}`} className="p-3">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="font-display uppercase tracking-[0.04em] text-ink text-sm">{e.title}</span>
+            {e.sub && <span className="font-body text-ink-faded text-xs shrink-0">{e.sub}</span>}
+          </div>
+          <p className="mt-1 font-body text-ink text-body-min leading-relaxed">{e.body}</p>
+        </Plate>
       ))}
     </div>
   );
