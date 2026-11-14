@@ -82,10 +82,21 @@ export default function RulesScreen() {
     });
 
     // Warband special rules
+    // Warbands: one dropdown each, with the warband's special rules and its own skill list.
+    const warbandSkills = skillsData.warbandSpecific as Record<string, SkillList>;
     out.push({
       id: 'warband-rules',
-      heading: 'Warband Special Rules',
-      entries: warbandDefinitionsByName.map((w) => ({ title: w.name, body: w.specialRules })),
+      heading: 'Warbands',
+      grouped: true,
+      entries: warbandDefinitionsByName.flatMap((w) => [
+        { title: 'Special Rules', group: w.name, body: w.specialRules },
+        ...(warbandSkills[w.id]?.skills ?? []).map((sk) => ({
+          title: sk.name,
+          group: w.name,
+          sub: 'Warband skill',
+          body: sk.effect,
+        })),
+      ]),
     });
 
     return out;
@@ -110,7 +121,7 @@ export default function RulesScreen() {
       <Link to="/scenarios" className="inline-flex items-center min-h-[44px] underline">Open scenario generator</Link>
       <p className="font-body text-ink text-body-min">
         Generated live from the app's own Mord Hive v0.5 data. Search skills, wargear, psychic
-        powers and prayers, and every warband's special rules.
+        powers and prayers, and every warband's special rules and own skills.
       </p>
       <section aria-label="Resources" className="space-y-3">
         <BannerHeader as="h2">Resources</BannerHeader>
