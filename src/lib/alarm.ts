@@ -28,5 +28,7 @@ export function advanceTurn(s: BattleSession): BattleSession {
  }
  messages.push(`Alarm ${s.alarm} (grade ${grade}): ${added.length} reinforcement(s)${added.length ? ' — '+added.map(r=>`${r.unitType} at ${r.entry}`).join('; ') : ''}`);
  if(grade===3) { const event=rollHiveEvent(); messages.push(`Hive event ${event.roll}: ${event.text}`); }
- return {...next,npcReinforcements:[...s.npcReinforcements,...added],events:[...messages.map(text=>({id:generateId(),turn:next.turn,text})),...s.events]};
+ // Every model that answers the alarm quiets it by 2, so the meter only stays high while the noise continues.
+ const alarm=Math.max(0,s.alarm-2*added.length);
+ return {...next,alarm,npcReinforcements:[...s.npcReinforcements,...added],events:[...messages.map(text=>({id:generateId(),turn:next.turn,text})),...s.events]};
 }

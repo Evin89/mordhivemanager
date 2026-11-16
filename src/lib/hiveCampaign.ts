@@ -202,7 +202,15 @@ function entry(state: HiveState, kind: HiveChronicleEntry['kind'], text: string,
   return { turn: state.turn, kind, text, sector, date: new Date().toISOString() };
 }
 
-export function hiveMoves(state: HiveState, chosenId: string, context: HiveContext, rand: Random = Math.random): HiveState {
+/** The hive's answer after a mission. A win holds the nemesis in place for the
+ *  turn (`nemesisChecked`); after a draw or a loss it advances one sector. */
+export function hiveMoves(
+  state: HiveState,
+  chosenId: string,
+  context: HiveContext,
+  rand: Random = Math.random,
+  nemesisChecked = false,
+): HiveState {
   const control = { ...state.control };
   const chronicle = [...state.chronicle];
   state.board.filter((mission) => mission.id !== chosenId && mission.stake === 'defence').forEach((mission) => {
@@ -211,7 +219,10 @@ export function hiveMoves(state: HiveState, chosenId: string, context: HiveConte
   });
   const eligible = SECTORS.filter(({ id }) => control[id] > -3);
   const adjacent = eligible.filter(({ id }) => adjacentSectors(id).some((other) => control[other] <= -1));
-  const target = pick(adjacent.length ? adjacent : eligible, rand);
+  const target = nemesisChecked ? undefined : pick(adjacent.length ? adjacent : eligible, rand);
+  if (nemesisChecked) {
+    chronicle.push(entry(state, 'nemesis', `The ${context.faction} gained no ground this turn.`));
+  }
   if (target) {
     control[target.id] = clamp(control[target.id] - 1);
     const leader = state.nemesis.find((hero) => hero.isLeader && hero.status === 'active');
@@ -287,7 +298,7 @@ export function resolveMission(
     ...state, nemesis,
     control: applyMissionControl(state, mission, result, rand),
     chronicle: [...state.chronicle, entry(state, 'battle', text, mission.sector)],
-  }, missionId, context, rand);
+  }, missionId, context, rand, result === 'win');
 }
 
 export function abandonMission(state: HiveState, context: HiveContext, rand: Random = Math.random): HiveState {
