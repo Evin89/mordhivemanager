@@ -590,3 +590,6 @@ body,
 .wanted-bill .wanted-deceased{color:rgb(var(--color-wax));border:4px solid currentColor;transform:rotate(-4deg);max-width:260px;margin-inline:auto}
 .wanted-bill .portrait-large{width:190px}
 .hive-last-seen{align-self:flex-start;font:600 12px 'Barlow Condensed',sans-serif;letter-spacing:.04em;padding:1px 6px;color:#f4d9d4;background:rgb(var(--color-wax))}
+
+/* Small section labels inside the warband rules tabs (Grenze stays for titles of 22px and up). */
+[data-theme='plated'] h4.rules-label{font:600 14px/1.2 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.06em;color:rgb(var(--color-ink-faded))}

@@ -11,6 +11,8 @@ import { warbandDefinitionsByName } from '../data/warbandRegistry';
 import { EQUIPMENT_CATEGORY_LABELS, groupByCategory } from '../lib/equipmentCategories';
 import { EquipmentCategory } from '../types';
 import { SkillList, SpellList } from '../data/types';
+import { playerText } from '../lib/playerText';
+import WarbandRulesTabs, { warbandRuleParagraphs, warbandSkills, warbandUnitRules } from '../components/WarbandRulesTabs';
 
 /** Official Mord Hive links, as published by its author (Nick) in the v0.5 rulebook and his announcement post. */
 const RESOURCES = [
@@ -26,7 +28,8 @@ const RESOURCES = [
 
 type Entry = { title: string; body: string; sub?: string; group?: string };
 /** `grouped`: render one dropdown per `entry.group` (e.g. each psychic discipline) instead of one flat list. */
-type Section = { id: string; heading: string; entries: Entry[]; grouped?: boolean };
+/** `tabs`: when not searching, render the section as one tab per warband instead. */
+type Section = { id: string; heading: string; entries: Entry[]; grouped?: boolean; tabs?: boolean };
 
 /**
  * A searchable, offline rules reference generated from the app's own data, so a
@@ -48,7 +51,7 @@ export default function RulesScreen() {
       id: 'skills',
       heading: 'Skills',
       entries: skillLists.flatMap((list) =>
-        list.skills.map((s) => ({ title: s.name, sub: list.name, body: s.effect })),
+        list.skills.map((s) => ({ title: s.name, sub: list.name, body: playerText(s.effect) })),
       ),
     });
 
@@ -56,7 +59,7 @@ export default function RulesScreen() {
     const items = equipmentData.common.map((e) => ({
       title: e.name,
       sub: EQUIPMENT_CATEGORY_LABELS[e.category as EquipmentCategory],
-      body: `${e.cost ?? '?'} tn${e.notes ? ` — ${e.notes}` : ''}`,
+      body: `${e.cost ?? '?'} tn${e.notes && playerText(e.notes) ? ` — ${playerText(e.notes)}` : ''}`,
       category: e.category as EquipmentCategory,
     }));
     out.push({
@@ -76,26 +79,29 @@ export default function RulesScreen() {
           title: sp.name,
           group: list.name,
           sub: sp.difficulty !== null ? `Difficulty ${sp.difficulty}` : undefined,
-          body: sp.effect,
+          body: playerText(sp.effect),
         })),
       ),
     });
 
-    // Warband special rules
-    // Warbands: one dropdown each, with the warband's special rules and its own skill list.
-    const warbandSkills = skillsData.warbandSpecific as Record<string, SkillList>;
+    // Warbands: one tab each (see WarbandRulesTabs). The entries below only feed
+    // the search, so a rule found by searching names its warband.
     out.push({
       id: 'warband-rules',
       heading: 'Warbands',
       grouped: true,
+      tabs: true,
       entries: warbandDefinitionsByName.flatMap((w) => [
-        { title: 'Special Rules', group: w.name, body: w.specialRules },
-        ...(warbandSkills[w.id]?.skills ?? []).map((sk) => ({
-          title: sk.name,
-          group: w.name,
-          sub: 'Warband skill',
-          body: sk.effect,
-        })),
+        ...warbandRuleParagraphs(w).map((body) => ({ title: 'Special Rules', group: w.name, body })),
+        ...warbandUnitRules(w).flatMap((u) =>
+          u.rules.map((r) => ({
+            title: r.name,
+            group: w.name,
+            sub: u.unit,
+            body: r.note ? `${r.description} ${r.note}` : r.description,
+          })),
+        ),
+        ...warbandSkills(w).map((sk) => ({ title: sk.name, group: w.name, sub: 'Warband skill', body: sk.effect })),
       ]),
     });
 
@@ -121,7 +127,7 @@ export default function RulesScreen() {
       <Link to="/scenarios" className="inline-flex items-center min-h-[44px] underline">Open scenario generator</Link>
       <p className="font-body text-ink text-body-min">
         Generated live from the app's own Mord Hive v0.5 data. Search skills, wargear, psychic
-        powers and prayers, and every warband's special rules and own skills.
+        powers and prayers, and every warband's special rules, unit rules and own skills.
       </p>
       <section aria-label="Resources" className="space-y-3">
         <BannerHeader as="h2">Resources</BannerHeader>
@@ -150,10 +156,18 @@ export default function RulesScreen() {
 
       {filtered.map((section) => (
         <section key={section.id} className="space-y-3">
-          <BannerHeader trailing={<PageChip className="border-on-banner/40">{section.entries.length}</PageChip>}>
+          <BannerHeader
+            trailing={
+              <PageChip className="border-on-banner/40">
+                {section.tabs && !q ? warbandDefinitionsByName.length : section.entries.length}
+              </PageChip>
+            }
+          >
             {section.heading}
           </BannerHeader>
-          {section.grouped ? (
+          {section.tabs && !q ? (
+            <WarbandRulesTabs />
+          ) : section.grouped ? (
             /* One dropdown per discipline; all closed until you open one or search. */
             <div className="space-y-2">
               {groupEntries(section.entries).map(([group, entries]) => (
