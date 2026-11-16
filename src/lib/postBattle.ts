@@ -105,6 +105,7 @@ export type PostBattleDraft = {
   diamantineFound: number;
   goldFound: number;
   notes: string;
+  endeavourAwards: string[];
 };
 
 /** Builds the initial draft: casualties come from the battle tally; the
@@ -113,10 +114,12 @@ export type PostBattleDraft = {
 export function createDraft(warband: Warband, session: BattleSession | undefined): PostBattleDraft {
   const win = false; // set by the player in Battle Info; XP recomputed there
   const heroes: Record<string, HeroPB> = {};
+  const joker = session?.endeavours?.find(c => c.cardId === 'deal-with-death' && c.used);
+  const jokerResult = injuriesData.table.find(row => row.roll === '66');
   for (const h of warband.heroes) {
     heroes[h.id] = {
       outOfAction: session?.outOfAction.heroIds.includes(h.id) ?? false,
-      injury: null,
+      injury: joker?.modelId === h.id && jokerResult ? {roll:'66', name:jokerResult.name, effect:jokerResult.effect} : null,
       dies: false,
       xpGained: 1, // +1 Survives
       advances: [],
@@ -136,12 +139,12 @@ export function createDraft(warband: Warband, session: BattleSession | undefined
     if (h.status !== 'active' && h.status !== 'missNextGame') continue;
     hired[h.id] = { outOfAction: false, lost: false, xpGained: 1, advances: [], keep: true };
   }
-  const enemiesTakenOut = session?.npcOutOfAction
+  const enemiesTakenOut = (session?.npcReinforcements?.filter(r => r.outOfAction).length ?? 0) + (session?.npcOutOfAction
     ? session.npcOutOfAction.heroIds.length +
       Object.values(session.npcOutOfAction.henchmenCounts).reduce((s, n) => s + n, 0)
-    : 0;
+    : 0);
 
-  return { result: win ? 'win' : 'draw', enemiesTakenOut, heroes, henchmen, hired, diamantineFound: 0, goldFound: 0, notes: '' };
+  return { result: session?.result ?? (win ? 'win' : 'draw'), enemiesTakenOut, heroes, henchmen, hired, diamantineFound: 0, goldFound: 0, notes: '', endeavourAwards: [] };
 }
 
 // Injury → concrete effects the app can apply. Anything not mapped is recorded

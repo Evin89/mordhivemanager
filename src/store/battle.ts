@@ -7,6 +7,9 @@
 // when it lands, reads the same tally it does there.
 
 import { Warband } from '../types';
+import type { Behaviour } from '../lib/behaviours';
+import type { Endeavour } from '../lib/endeavours';
+import { StatLine, BattleResult } from '../types';
 import { NpcAgenda } from '../lib/npc';
 
 export type BattleEvent = {
@@ -52,6 +55,16 @@ export type BattleSession = {
   npcAgendaRevealed: boolean;
   /** Seed for the generated SVG battlefield; null until a map is rolled. */
   battlefieldSeed: number | null;
+  npcBehaviours: Record<string, Behaviour>;
+  behaviourTicks: Record<string, number[]>;
+  alarmEnabled: boolean;
+  alarm: number;
+  npcReinforcements: { id: string; unitType: string; stats: StatLine; equipment: string[]; entry: string; behaviour: Behaviour; outOfAction: boolean }[];
+  endeavourDraw: 'none' | 'd3' | '2d3';
+  endeavours: Endeavour[];
+  allies: { warband: Warband; outOfAction: OutOfActionTally; source: 'own' | 'gallery'; endeavours: Endeavour[] }[];
+  result?: BattleResult;
+  postBattleComplete?: boolean;
 };
 
 export function defaultBattleSession(warbandId: string): BattleSession {
@@ -70,6 +83,8 @@ export function defaultBattleSession(warbandId: string): BattleSession {
     npcAgenda: null,
     npcAgendaRevealed: false,
     battlefieldSeed: null,
+    npcBehaviours: {}, behaviourTicks: {}, alarmEnabled: false, alarm: 0, npcReinforcements: [],
+    endeavourDraw: 'none', endeavours: [], allies: [],
   };
 }
 
@@ -81,7 +96,10 @@ export function loadBattleSession(warbandId: string): BattleSession | undefined 
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as BattleSession;
     // Merge onto the default so a session written by an older shape still loads.
-    return { ...defaultBattleSession(warbandId), ...parsed, warbandId };
+    return { ...defaultBattleSession(warbandId), ...parsed,
+      allies: (parsed.allies ?? []).map(a => ({...a, endeavours:a.endeavours ?? []})),
+      alarm: Math.max(0, Math.min(15, parsed.alarm ?? 0)),
+      alarmEnabled: parsed.alarmEnabled ?? !!parsed.npcWarband, warbandId };
   } catch {
     return undefined;
   }

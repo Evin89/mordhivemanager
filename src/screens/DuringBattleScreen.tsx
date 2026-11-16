@@ -1,4 +1,12 @@
-import { useState } from 'react';
+import EnemyInstructions from '../components/EnemyInstructions';
+import BehaviourCard from '../components/BehaviourCard';
+import AlarmPanel from '../components/AlarmPanel';
+import EndeavourCards from '../components/EndeavourCards';
+import { AllyCasualties } from '../components/BattleExtrasSetup';
+import SoloNote from '../components/SoloNote';
+import { assignBehaviours, baseBehaviour } from '../lib/behaviours';
+import { advanceTurn } from '../lib/alarm';
+import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
@@ -9,7 +17,7 @@ import { Button, TextField } from '../components/ui';
 import { useWarbands, useWarbandLookup } from '../store/warbands';
 import { generateId } from '../lib/id';
 import { countModels, isInWarband } from '../lib/rating';
-import { suggestNpcAction, TEMPERAMENT_LABELS, TEMPERAMENT_HINTS } from '../lib/npc';
+import { TEMPERAMENT_LABELS, TEMPERAMENT_HINTS } from '../lib/npc';
 import { generateBattlefield } from '../lib/battlefield';
 import BattlefieldMap from '../components/BattlefieldMap';
 import Oracle from '../components/Oracle';
@@ -39,6 +47,15 @@ export default function DuringBattleScreen() {
   const [oracleOpen, setOracleOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
 
+  useEffect(() => {
+    if (!session.npcWarband) return;
+    const actors = [...session.npcWarband.heroes, ...session.npcWarband.henchmenGroups];
+    if (actors.some(a => !session.npcBehaviours[a.id])) {
+      const next = {...session, npcBehaviours: {...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours}};
+      setSession(next); saveBattleSession(next);
+    }
+  }, [session]);
+
   if (!warband) return <Navigate to="/warbands" replace />;
   if (!session.started) return <Navigate to={`/warbands/${warband.id}/pre-battle`} replace />;
 
@@ -46,9 +63,7 @@ export default function DuringBattleScreen() {
   const activeHeroes = warband.heroes.filter((h) => isInWarband(h.status));
 
   function update(patch: Partial<BattleSession>) {
-    const next = { ...session, ...patch };
-    setSession(next);
-    saveBattleSession(next);
+    setSession(current => { const next = { ...current, ...patch }; saveBattleSession(next); return next; });
   }
 
   function logEvent(text: string) {
@@ -61,7 +76,7 @@ export default function DuringBattleScreen() {
     if (delta < 0) {
       if (!window.confirm('Step the turn counter back?')) return;
     }
-    update({ turn: Math.max(1, session.turn + delta) });
+    update(delta > 0 ? advanceTurn(session) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
   }
 
   function toggleHero(id: string) {
@@ -97,7 +112,16 @@ export default function DuringBattleScreen() {
   }
 
   function endBattle() {
-    if (!warband) return;
+    useEffect(() => {
+    if (!session.npcWarband) return;
+    const actors = [...session.npcWarband.heroes, ...session.npcWarband.henchmenGroups];
+    if (actors.some(a => !session.npcBehaviours[a.id])) {
+      const next = {...session, npcBehaviours: {...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours}};
+      setSession(next); saveBattleSession(next);
+    }
+  }, [session]);
+
+  if (!warband) return;
     if (window.confirm('Finish the battle and run the post-battle sequence?')) {
       navigate(`/warbands/${warband.id}/post-battle`);
     }
@@ -108,7 +132,7 @@ export default function DuringBattleScreen() {
     Object.values(session.outOfAction.henchmenCounts).reduce((s, n) => s + n, 0);
 
   return (
-    <div>
+    <div className="battle-full-width">
       <BackHeader title="Battle" to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
         {/* Turn + summary */}
@@ -129,6 +153,8 @@ export default function DuringBattleScreen() {
           <p className="mt-4 font-ui">{totalOoa} of {countModels(warband)} out of action</p><div className="flex gap-1 mt-2" aria-hidden="true">{Array.from({ length: countModels(warband) }, (_, i) => <span key={i} className={`h-2 flex-1 ${i < totalOoa ? 'bg-wax' : 'bg-brass'}`} />)}</div>
         </Plate>
 
+        <div className="battle-table">
+        <div className="battle-players space-y-4">
         {/* Casualties */}
         <section className="space-y-3">
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{totalOoa} OOA</PageChip>}>
@@ -187,6 +213,9 @@ export default function DuringBattleScreen() {
           </Plate>
         </section>
 
+        <EndeavourCards warband={warband} cards={session.endeavours} onChange={endeavours=>update({endeavours})} onLog={logEvent}/>
+        {session.allies.map((a,i)=><div key={a.warband.id} className="space-y-3"><AllyCasualties warband={a.warband} tally={a.outOfAction} onChange={outOfAction=>update({allies:session.allies.map((b,j)=>j===i?{...b,outOfAction}:b)})}/><EndeavourCards warband={a.warband} cards={a.endeavours??[]} onChange={endeavours=>update({allies:session.allies.map((b,j)=>j===i?{...b,endeavours}:b)})} onLog={logEvent}/></div>)}
+        </div><div className="battle-enemy space-y-4">
         {/* Enemy (AI opponent) */}
         {session.npcWarband && (
           <section className="space-y-3">
@@ -225,6 +254,8 @@ export default function DuringBattleScreen() {
                 )}
               </Plate>
             )}
+            <p className="font-ui">Enemy out of action: {session.npcOutOfAction.heroIds.length + Object.values(session.npcOutOfAction.henchmenCounts).reduce((sum,n)=>sum+n,0) + session.npcReinforcements.filter(r=>r.outOfAction).length} / {countModels(session.npcWarband) + session.npcReinforcements.length}</p>
+            <EnemyInstructions temperament={session.npcAgenda?.temperament}/>
             <Plate className="p-3 space-y-3">
               {/* Enemy heroes */}
               <ul className="space-y-2">
@@ -251,9 +282,7 @@ export default function DuringBattleScreen() {
                         </>
                       )}
                       {aiOpen && !down && (
-                        <p className="font-body text-ink-faded text-xs pl-1">
-                          ▸ {suggestNpcAction({ name: h.name, unitType: h.unitType, isLeader: h.isLeader, isAnimal: false, stats: h.stats }, session.turn, session.npcAgenda?.temperament)}
-                        </p>
+                        <BehaviourCard id={h.id} name={h.name} behaviour={session.npcBehaviours[h.id] ?? baseBehaviour(h)} session={session} update={update} />
                       )}
                     </li>
                   );
@@ -288,9 +317,7 @@ export default function DuringBattleScreen() {
                           </>
                         )}
                         {aiOpen && !wiped && (
-                          <p className="font-body text-ink-faded text-xs pl-1">
-                            ▸ {suggestNpcAction({ name: g.groupName, unitType: g.unitType, isLeader: false, isAnimal: g.isAnimal, stats: g.stats }, session.turn, session.npcAgenda?.temperament)}
-                          </p>
+                          <BehaviourCard id={g.id} name={g.groupName} behaviour={session.npcBehaviours[g.id] ?? baseBehaviour(g)} session={session} update={update} />
                         )}
                       </li>
                     );
@@ -301,6 +328,9 @@ export default function DuringBattleScreen() {
           </section>
         )}
 
+        {session.npcReinforcements.map(r=><Plate key={r.id} className="p-3 space-y-2"><SoloNote/><h3 className="font-heading text-2xl">{r.unitType} - Reinforcement</h3><p className="font-body text-sm">Entry: {r.entry}</p><ProfileBlock stats={r.stats} variant="collapsed"/><p className="font-body text-xs">Wargear: {r.equipment.join(', ')}</p><Button variant={r.outOfAction?'danger':'secondary'} onClick={()=>update({npcReinforcements:session.npcReinforcements.map(a=>a.id===r.id?{...a,outOfAction:!a.outOfAction}:a)})}>{r.outOfAction?'Out of action':'Standing'}</Button>{!r.outOfAction&&<BehaviourCard id={r.id} name={r.unitType} behaviour={session.npcBehaviours[r.id]??r.behaviour} session={session} update={update}/>}</Plate>)}
+        </div><div className="battle-cogitator space-y-4">
+        <AlarmPanel session={session} update={update}/>
         {/* Battlefield map */}
         {session.battlefieldSeed !== null && (
           <section className="space-y-3">
@@ -367,6 +397,7 @@ export default function DuringBattleScreen() {
           )}
         </section>
 
+        </div></div>
         {/* Read-only roster reference */}
         <section className="space-y-3">
           <BannerHeader>Roster Reference</BannerHeader>

@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Hero, Warband } from '../types';
 import { defaultPortraitIndex, PORTRAIT_SETS, portraitUrl, resolvePortraitSrc } from '../data/portraits';
 import { processPortraitPhoto } from '../lib/portraitPhoto';

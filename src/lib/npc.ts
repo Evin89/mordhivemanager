@@ -14,7 +14,7 @@ import { generateId } from './id';
  * modest: one melee weapon capped at 30 tn where possible, the cheapest missile,
  * the cheapest armour — enough to fight, not a gilded elite.
  */
-function equipNpcModel(def: WarbandDefinition, equipmentOptions: string[], stats: StatLine): EquipmentItem[] {
+export function equipNpcModel(def: WarbandDefinition, equipmentOptions: string[], stats: StatLine): EquipmentItem[] {
   const ids = new Set<string>();
   for (const listId of equipmentOptions) for (const id of def.equipmentLists[listId] ?? []) ids.add(id);
   const items = [...ids]

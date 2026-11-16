@@ -444,3 +444,16 @@ body,
 .portrait-choices small{color:#D0B67C}
 
 .portrait-placeholder{top:19.85%}
+/* At-table layout: cogitator leads on phones, three work areas on tablets. */
+.battle-table { display: flex; flex-direction: column; gap: 1.5rem; }
+.battle-cogitator { order: -1; }
+.battle-table > * { min-width: 0; }
+.battle-table :is(button, select, summary) { min-height: 44px; }
+@media (min-width: 900px) {
+  .battle-full-width { width: min(1400px, calc(100vw - 48px)); position: relative; left: 50%; transform: translateX(-50%); }
+  .battle-table { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+  .battle-cogitator { order: initial; }
+}
+.endeavour-card{background:rgb(var(--color-vellum));color:rgb(var(--color-vellum-ink))}
+.endeavour-card h3{color:rgb(var(--color-vellum-ink))}
+.endeavour-card p{color:rgb(var(--color-vellum-ink))}

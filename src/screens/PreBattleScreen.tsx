@@ -1,3 +1,6 @@
+import BattleExtrasSetup from '../components/BattleExtrasSetup';
+import { drawEndeavours } from '../lib/endeavours';
+import { assignBehaviours } from '../lib/behaviours';
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -43,13 +46,15 @@ export default function PreBattleScreen() {
     const def = getWarbandDefinition(campaign.nemesisType);
     if (!def) return;
     const npc = buildNpcWarband(def, budgetForAct(campaign.act));
+    const agenda = generateAgenda();
     const next: BattleSession = {
       ...session,
       npcWarband: npc,
       opponentName: npc.name,
       opponentWarbandId: null,
-      npcAgenda: generateAgenda(),
+      npcAgenda: agenda,
       npcAgendaRevealed: false,
+      alarmEnabled: true, npcBehaviours: assignBehaviours(npc, agenda), behaviourTicks: {}, npcReinforcements: [],
     };
     setSession(next);
     saveBattleSession(next);
@@ -86,22 +91,28 @@ export default function PreBattleScreen() {
     const def = warbandDefinitionsByName.find((d) => d.id === npcTypeId);
     if (!def) return;
     const npc = buildNpcWarband(def, npcBudget);
+    const agenda = generateAgenda();
     update({
       npcWarband: npc,
       opponentName: npc.name,
       opponentWarbandId: null,
-      npcAgenda: generateAgenda(),
+      npcAgenda: agenda,
       npcAgendaRevealed: false,
+      alarmEnabled: true, npcBehaviours: assignBehaviours(npc, agenda), behaviourTicks: {}, npcReinforcements: [],
     });
   }
 
   function clearNpc() {
-    update({ npcWarband: null, npcAgenda: null, npcAgendaRevealed: false });
+    update({ npcWarband: null, npcAgenda: null, npcAgendaRevealed: false, alarmEnabled:false, npcBehaviours:{}, behaviourTicks:{}, npcReinforcements:[], allies:[] });
   }
 
   function startBattle() {
     if (!warband) return;
-    update({ started: true, turn: 1 });
+    update({ started: true, turn: session.started ? session.turn : 1,
+      npcBehaviours: session.npcWarband ? { ...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours } : {},
+      endeavours: session.started ? session.endeavours : drawEndeavours(session.endeavourDraw),
+      allies: session.allies.map(a => ({...a, endeavours: session.started ? a.endeavours : drawEndeavours(session.endeavourDraw)})),
+    });
     navigate(`/warbands/${warband.id}/battle`, { replace: true });
   }
 
@@ -246,7 +257,7 @@ export default function PreBattleScreen() {
                   </p>
                 )}
                 <div className="mt-2 flex gap-2">
-                  <Button size="dense" variant="secondary" fullWidth={false} onClick={generateNpc}>Re-roll</Button>
+                  <label className="font-ui">Budget<TextField type="number" min={0} value={npcBudget} onChange={e=>setNpcBudget(Math.max(0,Number(e.target.value)||0))}/></label><Button size="dense" variant="secondary" fullWidth={false} onClick={generateNpc}>Re-roll</Button>
                   <Button size="dense" variant="secondary" fullWidth={false} onClick={clearNpc}>Remove</Button>
                 </div>
               </Plate>
@@ -266,6 +277,7 @@ export default function PreBattleScreen() {
                     <option value={350}>Skirmish (350 tn)</option>
                     <option value={500}>Even (500 tn)</option>
                     <option value={650}>Overwhelming (650 tn)</option>
+                    {![350,500,650].includes(npcBudget) && <option value={npcBudget}>Combined strength ({npcBudget} tn)</option>}
                   </Select>
                 </label>
                 <Button size="dense" fullWidth={false} onClick={generateNpc}>Generate</Button>
@@ -277,6 +289,7 @@ export default function PreBattleScreen() {
           </div>
         </section>
 
+        <BattleExtrasSetup session={session} own={warbands} update={update} onAlliesChanged={count => setNpcBudget(500 * (count + 1))} />
         {/* Notes */}
         <section className="space-y-2">
           <BannerHeader>Pre-Battle Notes</BannerHeader>

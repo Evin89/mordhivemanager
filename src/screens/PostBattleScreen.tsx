@@ -1,3 +1,5 @@
+import { EndeavourAwards, JokerReminder } from '../components/EndeavourPostBattle';
+import { AllyAfterBattle } from '../components/AllyAfterBattle';
 import { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -6,7 +8,7 @@ import Plate from '../components/Plate';
 import { Button, Select } from '../components/ui';
 import { strings } from '../strings';
 import { useWarbands, useWarbandLookup } from '../store/warbands';
-import { clearBattleSession, loadBattleSession } from '../store/battle';
+import { BattleSession, clearBattleSession, loadBattleSession, saveBattleSession } from '../store/battle';
 import {
   PostBattleDraft,
   createDraft,
@@ -55,11 +57,19 @@ function NumField({ value, onChange, min = 0 }: { value: number; onChange: (n: n
  * casualty tally and applying injuries, experience, advances and income to the
  * warband in one commit. A staged draft; nothing changes until Confirm. */
 export default function PostBattleScreen() {
+  const {warbandId} = useParams<{warbandId:string}>();
+  const warband = useWarbandLookup(warbandId);
+  if (!warband) return <Navigate to="/warbands" replace />;
+  return <PostBattleForWarband key={warbandId} />;
+}
+function PostBattleForWarband() {
   const { warbandId } = useParams<{ warbandId: string }>();
   const navigate = useNavigate();
   const warband = useWarbandLookup(warbandId);
   const { saveWarband, warbands } = useWarbands();
   const [saving, setSaving] = useState(false);
+  const [battleSession, setBattleSession] = useState(() => loadBattleSession(warbandId ?? ''));
+  const [finishedSession, setFinishedSession] = useState<BattleSession | null>(() => { const s=loadBattleSession(warbandId ?? ''); return s?.postBattleComplete ? s : null; });
 
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<PostBattleDraft>(() =>
@@ -80,11 +90,11 @@ export default function PostBattleScreen() {
     setDraft((d) => {
       const heroes = { ...d.heroes };
       for (const h of warband!.heroes) {
-        const base = 1 + (d.result === 'win' && h.isLeader ? 1 : 0);
+        const base = 1 + (d.result === 'win' && h.isLeader ? 1 : 0) + (battleSession?.endeavours.filter(c=>c.modelId===h.id&&d.endeavourAwards.includes(c.cardId)).length??0);
         heroes[h.id] = { ...heroes[h.id], xpGained: base };
       }
       const henchmen = { ...d.henchmen };
-      for (const g of warband!.henchmenGroups) henchmen[g.id] = { ...henchmen[g.id], xpGained: 1 };
+      for (const g of warband!.henchmenGroups) henchmen[g.id] = { ...henchmen[g.id], xpGained: 1 + (battleSession?.endeavours.filter(c=>c.modelId===g.id&&d.endeavourAwards.includes(c.cardId)).length??0) };
       const hired = { ...d.hired };
       for (const id of Object.keys(hired)) hired[id] = { ...hired[id], xpGained: 1 };
       return { ...d, heroes, henchmen, hired };
@@ -106,9 +116,14 @@ export default function PostBattleScreen() {
       session,
       myWarbands: warbands,
     });
-    clearBattleSession(before.id);
-    navigate(`/warbands/${before.id}`, { replace: true, state: err ? { notice: err } : undefined });
+    if (session?.allies.length) {
+      const finished = {...session, started:false, postBattleComplete:true, result:draft.result};
+      saveBattleSession(finished);
+      setFinishedSession(finished);
+    } else { clearBattleSession(before.id); navigate(`/warbands/${before.id}`, { replace: true, state: err ? { notice: err } : undefined }); }
   }
+
+  if (finishedSession) return <AllyAfterBattle session={finishedSession} onDone={()=>{clearBattleSession(warband.id);navigate(`/warbands/${warband.id}`, {replace:true});}} />;
 
   const heroList = warband.heroes.filter((h) => h.status === 'active' || h.status === 'missNextGame');
   const hiredList = warband.hiredSwords.filter((h) => draft.hired?.[h.id]);
@@ -197,6 +212,11 @@ export default function PostBattleScreen() {
                         )}
                       </div>
                       {pb.injury && <p className="font-body text-ink-faded text-xs">{pb.injury.effect}</p>}
+                      <JokerReminder session={battleSession} injury={pb.injury} onUse={injury=>{
+                        patchHero(h.id, {injury, dies:false});
+                        if(battleSession) { const next={...battleSession,endeavours:battleSession.endeavours.map(c=>c.cardId==='deal-with-death'?{...c,used:true,completed:true,modelId:h.id}:c)};setBattleSession(next);saveBattleSession(next); }
+                      }}/>
+
                     </>
                   )}
                 </Plate>
@@ -258,6 +278,16 @@ export default function PostBattleScreen() {
         {step === 2 && (
           <section className="space-y-3">
             <BannerHeader>Experience</BannerHeader>
+            <EndeavourAwards warband={warband} session={battleSession} draft={draft} onAward={(id,cardId)=>{
+              setDraft(d=> {
+                if(d.endeavourAwards.includes(cardId)) return d;
+                const heroes={...d.heroes}; const henchmen={...d.henchmen};
+                if(heroes[id]) heroes[id]={...heroes[id],xpGained:heroes[id].xpGained+1};
+                else if(henchmen[id]) henchmen[id]={...henchmen[id],xpGained:henchmen[id].xpGained+1};
+                return {...d,heroes,henchmen,endeavourAwards:[...d.endeavourAwards,cardId]};
+              });
+            }}/>
+
             <Button size="dense" variant="secondary" fullWidth={false} onClick={autoAwardXp}>
               Auto-award standard XP (+1 survives, +1 winning leader)
             </Button>
