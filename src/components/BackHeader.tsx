@@ -1,3 +1,5 @@
+import TransitionLink from './TransitionLink';
+import { navigateWithTransition } from '../lib/viewTransition';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -9,14 +11,14 @@ export default function BackHeader({ title, to }: { title: string; to?: string }
   const navigate = useNavigate();
   return (
     <div className="bg-banner flex items-center gap-2 px-3 py-2">
-      <button
+      {to ? <TransitionLink to={to} aria-label="Back" className="text-on-banner font-display text-lg px-2 py-1 min-h-[44px] flex items-center">‹</TransitionLink> : <button
         type="button"
-        onClick={() => (to ? navigate(to) : navigate(-1))}
+        onClick={() => navigateWithTransition(() => navigate(-1))}
         aria-label="Back"
         className="text-on-banner font-display text-lg px-2 py-1 min-h-[44px] hover:opacity-80"
       >
         ‹
-      </button>
+      </button>}
       <h1 className="font-display uppercase tracking-[0.05em] text-on-banner text-lg">{title}</h1>
     </div>
   );

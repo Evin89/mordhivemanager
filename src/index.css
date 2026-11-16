@@ -457,3 +457,52 @@ body,
 .endeavour-card{background:rgb(var(--color-vellum));color:rgb(var(--color-vellum-ink))}
 .endeavour-card h3{color:rgb(var(--color-vellum-ink))}
 .endeavour-card p{color:rgb(var(--color-vellum-ink))}
+
+/* Keep only page content in the default navigation cross-fade. */
+:root {
+  view-transition-name: none;
+}
+.app-main {
+  view-transition-name: page-content;
+}
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  animation-duration: 180ms;
+}
+::view-transition-old(top-navigation),
+::view-transition-new(top-navigation),
+::view-transition-old(bottom-navigation),
+::view-transition-new(bottom-navigation) {
+  animation: none;
+}
+.earned-seal, .unearned-seal {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.unearned-seal {
+  border: 1px dashed #9A8249;
+  border-radius: 50%;
+  opacity: .6;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .seal-stamp {
+    animation: seal-stamp 350ms ease-out both;
+  }
+  @keyframes seal-stamp {
+    from {
+      transform: scale(1.6) rotate(-12deg);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) rotate(0);
+      opacity: 1;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation: none !important;
+  }
+}

@@ -1,3 +1,7 @@
+import SealsPlate from '../components/SealsPlate';
+import ShareDossierButton from '../components/ShareDossierButton';
+import { useDossierBattles } from '../lib/useDossierBattles';
+import TransitionLink from '../components/TransitionLink';
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ChevronRail from '../components/ChevronRail';
 import BattleHistory from '../components/BattleHistory';
@@ -21,6 +25,7 @@ const { terms } = strings;
 export default function RosterScreen() {
   const { warbandId } = useParams<{ warbandId: string }>();
   const navigate = useNavigate();
+  const history = useDossierBattles(warbandId);
   const warband = useWarbandLookup(warbandId);
   const { deleteWarband, saveWarband } = useWarbands();
   const notice = (useLocation().state as { notice?: string } | null)?.notice;
@@ -51,6 +56,8 @@ export default function RosterScreen() {
         )}
         <div><div className="roster-band"><h1>{warband.name}</h1><p className="type">{getWarbandTypeName(warband.warbandType)}, {warband.visibility === 'public' ? 'public' : 'private'}</p><div className="metrics"><div><strong>{computeWarbandRating(warband)}</strong><span>Rating</span></div><div><strong>{warband.gold} tn</strong><span>Thrones</span></div><div><strong>{warband.wyrdstoneShards}</strong><span>Diamantine</span></div><div><strong>{countModels(warband)}</strong><span>Models</span></div></div><div className="grid grid-cols-2 gap-3 mt-5"><Link className="btn btn-p" to={`/warbands/${warband.id}/${hasActiveBattle(warband.id) ? 'battle' : 'pre-battle'}`}>{hasActiveBattle(warband.id) ? 'Resume battle' : 'Battle'}</Link><Link className="btn btn-s" to={`/warbands/${warband.id}/trading`}>Trading Post</Link></div></div><ChevronRail /></div>
 
+        {!history.loading && <SealsPlate key={warband.id} warband={warband} historyAvailable={!history.error} battles={history.error ? [] : history.rows} />}
+
         {/* Heroes */}
         <section className="space-y-3">
           <BannerHeader trailing={<PageChip className="border-on-banner/40">{activeHeroes.length}</PageChip>}>
@@ -61,16 +68,16 @@ export default function RosterScreen() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {activeHeroes.map((h) => (
-                <Link key={h.id} to={`/warbands/${warband.id}/hero/${h.id}`} className="block hover:opacity-90">
+                <TransitionLink key={h.id} to={`/warbands/${warband.id}/hero/${h.id}`} className="block hover:opacity-90">
                   <Datasheet
-                    hero portraitSrc={resolvePortraitSrc(h, warband)} leader={h.isLeader} xp={h.xp}
+                    hero portraitTransition portraitSrc={resolvePortraitSrc(h, warband)} leader={h.isLeader} xp={h.xp}
                     name={h.name}
                     subtitle={h.unitType}
                     stats={h.stats}
                     maximums={h.statMaximums}
                     wargear={equipList(h.equipment)}
                   />
-                </Link>
+                </TransitionLink>
               ))}
             </div>
           )}
@@ -90,14 +97,14 @@ export default function RosterScreen() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {warband.henchmenGroups.map((g) => (
-                <Link key={g.id} to={`/warbands/${warband.id}/henchmen/${g.id}`} className="block hover:opacity-90">
+                <TransitionLink key={g.id} to={`/warbands/${warband.id}/henchmen/${g.id}`} className="block hover:opacity-90">
                   <Datasheet
                     name={g.groupName}
                     subtitle={`${g.count}x ${g.unitType} · ${g.xp} XP each`}
                     stats={g.stats}
                     wargear={equipList(g.equipment)}
                   />
-                </Link>
+                </TransitionLink>
               ))}
             </div>
           )}
@@ -111,14 +118,14 @@ export default function RosterScreen() {
             </BannerHeader>
             <div className="grid gap-4 sm:grid-cols-2">
               {activeHired.map((h) => (
-                <Link key={h.id} to={`/warbands/${warband.id}/hired/${h.id}`} className="block hover:opacity-90">
+                <TransitionLink key={h.id} to={`/warbands/${warband.id}/hired/${h.id}`} className="block hover:opacity-90">
                   <Datasheet
                     name={h.name}
                     subtitle={`${h.type} · ${h.xp} XP · upkeep ${h.upkeep} ${terms.currencyAbbr}`}
                     stats={h.stats}
                     wargear={equipList(h.equipment)}
                   />
-                </Link>
+                </TransitionLink>
               ))}
             </div>
             <p className="font-body text-ink-faded text-xs px-1">
@@ -167,6 +174,7 @@ export default function RosterScreen() {
               >
                 {warband.visibility === 'public' ? 'Make private' : 'Make public'}
               </Button>
+              <ShareDossierButton warband={warband} battles={history.error ? null : history.rows} loading={history.loading} />
               <Link
                 to={`/warbands/${warband.id}/print`}
                 className="btn btn-s"

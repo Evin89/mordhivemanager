@@ -1,4 +1,5 @@
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { TransitionNavLink as NavLink } from './components/TransitionLink';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { strings } from './strings';
 import ChevronRail from './components/ChevronRail';
 import { AuthProvider, useAuth } from './store/auth';
@@ -118,7 +119,7 @@ function TopBar() {
   );
 
   return (
-    <header className="no-print bg-banner">
+    <header style={{ viewTransitionName: 'top-navigation' }} className="no-print bg-banner">
       <div className="max-w-[1240px] mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <NavLink to="/" className="flex items-center gap-2 min-h-[44px]" aria-label={`${strings.appName}, home`}>
           <span className="wordmark">Mord Hive</span>
@@ -165,5 +166,5 @@ function BottomTabs() {
     ['/gallery', 'Gallery', 'M3 3h18v18H3V3 M3 17l6-6 4 4 3-3 5 5 M16 7h.01'],
     ['/rules', 'Rules', 'M12 5C8 2 4 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-4-2-7-1-10 1v16'],
   ];
-  return <nav className="mobile-tabs no-print" aria-label="Mobile main">{tabs.map(([to, label, path]) => <NavLink key={to} to={to}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg><span>{label}</span></NavLink>)}</nav>;
+  return <nav style={{ viewTransitionName: 'bottom-navigation' }} className="mobile-tabs no-print" aria-label="Mobile main">{tabs.map(([to, label, path]) => <NavLink key={to} to={to}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg><span>{label}</span></NavLink>)}</nav>;
 }
