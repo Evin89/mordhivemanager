@@ -8,6 +8,7 @@ export type DatasheetProps = {
   /** Unit name, shown in the black banner header. */
   name: string;
   hero?: boolean;
+  portraitSrc?: string | null;
   leader?: boolean;
   xp?: number;
   /** Optional sub-line under the name — a type or tier label. */
@@ -31,6 +32,7 @@ export type DatasheetProps = {
 export default function Datasheet({
   name,
   hero = false,
+  portraitSrc,
   leader = false,
   xp,
   subtitle,
@@ -46,7 +48,7 @@ export default function Datasheet({
       {leader && <img className="leader-seal" src="/img/seal.png" alt="" aria-hidden="true" />}
       {/* Black banner header — the unit name, in Oxanium on black. */}
       <div className="flex items-center justify-between gap-3 px-4 py-3">
-        {hero && <Portrait />}
+        {hero && <Portrait src={portraitSrc} alt={name} />}
         <div className="min-w-0 flex-1">
           <h3 className="font-display uppercase tracking-[0.05em] text-heading text-[25px] leading-tight truncate">
             {name}

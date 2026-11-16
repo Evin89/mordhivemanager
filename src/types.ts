@@ -63,6 +63,7 @@ export type EquipmentItem = {
 export type ModelStatus = 'active' | 'missNextGame' | 'dead' | 'captured' | 'left';
 
 export type Hero = {
+  portrait?: string | null;
   id: string;
   name: string;
   /** A byname shown in parentheses after the given name (spec §18.1). */

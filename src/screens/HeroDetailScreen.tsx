@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import Portrait from '../components/Portrait';
+import PortraitPicker from '../components/PortraitPicker';
+import { resolvePortraitSrc } from '../data/portraits';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
 import Plate from '../components/Plate';
@@ -30,6 +32,7 @@ export default function HeroDetailScreen() {
   const { warbandId, heroId } = useParams<{ warbandId: string; heroId: string }>();
   const warband = useWarbandLookup(warbandId);
   const { saveWarband } = useWarbands();
+  const [portraitOpen, setPortraitOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   if (!warband) return <Navigate to="/warbands" replace />;
@@ -48,9 +51,26 @@ export default function HeroDetailScreen() {
 
   return (
     <div>
+      {portraitOpen && (
+        <PortraitPicker
+          hero={hero}
+          warband={warband}
+          onChange={portrait => patchHero(h => ({ ...h, portrait }))}
+          onClose={() => setPortraitOpen(false)}
+        />
+      )}
       <BackHeader title={hero.name} to={`/warbands/${warband.id}`} />
       <div className="py-6 space-y-6">
-        <div><Portrait large /><div className="hero-sheet">
+        <div>
+          <div className="portrait-control">
+            <button type="button" aria-label="Change portrait" onClick={() => setPortraitOpen(true)}>
+              <Portrait large src={resolvePortraitSrc(hero, warband)} alt={hero.name} />
+            </button>
+            <button type="button" className="portrait-change" onClick={() => setPortraitOpen(true)}>
+              Change portrait
+            </button>
+          </div>
+          <div className="hero-sheet">
           {hero.isLeader && <><img className="leader-seal" src="/img/seal.png" alt="" aria-hidden="true" /><p className="font-ui">Leader</p></>}
           <h1>{hero.name}</h1><p className="italic mb-5">{hero.unitType}</p>
             <ProfileBlock

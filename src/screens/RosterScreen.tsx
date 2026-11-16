@@ -3,6 +3,7 @@ import ChevronRail from '../components/ChevronRail';
 import BattleHistory from '../components/BattleHistory';
 import BackHeader from '../components/BackHeader';
 import BannerHeader from '../components/BannerHeader';
+import { resolvePortraitSrc } from '../data/portraits';
 import Datasheet from '../components/Datasheet';
 import Plate from '../components/Plate';
 import PageChip from '../components/PageChip';
@@ -62,7 +63,7 @@ export default function RosterScreen() {
               {activeHeroes.map((h) => (
                 <Link key={h.id} to={`/warbands/${warband.id}/hero/${h.id}`} className="block hover:opacity-90">
                   <Datasheet
-                    hero leader={h.isLeader} xp={h.xp}
+                    hero portraitSrc={resolvePortraitSrc(h, warband)} leader={h.isLeader} xp={h.xp}
                     name={h.name}
                     subtitle={h.unitType}
                     stats={h.stats}
