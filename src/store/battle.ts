@@ -51,6 +51,13 @@ export type ThirdParty = {
 };
 
 export type BattleSession = {
+  enemyShape: import('../lib/enemyShape').EnemyShape;
+  searchEnabled: boolean;
+  searchPoints: import('../lib/searchPoints').SearchPoint[];
+  lead: boolean;
+  alarmDeck: string[];
+  alarmEvent: { id: string; turn: number } | null;
+  soloScenario: import('../lib/soloScenarios').SoloScenarioState | null;
   hiddenContacts: boolean;
   contacts: Contact[];
   thirdPartyEnabled: boolean;
@@ -97,6 +104,10 @@ export type BattleSession = {
 export function defaultBattleSession(warbandId: string): BattleSession {
   return {
     hiddenContacts: false, contacts: [], thirdPartyEnabled: false, thirdParty: null, cogitatorStarted: false,
+    enemyShape: 'balanced',
+    searchEnabled: false, searchPoints: [], lead: false,
+    alarmDeck: [], alarmEvent: null,
+    soloScenario: null,
     warbandId,
     scenario: '',
     opponentWarbandId: null,

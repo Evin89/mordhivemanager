@@ -293,6 +293,7 @@ export function resolveMission(
   participatingIds: string[] = [],
   downIds: string[] = [],
   rand: Random = Math.random,
+  lead = false,
 ): HiveState {
   state = normalizeHive(state);
   const mission = state.board.find((item) => item.id === missionId);
@@ -348,7 +349,7 @@ export function resolveMission(
   const text = [opening, pick(results[result], rand), ...casualtyLines].join(' ');
   const leader = state.nemesis.find((hero) => hero.isLeader && hero.status === 'active');
   let next = gainClues({ ...state, nemesis },
-    (result === 'win' ? 1 : 0) + Math.min(2, state.nemesis.filter((hero) =>
+    (lead ? 1 : 0) + (result === 'win' ? 1 : 0) + Math.min(2, state.nemesis.filter((hero) =>
       hero.status === 'active' && participatingIds.includes(hero.id) && downIds.includes(hero.id)).length), context.agenda);
   if (mission.stake === 'reckoning' && result === 'win') {
     return {

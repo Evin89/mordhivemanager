@@ -6,7 +6,7 @@ import { Battlefield } from '../lib/battlefield';
  * ruins on the page ground, black objective, diamantine glints). Colours come
  * from the theme's CSS variables, so it re-themes with everything else.
  */
-export default function BattlefieldMap({ field, contacts = [] }: { field: Battlefield; contacts?: Contact[] }) {
+export default function BattlefieldMap({ field, contacts = [], searchPoints = [] }: { field: Battlefield; contacts?: Contact[]; searchPoints?: import('../lib/searchPoints').SearchPoint[] }) {
   const s = field.size;
   const c = (name: string) => {
     const roles: Record<string, string> = { plate: 'cog', page: 'cog', steel: 'phosphor-faint', 'steel-l': 'cog-border', ink: 'phosphor', bolt: 'phosphor-dim', banner: 'phosphor' };
@@ -54,6 +54,12 @@ export default function BattlefieldMap({ field, contacts = [] }: { field: Battle
         ),
       )}
       {field.markers.map((m, i) => <text key={`label${i}`} x={m.x} y={m.y - 5} textAnchor="middle" fontSize={2.5} fill={c('ink')}>{m.label}</text>)}
+      {searchPoints.map(p => (
+        <g key={`search${p.n}`} opacity={p.searched ? 0.45 : 1}>
+          <rect x={p.x - 2.5} y={p.y - 2.5} width={5} height={5} fill={c('plate')} stroke={c('ink')} strokeWidth={0.7}/>
+          <text x={p.x} y={p.y + 1} textAnchor="middle" fontSize={3} fill={c('ink')}>{p.n}</text>
+        </g>
+      ))}
       {contacts.filter(contact => !(contact.revealed && contact.kind === 'echo')).map(contact => (
         <g key={contact.letter}>
           <circle cx={contact.x} cy={contact.y} r={2.3} fill={contact.revealed ? c('ink') : c('plate')} stroke={c('ink')} strokeWidth={0.7} />

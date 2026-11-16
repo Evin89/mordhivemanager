@@ -135,6 +135,8 @@ function PostBattleForWarband() {
           { warband: before.name, faction: campaign.nemesisName, agenda: campaign.agenda },
           session.npcWarband?.heroes.map((hero) => hero.id) ?? [],
           session.npcOutOfAction.heroIds,
+          undefined,
+          session.lead,
         );
         saveCampaign({ ...campaign, hive, status: hive.outcome ? 'concluded' : 'active' });
         destination = `/solo/${campaign.id}`;

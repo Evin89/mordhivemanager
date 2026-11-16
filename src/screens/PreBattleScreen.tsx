@@ -1,3 +1,7 @@
+import { EnemyShape, shapeLabels } from '../lib/enemyShape';
+import { prepareSearchPoints } from '../lib/searchPoints';
+import { findSoloScenario, soloScenarios, startSolo, battleField } from '../lib/soloScenarios';
+import SoloScenarioBriefing from '../components/SoloScenarioBriefing';
 import { prepareContacts } from '../lib/battleEncounters';
 import BattleExtrasSetup from '../components/BattleExtrasSetup';
 import { drawEndeavours } from '../lib/endeavours';
@@ -141,7 +145,7 @@ export default function PreBattleScreen() {
   function generateNpc() {
     const def = warbandDefinitionsByName.find((d) => d.id === npcTypeId);
     if (!def) return;
-    const generated = buildNpcWarband(def, npcBudget);
+    const generated = buildNpcWarband(def, npcBudget, session.enemyShape);
     const npc = campaignActive && campaign?.kind === 'hive' && campaign.hive && hiveMission
       ? identifyNemesis(generated, campaign.hive, hiveMission)
       : generated;
@@ -157,14 +161,16 @@ export default function PreBattleScreen() {
   }
 
   function clearNpc() {
-    update({ npcWarband: null, npcAgenda: null, npcAgendaRevealed: false, alarmEnabled:false, npcBehaviours:{}, behaviourTicks:{}, npcReinforcements:[], allies:[] });
+    update({ scenario: findSoloScenario(session.scenario) ? '' : session.scenario, soloScenario: null, searchEnabled: false, searchPoints: [], lead: false, npcWarband: null, npcAgenda: null, npcAgendaRevealed: false, alarmEnabled:false, npcBehaviours:{}, behaviourTicks:{}, npcReinforcements:[], allies:[] });
   }
 
   function startBattle() {
     if (!warband || hiveBattleConflict) return;
+    if (session.soloScenario?.id === 'solo-rescue' && !session.soloScenario.captiveHeroId) return;
     const ashEvent = !session.started && campaignActive && hiveMission?.condition === 'ash-storm'
       ? rollHiveEvent() : null;
-    update({ ...prepareContacts(session), started: true, turn: session.started ? session.turn : 1,
+    const prepared = prepareSearchPoints(startSolo(session));
+    update({ ...prepared, ...prepareContacts(prepared), started: true, turn: session.started ? session.turn : 1,
       events: ashEvent
         ? [{ id: generateId(), turn: 1, text: `Ash Storm — Hive event ${ashEvent.roll}: ${ashEvent.text}` }, ...session.events]
         : session.events,
@@ -202,12 +208,22 @@ export default function PreBattleScreen() {
         <section className="space-y-2">
           <BannerHeader>Scenario</BannerHeader>
           <div className="pt-2 space-y-2">
-            <Select value={session.scenario} onChange={(e) => { setRoll(null); update({ scenario: e.target.value }); }}>
+            <Select value={session.scenario} onChange={(e) => { setRoll(null); update({ scenario: e.target.value, soloScenario: findSoloScenario(e.target.value) ? { id: findSoloScenario(e.target.value)!.id, trackers: {}, outcome: null } : null }); }}>
               <option value="">Choose a scenario…</option>
               {scenariosData.scenarios.map((s) => (
                 <option key={s.id} value={s.name}>{s.name}</option>
               ))}
+              {session.npcWarband && !campaignActive && <optgroup label="Solo scenarios (app-original)">
+                {soloScenarios.filter(s => s.id !== 'solo-rescue' || warband.heroes.some(h => !h.isLeader)).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+              </optgroup>}
             </Select>
+            <SoloScenarioBriefing name={session.scenario} />
+            {session.soloScenario?.id === 'solo-rescue' && <label className="block">Captive
+              <Select value={session.soloScenario.captiveHeroId ?? ''} onChange={e => update({ soloScenario: { ...session.soloScenario!, captiveHeroId: e.target.value } })}>
+                <option value="">Choose a captive…</option>
+                {warband.heroes.filter(h => !h.isLeader).map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+              </Select>
+            </label>}
             <Button size="dense" variant="secondary" fullWidth={false} onClick={rollScenario}>
               Roll 2D6 for scenario
             </Button>
@@ -232,7 +248,7 @@ export default function PreBattleScreen() {
         </section>
 
         {/* Battlefield */}
-        {scenario && (
+        {(scenario || findSoloScenario(session.scenario)) && (
           <section className="space-y-2">
             <BannerHeader>Battlefield</BannerHeader>
             <div className="pt-2 space-y-2">
@@ -248,7 +264,7 @@ export default function PreBattleScreen() {
               ) : (
                 <>
                   <Plate className="p-3">
-                    <BattlefieldMap field={generateBattlefield(session.battlefieldSeed, scenario.id)} />
+                    <BattlefieldMap field={findSoloScenario(session.scenario) ? battleField(session) : generateBattlefield(session.battlefieldSeed, scenario?.id ?? '')} />
                   </Plate>
                   <div className="flex flex-wrap gap-3 items-center">
                     <span className="font-body text-ink-faded text-xs flex items-center gap-1">
@@ -298,6 +314,10 @@ export default function PreBattleScreen() {
           </div>
         </section>
 
+        {session.npcWarband && <label className="flex items-center gap-3 min-h-[44px]">
+          <input type="checkbox" checked={session.searchEnabled} onChange={e => update({ searchEnabled: e.target.checked, searchPoints: [], lead: false })}/>
+          Search points · App-original · Not part of the ruleset
+        </label>}
         {/* Solo: AI opponent */}
         <section className="space-y-2">
           <BannerHeader>Solo — AI Opponent</BannerHeader>
@@ -306,6 +326,12 @@ export default function PreBattleScreen() {
               Playing alone? Generate an app-built enemy warband to fight. Its roster is drawn from the
               sourced lists; its behaviour is an app-original assistant, not part of the ruleset.
             </p>
+            <label className="block font-ui">Shape
+              <Select disabled={!!campaignActive} value={session.enemyShape} onChange={e => update({ enemyShape: e.target.value as EnemyShape })}>
+                {Object.entries(shapeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </Select>
+            </label>
+            <p className="font-body text-ink-faded text-xs">Difficulty: {difficultyForBudget(npcBudget)} · {shapeLabels[session.enemyShape]}</p>
             {session.npcWarband ? (
               <Plate className="p-3">
                 <p className="font-display uppercase tracking-[0.04em] text-ink text-sm">{session.npcWarband.name}</p>
@@ -346,9 +372,6 @@ export default function PreBattleScreen() {
                 <Button size="dense" fullWidth={false} onClick={generateNpc}>Generate</Button>
               </div>
             )}
-            {!session.npcWarband && (
-              <p className="font-body text-ink-faded text-xs">Difficulty: {difficultyForBudget(npcBudget)}</p>
-            )}
           </div>
         </section>
 
@@ -367,7 +390,7 @@ export default function PreBattleScreen() {
           </Plate>
         </section>
 
-        <Button onClick={startBattle} disabled={!session.scenario || hiveBattleConflict}>
+        <Button onClick={startBattle} disabled={!session.scenario || hiveBattleConflict || (session.soloScenario?.id === 'solo-rescue' && !session.soloScenario.captiveHeroId)}>
           {session.started ? 'Resume battle' : 'Start battle'}
         </Button>
         {!session.scenario && <p className="font-body text-ink-faded text-sm">Pick a scenario to begin.</p>}

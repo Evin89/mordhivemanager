@@ -1,3 +1,7 @@
+import SearchPoints from '../components/SearchPoints';
+import AlarmEventCard from '../components/AlarmEventCard';
+import ObjectivePlate from '../components/ObjectivePlate';
+import { evaluateObjective, advanceSolo, battleField, findSoloScenario } from '../lib/soloScenarios';
 import { ContactInstructions, HiddenContact, Strangers } from '../components/BattleEncounters';
 import { applyContactAlarm, advanceStrangers } from '../lib/battleEncounters';
 import { alarmGrade } from '../lib/alarm';
@@ -67,7 +71,14 @@ export default function DuringBattleScreen() {
   const activeHeroes = warband.heroes.filter((h) => isInWarband(h.status));
 
   function update(patch: Partial<BattleSession>) {
-    setSession(current => { const next = applyContactAlarm({ ...current, ...patch }); saveBattleSession(next); return next; });
+    setSession(current => {
+      const next = evaluateObjective(
+        advanceSolo(applyContactAlarm({ ...current, ...patch })),
+        warband!,
+      );
+      saveBattleSession(next);
+      return next;
+    });
   }
 
   function logEvent(text: string) {
@@ -80,7 +91,7 @@ export default function DuringBattleScreen() {
     if (delta < 0) {
       if (!window.confirm('Step the turn counter back?')) return;
     }
-    update(delta > 0 ? advanceStrangers(advanceTurn(applyContactAlarm(session)), warband!.warbandType, session.alarmEnabled ? alarmGrade(session.alarm) : 0) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
+    update(delta > 0 ? advanceStrangers(advanceTurn(applyContactAlarm(session), warband!.warbandType), warband!.warbandType, session.alarmEnabled ? alarmGrade(session.alarm) : 0) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
   }
 
   function toggleHero(id: string) {
@@ -163,6 +174,7 @@ export default function DuringBattleScreen() {
               ) : (
                 <ul className="space-y-1">
                   {activeHeroes.map((h) => {
+                    if (session.soloScenario?.captiveHeroId === h.id && !session.soloScenario.trackers['Captive freed']) return null;
                     const down = session.outOfAction.heroIds.includes(h.id);
                     return (
                       <li key={h.id} className="flex items-center justify-between gap-2">
@@ -331,8 +343,11 @@ export default function DuringBattleScreen() {
         <Strangers session={session} update={update}/>
         {session.npcReinforcements.map(r=><Plate key={r.id} className="p-3 space-y-2"><SoloNote/><h3 className="font-heading text-2xl">{r.unitType} - Reinforcement</h3><p className="font-body text-sm">Entry: {r.entry}</p><ProfileBlock stats={r.stats} variant="collapsed"/><p className="font-body text-xs">Wargear: {r.equipment.join(', ')}</p><Button variant={r.outOfAction?'danger':'secondary'} onClick={()=>update({npcReinforcements:session.npcReinforcements.map(a=>a.id===r.id?{...a,outOfAction:!a.outOfAction}:a)})}>{r.outOfAction?'Out of action':'Standing'}</Button>{!r.outOfAction&&<BehaviourCard id={r.id} name={r.unitType} behaviour={session.npcBehaviours[r.id]??r.behaviour} session={session} update={update}/>}</Plate>)}
         </div><div className="battle-cogitator space-y-4">
+        <ObjectivePlate session={session} warband={warband} update={update}/>
         <CogitatorStartup session={session} update={update}/>
         <AlarmPanel session={session} update={update}/>
+        <AlarmEventCard session={session}/>
+        <SearchPoints session={session} update={update}/>
         {/* Battlefield map */}
         {session.battlefieldSeed !== null && (
           <section className="space-y-3">
@@ -343,8 +358,9 @@ export default function DuringBattleScreen() {
             {mapOpen && (
               <Plate className="cogitator map-grid p-3"><p className="mb-3">AUSPEX // SECTOR MAP <span className="text-phosphor-dim">// TURN {session.turn}</span></p>
                 <BattlefieldMap
+                  searchPoints={session.searchEnabled ? session.searchPoints : []}
                   contacts={session.hiddenContacts ? session.contacts : []}
-                  field={generateBattlefield(
+                  field={findSoloScenario(session.scenario) ? battleField(session) : generateBattlefield(
                     session.battlefieldSeed,
                     scenariosData.scenarios.find((s) => s.name === session.scenario)?.id ?? '',
                   )}
@@ -427,7 +443,7 @@ export default function DuringBattleScreen() {
           )}
         </section>
 
-        <Button variant="danger" onClick={endBattle}>Finish battle</Button>
+        <Button className={session.soloScenario?.outcome ? "ring-2 ring-brass" : ""} variant="danger" onClick={endBattle}>Finish battle</Button>
       </div>
     </div>
   );

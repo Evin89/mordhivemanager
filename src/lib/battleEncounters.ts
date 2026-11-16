@@ -7,19 +7,20 @@ import scenarios from '../data/scenarios.json';
 import { generateId } from './id';
 import { createHenchmenGroupFromType } from './warbandFactory';
 import { equipNpcModel } from './npc';
+import { findSoloScenario } from './soloScenarios';
 import { alarmGrade } from './alarm';
 const entries = ['enemy table edge', 'enemy table edge', 'left edge', 'right edge', 'nearest building to the objective (ground floor)', 'your table edge'];
 export function prepareContacts(s: BattleSession): Partial<BattleSession> {
     if (!s.npcWarband || !s.hiddenContacts || s.contacts.length)
         return {};
     const seed = s.battlefieldSeed ?? Math.floor(Math.random() * 4294967296);
-    const scenarioId = scenarios.scenarios.find(item => item.name === s.scenario)?.id ?? '';
+    const scenarioId = findSoloScenario(s.scenario)?.mapBase ?? scenarios.scenarios.find(item => item.name === s.scenario)?.id ?? '';
     const field = generateBattlefield(seed, scenarioId);
     const random = mulberry32(seed ^ 0x5a5a);
     const slots: Pick<Contact, 'kind' | 'refId'>[] = [
         ...s.npcWarband.heroes.map(h => ({ kind: 'hero' as const, refId: h.id })),
         ...s.npcWarband.henchmenGroups.map(g => ({ kind: 'group' as const, refId: g.id })),
-        { kind: 'echo', refId: null }, { kind: 'echo', refId: null },
+        ...Array.from({ length: s.soloScenario?.id === 'solo-hunt' ? 4 : 2 }, () => ({ kind: 'echo' as const, refId: null })),
     ];
     for (let i = slots.length - 1; i > 0; i--) {
         const j = Math.floor(random() * (i + 1));
@@ -62,6 +63,7 @@ export function revealContacts(s: BattleSession, letter?: string): BattleSession
     return { ...s, contacts: s.contacts.map(c => !letter || c.letter === letter ? { ...c, revealed: true } : c), events: [...messages, ...s.events] };
 }
 export function applyContactAlarm(s: BattleSession): BattleSession {
+    if (s.alarmEvent?.id === 'ghost' && s.alarmEvent.turn === s.turn) return s;
     if (!s.hiddenContacts || !s.alarmEnabled || alarmGrade(s.alarm) < 2 || !s.contacts.some(c => !c.revealed))
         return s;
     const next = revealContacts(s);
@@ -79,10 +81,10 @@ export function buildThirdParty(def: WarbandDefinition, random = Math.random): T
         group.equipment.push(...equipNpcModel(def, type.equipmentOptions, group.stats));
     return { listName: def.name, unitType: type.unitType, stats: group.stats, equipment: type.isAnimal ? [] : group.equipment.map(e => e.name), count: group.count, outOfAction: 0, entry: entries[Math.floor(random() * 6)], behaviour: type.isAnimal ? 'beast' : 'brawler', gone: false };
 }
-export function advanceStrangers(s: BattleSession, playerType: string, grade: number, random = Math.random): BattleSession {
-    if (!s.thirdPartyEnabled || !s.npcWarband || s.thirdParty || s.turn < 2)
+export function advanceStrangers(s: BattleSession, playerType: string, grade: number, random = Math.random, force = false): BattleSession {
+    if (!s.thirdPartyEnabled || !s.npcWarband || s.thirdParty || (!force && s.turn < 2))
         return s;
-    if (1 + Math.floor(random() * 6) + grade < 6)
+    if (!force && 1 + Math.floor(random() * 6) + grade < 6)
         return s;
     const eligible = warbandDefinitions.filter(d => d.id !== playerType && d.id !== s.npcWarband?.warbandType);
     const thirdParty = buildThirdParty(eligible[Math.floor(random() * eligible.length)], random);

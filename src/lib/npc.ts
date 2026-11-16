@@ -1,3 +1,4 @@
+import { buildShapedNpc, EnemyShape } from './enemyShape';
 import { WarbandDefinition } from '../data/types';
 import { Warband, StatLine, EquipmentItem } from '../types';
 import { createWarband, createHeroFromSlot, createHenchmenGroupFromType } from './warbandFactory';
@@ -52,7 +53,8 @@ export function equipNpcModel(def: WarbandDefinition, equipmentOptions: string[]
  * should be a real threat. Names are auto-assigned; each model is armed from its
  * own equipment list (see equipNpcModel) so it can actually fight.
  */
-export function buildNpcWarband(def: WarbandDefinition, budget = 500): Warband {
+export function buildNpcWarband(def: WarbandDefinition, budget = 500, shape: EnemyShape = 'balanced'): Warband {
+  if (shape !== 'balanced') return buildShapedNpc(def, budget, shape);
   const warband = createWarband(def, `${def.name} (AI)`);
   let gold = budget;
   const sizeCap = def.maxWarbandSize ?? 20;
