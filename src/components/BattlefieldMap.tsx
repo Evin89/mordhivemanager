@@ -1,3 +1,4 @@
+import type { Contact } from '../store/battle';
 import { Battlefield } from '../lib/battlefield';
 
 /**
@@ -5,7 +6,7 @@ import { Battlefield } from '../lib/battlefield';
  * ruins on the page ground, black objective, diamantine glints). Colours come
  * from the theme's CSS variables, so it re-themes with everything else.
  */
-export default function BattlefieldMap({ field }: { field: Battlefield }) {
+export default function BattlefieldMap({ field, contacts = [] }: { field: Battlefield; contacts?: Contact[] }) {
   const s = field.size;
   const c = (name: string) => {
     const roles: Record<string, string> = { plate: 'cog', page: 'cog', steel: 'phosphor-faint', 'steel-l': 'cog-border', ink: 'phosphor', bolt: 'phosphor-dim', banner: 'phosphor' };
@@ -53,6 +54,12 @@ export default function BattlefieldMap({ field }: { field: Battlefield }) {
         ),
       )}
       {field.markers.map((m, i) => <text key={`label${i}`} x={m.x} y={m.y - 5} textAnchor="middle" fontSize={2.5} fill={c('ink')}>{m.label}</text>)}
+      {contacts.filter(contact => !(contact.revealed && contact.kind === 'echo')).map(contact => (
+        <g key={contact.letter}>
+          <circle cx={contact.x} cy={contact.y} r={2.3} fill={contact.revealed ? c('ink') : c('plate')} stroke={c('ink')} strokeWidth={0.7} />
+          <text x={contact.x} y={contact.y - 3.5} fontSize={3} textAnchor="middle" fill={c('ink')}>{contact.letter}</text>
+        </g>
+      ))}
     </svg>
   );
 }

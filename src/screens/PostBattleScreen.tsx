@@ -1,3 +1,4 @@
+import { InjuryCounter, Seal, stampSeal } from '../components/BattleMoments';
 import { EndeavourAwards, JokerReminder } from '../components/EndeavourPostBattle';
 import { AllyAfterBattle } from '../components/AllyAfterBattle';
 import { useState } from 'react';
@@ -70,6 +71,8 @@ function PostBattleForWarband() {
   const warband = useWarbandLookup(warbandId);
   const { saveWarband, warbands } = useWarbands();
   const { getCampaign, saveCampaign } = useSoloCampaigns();
+  const [sealed, setSealed] = useState(false);
+  const [injurySpin, setInjurySpin] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
   const [battleSession, setBattleSession] = useState(() => loadBattleSession(warbandId ?? ''));
   const [finishedSession, setFinishedSession] = useState<BattleSession | null>(() => { const s=loadBattleSession(warbandId ?? ''); return s?.postBattleComplete ? s : null; });
@@ -137,6 +140,7 @@ function PostBattleForWarband() {
         destination = `/solo/${campaign.id}`;
       }
     }
+    await stampSeal(() => setSealed(true));
     if (session?.allies.length) {
       const finished = {...session, started:false, postBattleComplete:true, result:draft.result};
       saveBattleSession(finished);
@@ -238,18 +242,18 @@ function PostBattleForWarband() {
                       <div className="flex flex-wrap gap-2 items-center">
                         <Button size="dense" variant="secondary" fullWidth={false} onClick={() => {
                           const inj = rollInjury();
+                          setInjurySpin(n => ({ ...n, [h.id]: (n[h.id] ?? 0) + 1 }));
                           patchHero(h.id, { injury: inj, dies: inj.name === 'Dead' });
                         }}>
                           Roll D66
                         </Button>
-                        {pb.injury && <div className="injury-result"><strong>{pb.injury.roll}</strong><span>{pb.injury.name}</span></div>}
+                        {pb.injury && <InjuryCounter key={`${h.id}-${injurySpin[h.id] ?? 0}`} roll={pb.injury.roll} name={pb.injury.name} effect={pb.injury.effect}/>}
                         {pb.injury && (
                           <label className="flex items-center gap-1 font-body text-ink text-sm">
                             <input type="checkbox" checked={pb.dies} onChange={(e) => patchHero(h.id, { dies: e.target.checked })} /> Dies
                           </label>
                         )}
                       </div>
-                      {pb.injury && <p className="font-body text-ink-faded text-xs">{pb.injury.effect}</p>}
                       <JokerReminder session={battleSession} injury={pb.injury} onUse={injury=>{
                         patchHero(h.id, {injury, dies:false});
                         if(battleSession) { const next={...battleSession,endeavours:battleSession.endeavours.map(c=>c.cardId==='deal-with-death'?{...c,used:true,completed:true,modelId:h.id}:c)};setBattleSession(next);saveBattleSession(next); }
@@ -509,7 +513,7 @@ function PostBattleForWarband() {
 
         {/* Step 7 — Confirm */}
         {step === 6 && (
-          <section className="space-y-3">
+          <section className="space-y-3 relative">
             <BannerHeader>Confirm</BannerHeader>
             <Plate className="p-4 space-y-2 font-body text-ink text-body-min">
               <p>Result: <strong>{draft.result}</strong></p>
@@ -528,6 +532,7 @@ function PostBattleForWarband() {
               )}
             </Plate>
             <p className="font-body text-ink-faded text-xs px-1">Applying commits these changes to the warband, adds the battle to its history (and to its campaign's log, if it's in one) and ends the battle.</p>
+            <Seal visible={sealed}/>
             <Button onClick={commit} disabled={saving}>{saving ? 'Saving…' : 'Apply & finish'}</Button>
           </section>
         )}

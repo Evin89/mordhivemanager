@@ -1,3 +1,4 @@
+import { prepareContacts } from '../lib/battleEncounters';
 import BattleExtrasSetup from '../components/BattleExtrasSetup';
 import { drawEndeavours } from '../lib/endeavours';
 import { assignBehaviours } from '../lib/behaviours';
@@ -163,7 +164,7 @@ export default function PreBattleScreen() {
     if (!warband || hiveBattleConflict) return;
     const ashEvent = !session.started && campaignActive && hiveMission?.condition === 'ash-storm'
       ? rollHiveEvent() : null;
-    update({ started: true, turn: session.started ? session.turn : 1,
+    update({ ...prepareContacts(session), started: true, turn: session.started ? session.turn : 1,
       events: ashEvent
         ? [{ id: generateId(), turn: 1, text: `Ash Storm — Hive event ${ashEvent.roll}: ${ashEvent.text}` }, ...session.events]
         : session.events,

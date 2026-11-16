@@ -29,7 +29,33 @@ export type OutOfActionTally = {
   henchmenCounts: Record<string, number>;
 };
 
+export type Contact = {
+  letter: string;
+  x: number;
+  y: number;
+  kind: 'hero' | 'group' | 'echo';
+  refId: string | null;
+  revealed: boolean;
+};
+
+export type ThirdParty = {
+  listName: string;
+  unitType: string;
+  stats: StatLine;
+  equipment: string[];
+  count: number;
+  outOfAction: number;
+  entry: string;
+  behaviour: Behaviour;
+  gone: boolean;
+};
+
 export type BattleSession = {
+  hiddenContacts: boolean;
+  contacts: Contact[];
+  thirdPartyEnabled: boolean;
+  thirdParty: ThirdParty | null;
+  cogitatorStarted: boolean;
   soloMission?: { campaignId: string; missionId: string };
   warbandId: string;
   scenario: string;
@@ -70,6 +96,7 @@ export type BattleSession = {
 
 export function defaultBattleSession(warbandId: string): BattleSession {
   return {
+    hiddenContacts: false, contacts: [], thirdPartyEnabled: false, thirdParty: null, cogitatorStarted: false,
     warbandId,
     scenario: '',
     opponentWarbandId: null,

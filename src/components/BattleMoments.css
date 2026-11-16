@@ -1,0 +1,12 @@
+.confirm-seal { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; pointer-events: none; }
+.confirm-seal img { width: 140px; animation: seal-stamp 400ms ease-out both; }
+@keyframes seal-stamp { from { transform: scale(1.8) rotate(-12deg); opacity: 0; } to { transform: scale(1) rotate(-4deg); opacity: 1; } }
+.battle-cogitator:has(.cogitator-startup) { position: relative; overflow: hidden; }
+.cogitator-startup { position: absolute; inset: 0 0 auto; height: 2px; background: rgb(var(--color-phosphor)); pointer-events: none; animation: startup-scan 500ms linear both; }
+.battle-cogitator:has(.cogitator-startup) > :not(.cogitator-startup) { animation: panel-start 160ms ease-out both; }
+.battle-cogitator:has(.cogitator-startup) > :nth-child(3) { animation-delay: 100ms; }
+.battle-cogitator:has(.cogitator-startup) > :nth-child(4) { animation-delay: 220ms; }
+.battle-cogitator:has(.cogitator-startup) > :nth-child(5) { animation-delay: 340ms; }
+@keyframes startup-scan { from { top: 0; opacity: .7; } to { top: 100%; opacity: 0; } }
+@keyframes panel-start { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .confirm-seal img, .battle-cogitator > * { animation: none !important; } .cogitator-startup { display: none; } }

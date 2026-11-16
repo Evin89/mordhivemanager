@@ -275,3 +275,18 @@
     }
   }
 }
+
+.ordo-landing .vox-ticker { display: grid; list-style: none; margin: 0; padding: 12px 5%; background: #101813; color: #B5D9A4; font: 14px "Share Tech Mono", monospace; min-height: 64px; }
+.ordo-landing .vox-ticker li { grid-area: 1 / 1; opacity: 0; animation: vox-message 56s linear infinite; }
+.ordo-landing .vox-ticker span { color: #D3EDC8; }
+.ordo-landing .vox-ticker li:nth-child(1) { animation-delay: 0s; }
+.ordo-landing .vox-ticker li:nth-child(2) { animation-delay: 7s; }
+.ordo-landing .vox-ticker li:nth-child(3) { animation-delay: 14s; }
+.ordo-landing .vox-ticker li:nth-child(4) { animation-delay: 21s; }
+.ordo-landing .vox-ticker li:nth-child(5) { animation-delay: 28s; }
+.ordo-landing .vox-ticker li:nth-child(6) { animation-delay: 35s; }
+.ordo-landing .vox-ticker li:nth-child(7) { animation-delay: 42s; }
+.ordo-landing .vox-ticker li:nth-child(8) { animation-delay: 49s; }
+
+@keyframes vox-message { 0%, 12.5%, 100% { opacity: 0; } 0.6%, 11.9% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ordo-landing .vox-ticker li { animation: none; opacity: 0; } .ordo-landing .vox-ticker li:first-child { opacity: 1; } }

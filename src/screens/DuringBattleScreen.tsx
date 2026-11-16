@@ -1,3 +1,7 @@
+import { ContactInstructions, HiddenContact, Strangers } from '../components/BattleEncounters';
+import { applyContactAlarm, advanceStrangers } from '../lib/battleEncounters';
+import { alarmGrade } from '../lib/alarm';
+import { CogitatorStartup } from '../components/BattleMoments';
 import EnemyInstructions from '../components/EnemyInstructions';
 import BehaviourCard from '../components/BehaviourCard';
 import AlarmPanel from '../components/AlarmPanel';
@@ -63,7 +67,7 @@ export default function DuringBattleScreen() {
   const activeHeroes = warband.heroes.filter((h) => isInWarband(h.status));
 
   function update(patch: Partial<BattleSession>) {
-    setSession(current => { const next = { ...current, ...patch }; saveBattleSession(next); return next; });
+    setSession(current => { const next = applyContactAlarm({ ...current, ...patch }); saveBattleSession(next); return next; });
   }
 
   function logEvent(text: string) {
@@ -76,7 +80,7 @@ export default function DuringBattleScreen() {
     if (delta < 0) {
       if (!window.confirm('Step the turn counter back?')) return;
     }
-    update(delta > 0 ? advanceTurn(session) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
+    update(delta > 0 ? advanceStrangers(advanceTurn(applyContactAlarm(session)), warband!.warbandType, session.alarmEnabled ? alarmGrade(session.alarm) : 0) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
   }
 
   function toggleHero(id: string) {
@@ -246,17 +250,20 @@ export default function DuringBattleScreen() {
               </Plate>
             )}
             <p className="font-ui">Enemy out of action: {session.npcOutOfAction.heroIds.length + Object.values(session.npcOutOfAction.henchmenCounts).reduce((sum,n)=>sum+n,0) + session.npcReinforcements.filter(r=>r.outOfAction).length} / {countModels(session.npcWarband) + session.npcReinforcements.length}</p>
+            <ContactInstructions session={session} update={update}/>
             <EnemyInstructions temperament={session.npcAgenda?.temperament}/>
             <Plate className="p-3 space-y-3">
               {/* Enemy heroes */}
               <ul className="space-y-2">
                 {session.npcWarband.heroes.map((h) => {
+                  const contact = session.hiddenContacts ? session.contacts.find(c => c.refId === h.id) : undefined;
+                  if (contact && !contact.revealed) return <HiddenContact key={h.id} contact={contact} session={session} update={update} />;
                   const down = session.npcOutOfAction.heroIds.includes(h.id);
                   return (
                     <li key={h.id} className="space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className={`font-body text-body-min ${down ? 'text-ink-faded line-through' : 'text-ink'}`}>
-                          {h.unitType}{h.isLeader ? ' · Leader' : ''}
+                          {contact && `Contact ${contact.letter} — `}{h.unitType}{h.isLeader ? ' · Leader' : ''}
                         </span>
                         <Button size="dense" variant={down ? 'danger' : 'secondary'} fullWidth={false} onClick={() => toggleNpcHero(h.id)}>
                           {down ? 'Out of action' : 'Standing'}
@@ -283,13 +290,15 @@ export default function DuringBattleScreen() {
               {session.npcWarband.henchmenGroups.length > 0 && (
                 <ul className="space-y-2 border-t border-steel-l pt-3">
                   {session.npcWarband.henchmenGroups.map((g) => {
-                    const n = session.npcOutOfAction.henchmenCounts[g.id] ?? 0;
+                    const contact = session.hiddenContacts ? session.contacts.find(c => c.refId === g.id) : undefined;
+                  if (contact && !contact.revealed) return <HiddenContact key={g.id} contact={contact} session={session} update={update} />;
+                  const n = session.npcOutOfAction.henchmenCounts[g.id] ?? 0;
                     const wiped = n >= g.count;
                     return (
                       <li key={g.id} className="space-y-1">
                         <div className="flex items-center justify-between gap-2">
                           <span className={`font-body text-body-min ${wiped ? 'text-ink-faded line-through' : 'text-ink'}`}>
-                            {g.count}x {g.unitType}
+                            {contact && `Contact ${contact.letter} — `}{g.count}x {g.unitType}
                           </span>
                           <span className="flex items-center gap-2">
                             <Button size="dense" variant="secondary" fullWidth={false} onClick={() => setNpcHenchCount(g.id, Math.max(0, n - 1))} aria-label="One fewer down">−</Button>
@@ -319,8 +328,10 @@ export default function DuringBattleScreen() {
           </section>
         )}
 
+        <Strangers session={session} update={update}/>
         {session.npcReinforcements.map(r=><Plate key={r.id} className="p-3 space-y-2"><SoloNote/><h3 className="font-heading text-2xl">{r.unitType} - Reinforcement</h3><p className="font-body text-sm">Entry: {r.entry}</p><ProfileBlock stats={r.stats} variant="collapsed"/><p className="font-body text-xs">Wargear: {r.equipment.join(', ')}</p><Button variant={r.outOfAction?'danger':'secondary'} onClick={()=>update({npcReinforcements:session.npcReinforcements.map(a=>a.id===r.id?{...a,outOfAction:!a.outOfAction}:a)})}>{r.outOfAction?'Out of action':'Standing'}</Button>{!r.outOfAction&&<BehaviourCard id={r.id} name={r.unitType} behaviour={session.npcBehaviours[r.id]??r.behaviour} session={session} update={update}/>}</Plate>)}
         </div><div className="battle-cogitator space-y-4">
+        <CogitatorStartup session={session} update={update}/>
         <AlarmPanel session={session} update={update}/>
         {/* Battlefield map */}
         {session.battlefieldSeed !== null && (
@@ -332,6 +343,7 @@ export default function DuringBattleScreen() {
             {mapOpen && (
               <Plate className="cogitator map-grid p-3"><p className="mb-3">AUSPEX // SECTOR MAP <span className="text-phosphor-dim">// TURN {session.turn}</span></p>
                 <BattlefieldMap
+                  contacts={session.hiddenContacts ? session.contacts : []}
                   field={generateBattlefield(
                     session.battlefieldSeed,
                     scenariosData.scenarios.find((s) => s.name === session.scenario)?.id ?? '',
