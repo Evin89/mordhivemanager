@@ -24,7 +24,7 @@
       "notes": "Exactly one per warband.",
       "specialRules": [
         { "ref": "leader", "params": { "range": "6\"" } },
-        { "name": "Psyker", "description": "A Plague Abbot is a Psyker and uses the Nurgle Rituals (see spells.json)." }
+        { "name": "Psyker", "description": "A Plague Abbot is a Psyker and uses the Nurgle Rituals (see Psychic Powers & Prayers in the rules)." }
       ]
     },
     {

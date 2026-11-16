@@ -42,7 +42,7 @@
       "equipmentOptions": ["ordoHereticusEquipmentList"],
       "notes": "May use Imperial Prayers while in armour. TODO: verify skill-table access.",
       "specialRules": [
-        { "name": "Prayers", "description": "A devout servant of the Emperor; may use Imperial Prayers (see spells.json). Prayers are not psychic powers." }
+        { "name": "Prayers", "description": "A devout servant of the Emperor; may use Imperial Prayers (see Psychic Powers & Prayers in the rules). Prayers are not psychic powers." }
       ]
     },
     {

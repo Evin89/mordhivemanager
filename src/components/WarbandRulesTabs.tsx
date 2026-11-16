@@ -5,24 +5,33 @@ import { warbandDefinitionsByName } from '../data/warbandRegistry';
 import { resolveSpecialRules } from '../lib/specialRulesLookup';
 import skillsData from '../data/skills.json';
 import { SkillList, WarbandDefinition } from '../data/types';
+import { playerText } from '../lib/playerText';
 
 const WARBAND_SKILLS = skillsData.warbandSpecific as Record<string, SkillList>;
 
 /** The warband's own rules prose, split on the ` | ` separators the data uses between paragraphs. */
 export function warbandRuleParagraphs(w: WarbandDefinition): string[] {
-  return w.specialRules.split(' | ').map((p) => p.trim()).filter(Boolean);
+  return w.specialRules.split(' | ').map(playerText).filter(Boolean);
 }
 
 /** Every unit of the warband that prints special rules, heroes first. */
 export function warbandUnitRules(w: WarbandDefinition) {
   return [
-    ...w.heroSlots.map((u) => ({ unit: u.unitType, kind: 'Hero', rules: resolveSpecialRules(u.specialRules) })),
-    ...w.henchmenTypes.map((u) => ({ unit: u.unitType, kind: 'Henchmen', rules: resolveSpecialRules(u.specialRules) })),
+    ...w.heroSlots.map((u) => ({ unit: u.unitType, kind: 'Hero', rules: playerRules(u.specialRules) })),
+    ...w.henchmenTypes.map((u) => ({ unit: u.unitType, kind: 'Henchmen', rules: playerRules(u.specialRules) })),
   ].filter((u) => u.rules.length > 0);
 }
 
 export function warbandSkills(w: WarbandDefinition) {
-  return WARBAND_SKILLS[w.id]?.skills ?? [];
+  return (WARBAND_SKILLS[w.id]?.skills ?? []).map((s) => ({ ...s, effect: playerText(s.effect) }));
+}
+
+function playerRules(rules: Parameters<typeof resolveSpecialRules>[0]) {
+  return resolveSpecialRules(rules).map((r) => ({
+    ...r,
+    description: playerText(r.description),
+    note: r.note ? playerText(r.note) || undefined : undefined,
+  }));
 }
 
 /**

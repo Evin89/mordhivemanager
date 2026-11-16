@@ -11,6 +11,7 @@ import { warbandDefinitionsByName } from '../data/warbandRegistry';
 import { EQUIPMENT_CATEGORY_LABELS, groupByCategory } from '../lib/equipmentCategories';
 import { EquipmentCategory } from '../types';
 import { SkillList, SpellList } from '../data/types';
+import { playerText } from '../lib/playerText';
 import WarbandRulesTabs, { warbandRuleParagraphs, warbandSkills, warbandUnitRules } from '../components/WarbandRulesTabs';
 
 /** Official Mord Hive links, as published by its author (Nick) in the v0.5 rulebook and his announcement post. */
@@ -50,7 +51,7 @@ export default function RulesScreen() {
       id: 'skills',
       heading: 'Skills',
       entries: skillLists.flatMap((list) =>
-        list.skills.map((s) => ({ title: s.name, sub: list.name, body: s.effect })),
+        list.skills.map((s) => ({ title: s.name, sub: list.name, body: playerText(s.effect) })),
       ),
     });
 
@@ -58,7 +59,7 @@ export default function RulesScreen() {
     const items = equipmentData.common.map((e) => ({
       title: e.name,
       sub: EQUIPMENT_CATEGORY_LABELS[e.category as EquipmentCategory],
-      body: `${e.cost ?? '?'} tn${e.notes ? ` — ${e.notes}` : ''}`,
+      body: `${e.cost ?? '?'} tn${e.notes && playerText(e.notes) ? ` — ${playerText(e.notes)}` : ''}`,
       category: e.category as EquipmentCategory,
     }));
     out.push({
@@ -78,7 +79,7 @@ export default function RulesScreen() {
           title: sp.name,
           group: list.name,
           sub: sp.difficulty !== null ? `Difficulty ${sp.difficulty}` : undefined,
-          body: sp.effect,
+          body: playerText(sp.effect),
         })),
       ),
     });
