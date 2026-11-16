@@ -18,8 +18,9 @@ export default function MissionCard({ mission, leaderName, active, disabled, onT
   const condition = CONDITIONS[mission.condition];
   const scenario = scenariosData.scenarios.find((item) => item.id === mission.scenarioId);
   return (
-    <Plate className="p-4 space-y-3">
-      <h3 className="font-ui text-brass-text text-lg">{sectorName(mission.sector)} · {mission.stake === 'defence' ? 'Defence' : 'Raid'}</h3>
+    <Plate className={`p-4 space-y-3 ${mission.stake === 'reckoning' ? 'border-2 border-[#7A1F1A]' : ''}`}>
+      {mission.stake === 'reckoning' && <><h2 className="font-display text-3xl text-ink">The Reckoning</h2><p className="font-body text-ink">Win and it ends here.</p></>}
+      <h3 className="font-ui text-brass-text text-lg">{sectorName(mission.sector)} · {mission.stake === 'reckoning' ? 'Reckoning' : mission.stake === 'defence' ? 'Defence' : 'Raid'}</h3>
       <p className="font-body text-ink">{scenario?.name}</p>
       <p className="font-ui text-ink">{condition.name}</p>
       <p className="font-body text-ink-faded text-sm">{condition.line.replace('{Leader name}', leaderName)}</p>

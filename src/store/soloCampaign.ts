@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, ReactNode, createElement } from 'react';
 import { RemoteCollection, useRemoteCollection } from './remoteCollection';
 import { CampaignAgenda } from '../lib/soloAgenda';
-import type { HiveState } from '../lib/hiveCampaign';
+import { normalizeHive, type HiveState } from '../lib/hiveCampaign';
 
 // Solo campaigns — a sequence of linked games for one warband against a recurring
 // app-built nemesis, with a hidden overarching agenda (spec §6). Supabase-backed
@@ -60,11 +60,13 @@ export function SoloCampaignsProvider({ children }: { children: ReactNode }) {
   const col = useRemoteCollection<SoloCampaign>({ table: 'solo_campaigns', legacyKey: LEGACY_KEY, toRow, fromRow });
   const { items, ready, create, save, remove, error, clearError, pendingImport, importLocal, dismissImport } = col;
 
-  const getCampaign = useCallback((id: string | undefined) => items.find((c) => c.id === id), [items]);
+  const campaigns = useMemo(() => items.map((campaign) => campaign.hive
+    ? { ...campaign, hive: normalizeHive(campaign.hive) } : campaign), [items]);
+  const getCampaign = useCallback((id: string | undefined) => campaigns.find((c) => c.id === id), [campaigns]);
 
   const value = useMemo<SoloCampaignsContextValue>(
     () => ({
-      campaigns: items,
+      campaigns,
       ready,
       getCampaign,
       createCampaign: create,
@@ -72,7 +74,7 @@ export function SoloCampaignsProvider({ children }: { children: ReactNode }) {
       deleteCampaign: remove,
       sync: { error, clearError, pendingImport, importLocal, dismissImport },
     }),
-    [items, ready, getCampaign, create, save, remove, error, clearError, pendingImport, importLocal, dismissImport],
+    [campaigns, ready, getCampaign, create, save, remove, error, clearError, pendingImport, importLocal, dismissImport],
   );
 
   // createElement rather than JSX so this store stays a .ts file like battle.ts.

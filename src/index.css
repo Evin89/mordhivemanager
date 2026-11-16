@@ -582,3 +582,11 @@ body,
   .hive-campaign-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hive-map { width: 100%; max-height: none; }
 }
+
+/* Vellum sheets (dossier, wanted bill): dark ink on parchment, whatever the global heading colour is. */
+.vellum-sheet{background:rgb(var(--color-vellum));color:rgb(var(--color-vellum-ink))}
+.vellum-sheet :is(h2,h3,p){color:rgb(var(--color-vellum-ink))}
+.wanted-bill{max-width:560px;margin-inline:auto;border:3px double rgb(var(--color-vellum-ink));box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.wanted-bill .wanted-deceased{color:rgb(var(--color-wax));border:4px solid currentColor;transform:rotate(-4deg);max-width:260px;margin-inline:auto}
+.wanted-bill .portrait-large{width:190px}
+.hive-last-seen{align-self:flex-start;font:600 12px 'Barlow Condensed',sans-serif;letter-spacing:.04em;padding:1px 6px;color:#f4d9d4;background:rgb(var(--color-wax))}

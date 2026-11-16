@@ -1,9 +1,10 @@
-import { controlLabel, HiveState, reachableSectors, SECTORS, SectorId } from '../lib/hiveCampaign';
+import { normalizeHive, controlLabel, HiveState, reachableSectors, SECTORS, SectorId } from '../lib/hiveCampaign';
 
 type Props = { state: HiveState; selected: SectorId; onSelect: (sector: SectorId) => void };
 
 export default function HiveMap({ state, selected, onSelect }: Props) {
-  const reachable = reachableSectors(state.control);
+  state = normalizeHive(state);
+  const reachable = reachableSectors(state.control, state.dark);
   return (
     <div className="hive-map">
       <picture>
@@ -16,6 +17,8 @@ export default function HiveMap({ state, selected, onSelect }: Props) {
           const mission = state.board.some((item) => item.sector === sector.id);
           return (
             <button
+              disabled={state.dark!.includes(sector.id)}
+              style={state.dark!.includes(sector.id) ? { filter: 'grayscale(1)', opacity: 0.55 } : undefined}
               key={sector.id}
               type="button"
               className={`hive-map-band ${reachable.includes(sector.id) ? 'reachable' : 'unreachable'}`}
@@ -24,11 +27,12 @@ export default function HiveMap({ state, selected, onSelect }: Props) {
               onClick={() => onSelect(sector.id)}
             >
               <span className="font-ui">{sector.name}{mission && <span aria-hidden="true"> ◆</span>}</span>
-              <span className="hive-pips" aria-hidden="true">
+              {state.lastSeen === sector.id && <span className="hive-last-seen">last seen</span>}
+              {state.dark!.includes(sector.id) ? <span>Gone dark</span> : <span className="hive-pips" aria-hidden="true">
                 {[-3, -2, -1, 0, 1, 2, 3].map((pip) => (
                   <span key={pip} className={pip === value ? `marked ${value < 0 ? 'enemy' : value > 0 ? 'yours' : 'neutral'}` : ''} />
                 ))}
-              </span>
+              </span>}
             </button>
           );
         })}

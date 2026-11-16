@@ -129,7 +129,7 @@ function PostBattleForWarband() {
           campaign.hive,
           session.soloMission.missionId,
           draft.result,
-          { warband: before.name, faction: campaign.nemesisName },
+          { warband: before.name, faction: campaign.nemesisName, agenda: campaign.agenda },
           session.npcWarband?.heroes.map((hero) => hero.id) ?? [],
           session.npcOutOfAction.heroIds,
         );

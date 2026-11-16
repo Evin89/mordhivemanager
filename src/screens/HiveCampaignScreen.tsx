@@ -1,3 +1,5 @@
+import { Dossier, SchemeClock, WantedBills, Prisoners } from '../components/Investigation';
+import { normalizeHive, prisonerAction } from '../lib/hiveCampaign';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -21,13 +23,13 @@ export default function HiveCampaignScreen() {
   const [selected, setSelected] = useState<SectorId>('underhive');
   const campaign = getCampaign(campaignId);
   if (!campaign?.hive) return <Navigate to="/solo" replace />;
-  const hive = campaign.hive;
+  const hive = normalizeHive(campaign.hive);
   const warband = warbands.find((item) => item.id === campaign.warbandId);
-  const context = { warband: warband?.name ?? 'Warband', faction: campaign.nemesisName };
+  const context = { warband: warband?.name ?? 'Warband', faction: campaign.nemesisName, agenda: campaign.agenda };
   const sector = SECTORS.find((item) => item.id === selected)!;
   const leaderName = hive.nemesis.find((hero) => hero.isLeader && hero.status === 'active')?.name ?? campaign.nemesisName;
-  const yours = Object.values(hive.control).filter((value) => value >= 2).length;
-  const theirs = Object.values(hive.control).filter((value) => value <= -2).length;
+  const yours = SECTORS.filter(({ id }) => !hive.dark.includes(id)).map(({ id }) => hive.control[id]).filter((value) => value >= 2).length;
+  const theirs = SECTORS.filter(({ id }) => !hive.dark.includes(id)).map(({ id }) => hive.control[id]).filter((value) => value <= -2).length;
   const closed = campaign.status === 'concluded';
 
   function clearMissionBattle() {
@@ -57,19 +59,26 @@ export default function HiveCampaignScreen() {
         </p>
         <p className="font-mono text-ink">Firmly held: you {yours} · them {theirs} · 4 wins the hive</p>
         <p className="font-body text-ink-faded text-sm">Four levels at +2 win the hive; four at −2 lose it.</p>
+        <p className="font-ui text-ink">Clues {hive.clues} / 8</p>
+        <SchemeClock scheme={hive.scheme} />
       </Plate>
-      {hive.outcome && <Plate className="p-4 font-body text-ink">{outcomeText(hive.outcome, context)}</Plate>}
+      {hive.outcome && <Plate className="p-4 font-body text-ink">{[...hive.chronicle].reverse().find((item) => item.kind === 'outcome')?.text ?? outcomeText(hive.outcome, context)}</Plate>}
       <div className="hive-campaign-layout">
         <HiveMap state={hive} selected={selected} onSelect={setSelected} />
         <div className="space-y-4 min-w-0">
           <Plate className="p-4 space-y-2">
             <h2 className="font-ui text-brass-text text-xl">{sector.name}</h2>
             <p className="font-body text-ink">{sector.line}</p>
-            <p className="font-ui text-ink">{controlLabel(hive.control[selected])} ({hive.control[selected] > 0 ? '+' : ''}{hive.control[selected]})</p>
+            <p className="font-ui text-ink">{hive.dark.includes(selected) ? 'Gone dark' : controlLabel(hive.control[selected])} ({hive.control[selected] > 0 ? '+' : ''}{hive.control[selected]})</p>
             <p className="font-body text-ink-faded text-sm">{hive.board.some((mission) => mission.sector === selected) ? 'Mission marked below.' : 'No mission here this turn.'}</p>
           </Plate>
           <BannerHeader>Mission board</BannerHeader>
-          {!hive.board.length && <p className="font-body text-ink">No reachable sectors remain. You can conclude this campaign below.</p>}
+          {!hive.board.length && !hive.outcome && campaign.status === 'active' && (
+            <p className="font-body text-ink">No reachable sectors remain. You can conclude this campaign below.</p>
+          )}
+          {(hive.outcome || campaign.status !== 'active') && (
+            <p className="font-body text-ink-faded">The campaign is over. No further missions.</p>
+          )}
           {hive.board.map((mission) => (
             <div key={mission.id} className={mission.sector === selected ? 'outline outline-1 outline-brass outline-offset-2' : ''}>
               <MissionCard
@@ -88,6 +97,12 @@ export default function HiveCampaignScreen() {
           ))}
         </div>
       </div>
+      <Dossier agenda={campaign.agenda} clues={closed ? 8 : hive.clues} />
+      <WantedBills state={hive} agenda={campaign.agenda} faction={campaign.nemesisName} type={campaign.nemesisType} />
+      <Prisoners state={hive} onAction={(id, action) => {
+        const next = prisonerAction(hive, id, action, context);
+        saveCampaign({ ...campaign, hive: next, status: next.outcome ? 'concluded' : 'active' });
+      }} />
       <KnownEnemies heroes={hive.nemesis} />
       <section className="space-y-3">
         <BannerHeader>Chronicle</BannerHeader>

@@ -182,7 +182,7 @@ export default function PreBattleScreen() {
           <Plate className="p-3">
             <p className="font-display uppercase tracking-[0.05em] text-ink text-sm">
               {campaign.name} · {hiveMission
-                ? `${sectorName(hiveMission.sector)} · ${hiveMission.stake === 'defence' ? 'Defence' : 'Raid'} · ${CONDITIONS[hiveMission.condition].name}`
+                ? `${sectorName(hiveMission.sector)} · ${hiveMission.stake === 'reckoning' ? 'Reckoning' : hiveMission.stake === 'defence' ? 'Defence' : 'Raid'} · ${CONDITIONS[hiveMission.condition].name}`
                 : `${actLabel(campaign.act)} · Chapter ${campaign.chapter}`}
             </p>
             <p className="font-body text-ink-faded text-sm">
