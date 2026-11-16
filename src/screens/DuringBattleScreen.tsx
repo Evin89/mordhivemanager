@@ -112,16 +112,7 @@ export default function DuringBattleScreen() {
   }
 
   function endBattle() {
-    useEffect(() => {
-    if (!session.npcWarband) return;
-    const actors = [...session.npcWarband.heroes, ...session.npcWarband.henchmenGroups];
-    if (actors.some(a => !session.npcBehaviours[a.id])) {
-      const next = {...session, npcBehaviours: {...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours}};
-      setSession(next); saveBattleSession(next);
-    }
-  }, [session]);
-
-  if (!warband) return;
+    if (!warband) return;
     if (window.confirm('Finish the battle and run the post-battle sequence?')) {
       navigate(`/warbands/${warband.id}/post-battle`);
     }
