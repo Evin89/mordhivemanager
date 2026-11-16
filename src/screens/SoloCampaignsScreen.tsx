@@ -9,6 +9,8 @@ import { useWarbands } from '../store/warbands';
 import { useSoloCampaigns, SoloCampaign } from '../store/soloCampaign';
 import { generateCampaignAgenda, actLabel } from '../lib/soloAgenda';
 import { warbandDefinitionsByName, getWarbandTypeName } from '../data/warbandRegistry';
+import { createHiveState } from '../lib/hiveCampaign';
+import { buildNpcWarband } from '../lib/npc';
 
 const CHAPTERS_PER_ACT = 3;
 
@@ -22,6 +24,7 @@ export default function SoloCampaignsScreen() {
   const [name, setName] = useState('');
   const [warbandId, setWarbandId] = useState('');
   const [nemesis, setNemesis] = useState('random');
+  const [kind, setKind] = useState<'hive' | 'classic'>('hive');
 
   const canCreate = warbands.length > 0 && (warbandId || warbands[0]);
 
@@ -35,6 +38,10 @@ export default function SoloCampaignsScreen() {
     if (!def) return;
     const wb = warbands.find((w) => w.id === wbId);
     const campaign: SoloCampaign = {
+      kind,
+      hive: kind === 'hive'
+        ? createHiveState({ warband: wb?.name ?? 'Warband', faction: def.name }, buildNpcWarband(def, 500).heroes)
+        : undefined,
       id: generateId(),
       name: name.trim() || `${wb?.name ?? 'Warband'} — Solo Campaign`,
       warbandId: wbId,
@@ -44,7 +51,7 @@ export default function SoloCampaignsScreen() {
       agendaRevealed: false,
       act: 1,
       chapter: 1,
-      chaptersPerAct: CHAPTERS_PER_ACT,
+      chaptersPerAct: kind === 'hive' ? 0 : CHAPTERS_PER_ACT,
       log: [],
       status: 'active',
       createdAt: new Date().toISOString(),
@@ -57,9 +64,8 @@ export default function SoloCampaignsScreen() {
     <div className="space-y-6">
       <BannerHeader as="h1">Solo Campaigns</BannerHeader>
       <p className="font-body text-ink text-body-min">
-        A run of linked games for one warband against a recurring, escalating AI nemesis with a hidden
-        agenda across three acts. Everything the enemy does is an app-original assistant, not part of the
-        ruleset.
+        Fight for six levels in The Hive, or follow the original Three Acts format.
+        Both link games against a recurring nemesis. App-original · Not part of the ruleset.
       </p>
 
       {/* Existing campaigns */}
@@ -76,10 +82,11 @@ export default function SoloCampaignsScreen() {
                   <Plate className="p-4">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-display uppercase tracking-[0.04em] text-ink text-lg">{c.name}</span>
-                      <PageChip>{c.status === 'concluded' ? 'Concluded' : actLabel(c.act)}</PageChip>
+                      <PageChip>{c.status === 'concluded' ? 'Concluded' : c.kind === 'hive' ? `Turn ${c.hive?.turn ?? 1}` : actLabel(c.act)}</PageChip>
                     </div>
                     <p className="font-body text-ink-faded text-sm mt-1">
-                      {wb?.name ?? 'Unknown warband'} vs {c.nemesisName} · {c.log.length} games ({wins}W / {losses}L)
+                      {c.kind === 'hive' ? 'The Hive' : 'Three Acts'} · {wb?.name ?? 'Unknown warband'} vs {c.nemesisName}
+                      {c.kind !== 'hive' && ` · ${c.log.length} games (${wins}W / ${losses}L)`}
                     </p>
                   </Plate>
                 </Link>
@@ -100,6 +107,13 @@ export default function SoloCampaignsScreen() {
           </Plate>
         ) : (
           <Plate className="p-4 space-y-3">
+            <label className="block">
+              <span className="font-ui text-ink-faded">Campaign type</span>
+              <Select value={kind} onChange={(event) => setKind(event.target.value as 'hive' | 'classic')}>
+                <option value="hive">The Hive</option>
+                <option value="classic">Three Acts — the original format</option>
+              </Select>
+            </label>
             <label className="block">
               <span className="font-display uppercase tracking-[0.06em] text-ink-faded text-xs">Campaign name</span>
               <TextField value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. The Long Dark" />

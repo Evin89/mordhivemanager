@@ -30,6 +30,7 @@ export type OutOfActionTally = {
 };
 
 export type BattleSession = {
+  soloMission?: { campaignId: string; missionId: string };
   warbandId: string;
   scenario: string;
   opponentWarbandId: string | null;

@@ -1,0 +1,299 @@
+import scenariosData from '../data/scenarios.json';
+import type { Warband } from '../types';
+import { rollHiveEvent } from './oracle';
+
+export const SECTORS = [
+  { id: 'spire', name: 'The Spire', line: 'Empty halls, and the only landing pads left.' },
+  { id: 'hab-stacks', name: 'The Hab-stacks', line: 'Ten thousand dark floors.' },
+  { id: 'wound', name: 'The Wound', line: 'Where the Hulk struck. Still burning.' },
+  { id: 'refineries', name: 'The Refineries', line: 'Cold crucibles and loose shards.' },
+  { id: 'underhive', name: 'The Underhive', line: 'Tunnels, shanties, a line that still hums.' },
+  { id: 'sump', name: 'The Sump', line: 'Black water and catacombs.' },
+] as const;
+
+export type SectorId = typeof SECTORS[number]['id'];
+export const CONDITIONS = {
+  quiet: { name: 'Quiet', line: 'No surprises.', budget: 0 },
+  'on-alert': { name: 'On Alert', line: 'They are listening for you.', budget: 0 },
+  'hunting-party': { name: 'Hunting Party', line: 'More of them than usual.', budget: 100 },
+  'thin-patrols': { name: 'Thin Patrols', line: 'Most of them are elsewhere.', budget: -100 },
+  'rich-seam': { name: 'Rich Seam', line: 'Worth the risk.', budget: 0 },
+  bounty: { name: 'Bounty', line: 'Someone is paying for results.', budget: 0 },
+  'ash-storm': { name: 'Ash Storm', line: 'The air itself is against you.', budget: 0 },
+  'nemesis-present': { name: 'The Nemesis Walks', line: '{Leader name} leads them in person.', budget: 50 },
+} as const;
+export type ConditionId = keyof typeof CONDITIONS;
+export type HiveMission = {
+  id: string;
+  sector: SectorId;
+  stake: 'raid' | 'defence';
+  scenarioId: string;
+  condition: ConditionId;
+  budget: number;
+};
+export type NemesisHero = {
+  id: string;
+  name: string;
+  role: string;
+  isLeader: boolean;
+  status: 'active' | 'dead';
+  battles: number;
+  timesDown: number;
+  scars: number;
+};
+export type HiveChronicleEntry = {
+  turn: number;
+  kind: 'battle' | 'nemesis' | 'event' | 'ignored' | 'outcome';
+  sector?: SectorId;
+  text: string;
+  date: string;
+};
+export type HiveState = {
+  turn: number;
+  control: Record<SectorId, number>;
+  board: HiveMission[];
+  activeMissionId: string | null;
+  nemesis: NemesisHero[];
+  chronicle: HiveChronicleEntry[];
+  outcome: 'won' | 'lost' | null;
+};
+export type HiveContext = { warband: string; faction: string };
+type Random = () => number;
+const FIRST = ['Varn', 'Sable', 'Korrin', 'Mott', 'Ilse', 'Drey', 'Hask', 'Oriel', 'Tamsin', 'Brask', 'Vess', 'Calder', 'Nix', 'Orrin', 'Maude', 'Jerrik'];
+const EPITHETS = ['the Patient', 'Ashmouth', 'of the Ninth Stair', 'Coldhand', 'the Unpaid', 'Lampless', 'Twice-Buried', 'the Ledger', 'Sumpborn', 'Greycoat', 'the Last Shift', 'No-Name'];
+
+function pick<T>(items: readonly T[], rand: Random): T {
+  return items[Math.floor(rand() * items.length)];
+}
+
+export function generateNemesisName(used: string[], rand: Random = Math.random): string {
+  const available = FIRST.flatMap((first) => EPITHETS.map((epithet) => `${first} ${epithet}`))
+    .filter((name) => !used.includes(name));
+  if (!available.length) throw new Error('All specified nemesis names have been used.');
+  return pick(available, rand);
+}
+
+export function sectorName(id: SectorId): string {
+  return SECTORS.find((sector) => sector.id === id)!.name;
+}
+
+export function adjacentSectors(id: SectorId): SectorId[] {
+  const index = SECTORS.findIndex((sector) => sector.id === id);
+  return SECTORS.filter((_, i) => Math.abs(i - index) === 1).map((sector) => sector.id);
+}
+
+export function reachableSectors(control: HiveState['control']): SectorId[] {
+  // The camp in the Underhive is never lost as a base: it and its neighbours stay
+  // reachable even when control there has dropped, so the board can never be empty.
+  const held = (id: SectorId) => id === 'underhive' || control[id] >= 1;
+  return SECTORS.filter(({ id }) => held(id) || adjacentSectors(id).some(held))
+    .map(({ id }) => id);
+}
+
+export function missionBudget(turn: number, control: number, condition: ConditionId): number {
+  const budget = 350 + 25 * Math.min(10, Math.max(0, turn - 1))
+    + 75 * Math.max(0, -control) + CONDITIONS[condition].budget;
+  return Math.max(250, Math.round(budget / 25) * 25);
+}
+
+export function generateBoard(state: HiveState, rand: Random = Math.random): HiveMission[] {
+  const pool = reachableSectors(state.control);
+  const selected: SectorId[] = [];
+  while (pool.length && selected.length < 3) {
+    const sector = pick(pool, rand);
+    selected.push(sector);
+    pool.splice(pool.indexOf(sector), 1);
+  }
+  let defenceDrawn = false;
+  const conditions = (Object.keys(CONDITIONS) as ConditionId[])
+    .filter((id) => id !== 'nemesis-present' || state.nemesis.some((hero) => hero.isLeader && hero.status === 'active'));
+  conditions.push('quiet');
+  return selected.map((sector, index) => {
+    const defence = !defenceDrawn && state.control[sector] >= 1
+      && adjacentSectors(sector).some((other) => state.control[other] <= -1);
+    if (defence) defenceDrawn = true;
+    const condition = pick(conditions, rand);
+    return {
+      id: `turn-${state.turn}-${index}-${sector}`,
+      sector,
+      stake: defence ? 'defence' : 'raid',
+      scenarioId: pick(scenariosData.scenarios, rand).id,
+      condition,
+      budget: missionBudget(state.turn, state.control[sector], condition),
+    };
+  });
+}
+
+export function createHiveState(
+  context: HiveContext,
+  heroes: Pick<Warband['heroes'][number], 'unitType' | 'isLeader'>[],
+  rand: Random = Math.random,
+): HiveState {
+  const control: HiveState['control'] = { spire: 0, 'hab-stacks': 0, wound: 0, refineries: 0, underhive: 1, sump: 0 };
+  const lair = pick<SectorId>(['spire', 'wound', 'sump'], rand);
+  control[lair] = -2;
+  const nemesis: NemesisHero[] = [];
+  heroes.forEach((hero, index) => {
+    nemesis.push({
+      id: `nemesis-${index}`,
+      name: generateNemesisName(nemesis.map((other) => other.name), rand),
+      role: hero.unitType,
+      isLeader: hero.isLeader,
+      status: 'active', battles: 0, timesDown: 0, scars: 0,
+    });
+  });
+  const state: HiveState = {
+    turn: 1, control, board: [], activeMissionId: null, nemesis, outcome: null,
+    chronicle: [{
+      turn: 1, kind: 'event', date: new Date().toISOString(),
+      text: `${context.warband} made camp in the Underhive. ${nemesis.find((hero) => hero.isLeader)?.name ?? context.faction} of the ${context.faction} holds ${sectorName(lair)}.`,
+    }],
+  };
+  return { ...state, board: generateBoard(state, rand) };
+}
+
+export function identifyNemesis(npc: Warband, state: HiveState, mission: HiveMission): Warband {
+  const active = state.nemesis.filter((hero) => hero.status === 'active' && !hero.isLeader);
+  const leader = mission.condition === 'nemesis-present'
+    ? state.nemesis.find((hero) => hero.status === 'active' && hero.isLeader) : undefined;
+  let index = 0;
+  return {
+    ...npc,
+    heroes: npc.heroes.map((hero) => {
+      const identity = hero.isLeader ? leader : active[index++];
+      if (identity) return { ...hero, id: identity.id, name: identity.name };
+      return { ...hero, name: hero.isLeader ? `${hero.unitType}, acting leader` : hero.name };
+    }),
+  };
+}
+
+function clamp(value: number): number {
+  return Math.max(-3, Math.min(3, value));
+}
+
+export function applyMissionControl(state: HiveState, mission: HiveMission, result: 'win' | 'loss' | 'draw', rand: Random = Math.random): HiveState['control'] {
+  const control = { ...state.control };
+  let change = 0;
+  if (mission.stake === 'raid') change = result === 'win' ? (mission.condition === 'rich-seam' ? 2 : 1) : result === 'loss' ? -1 : 0;
+  else if (result === 'win') {
+    const enemies = adjacentSectors(mission.sector).filter((id) => control[id] <= -1);
+    if (enemies.length) {
+      const target = pick(enemies, rand);
+      control[target] = clamp(control[target] + 1);
+    }
+  } else change = result === 'loss' ? -2 : -1;
+  control[mission.sector] = clamp(control[mission.sector] + change);
+  return control;
+}
+
+export function checkOutcome(control: HiveState['control']): HiveState['outcome'] {
+  if (Object.values(control).filter((value) => value >= 2).length >= 4) return 'won';
+  if (Object.values(control).filter((value) => value <= -2).length >= 4) return 'lost';
+  return null;
+}
+
+export function outcomeText(outcome: 'won' | 'lost', context: HiveContext): string {
+  return outcome === 'won'
+    ? `Four levels answer to ${context.warband}. For now, Mord Hive is theirs.`
+    : `The ${context.faction} hold the hive. ${context.warband} are hunted in it.`;
+}
+
+function entry(state: HiveState, kind: HiveChronicleEntry['kind'], text: string, sector?: SectorId): HiveChronicleEntry {
+  return { turn: state.turn, kind, text, sector, date: new Date().toISOString() };
+}
+
+export function hiveMoves(state: HiveState, chosenId: string, context: HiveContext, rand: Random = Math.random): HiveState {
+  const control = { ...state.control };
+  const chronicle = [...state.chronicle];
+  state.board.filter((mission) => mission.id !== chosenId && mission.stake === 'defence').forEach((mission) => {
+    control[mission.sector] = clamp(control[mission.sector] - 1);
+    chronicle.push(entry(state, 'ignored', `${sectorName(mission.sector)} was left to fend for itself.`, mission.sector));
+  });
+  const eligible = SECTORS.filter(({ id }) => control[id] > -3);
+  const adjacent = eligible.filter(({ id }) => adjacentSectors(id).some((other) => control[other] <= -1));
+  const target = pick(adjacent.length ? adjacent : eligible, rand);
+  if (target) {
+    control[target.id] = clamp(control[target.id] - 1);
+    const leader = state.nemesis.find((hero) => hero.isLeader && hero.status === 'active');
+    const text = pick([
+      `The ${context.faction} pushed into ${target.name}.`,
+      `${leader?.name ?? context.faction}'s people were seen in ${target.name}.`,
+    ], rand);
+    chronicle.push(entry(state, 'nemesis', text, target.id));
+  }
+  const event = rollHiveEvent(rand);
+  chronicle.push(entry(state, 'event', `Hive event ${event.roll} (flavour only): ${event.text}`));
+  const outcome = checkOutcome(control);
+  if (outcome) chronicle.push(entry(state, 'outcome', outcomeText(outcome, context)));
+  const next = { ...state, control, chronicle, outcome, turn: state.turn + 1, activeMissionId: null };
+  return { ...next, board: generateBoard(next, rand) };
+}
+
+export function resolveMission(
+  state: HiveState,
+  missionId: string,
+  result: 'win' | 'loss' | 'draw',
+  context: HiveContext,
+  participatingIds: string[] = [],
+  downIds: string[] = [],
+  rand: Random = Math.random,
+): HiveState {
+  const mission = state.board.find((item) => item.id === missionId);
+  if (!mission || state.activeMissionId !== missionId || state.outcome) return state;
+  const casualtyLines: string[] = [];
+  const nemesis = state.nemesis.map((hero) => {
+    if (hero.status !== 'active' || !participatingIds.includes(hero.id)) return { ...hero };
+    const next = { ...hero, battles: hero.battles + 1 };
+    if (downIds.includes(hero.id)) {
+      next.timesDown += 1;
+      casualtyLines.push(`${hero.name} was carried from the fight.`);
+      const roll = 1 + Math.floor(rand() * 6);
+      if (roll === 1) {
+        next.status = 'dead';
+        casualtyLines.push(`${hero.name} did not get up again.`);
+      } else if (roll <= 3) {
+        next.scars += 1;
+        casualtyLines.push(`${hero.name} will carry the mark.`);
+      }
+    }
+    return next;
+  });
+  if (!nemesis.some((hero) => hero.isLeader && hero.status === 'active')) {
+    const successor = nemesis.find((hero) => hero.status === 'active');
+    if (successor) successor.isLeader = true;
+    else {
+      nemesis.push({
+        id: `nemesis-${nemesis.length}`,
+        name: generateNemesisName(nemesis.map((hero) => hero.name), rand),
+        role: nemesis.find((hero) => hero.isLeader)?.role ?? '',
+        isLeader: true, status: 'active', battles: 0, timesDown: 0, scars: 0,
+      });
+    }
+  }
+  const sector = sectorName(mission.sector);
+  const scenario = scenariosData.scenarios.find((item) => item.id === mission.scenarioId)!.name;
+  const opening = pick([
+    `Turn ${state.turn}. ${sector}: ${context.warband} went in after ${scenario}.`,
+    `Turn ${state.turn}. ${context.warband} fought the ${context.faction} in ${sector} (${scenario}).`,
+    `Turn ${state.turn}. ${sector}, ${CONDITIONS[mission.condition].name}. ${context.warband} against the ${context.faction}.`,
+  ], rand);
+  const results = {
+    win: ['They held the field.', `The ${context.faction} broke first.`, `It cost them, but ${sector} is quieter tonight.`],
+    loss: ['They were driven back to camp.', `The ${context.faction} kept the ground.`, 'Nobody talks about how it ended.'],
+    draw: ['Neither side could finish it.', 'Both pulled back before the lamps ran dry.'],
+  };
+  const text = [opening, pick(results[result], rand), ...casualtyLines].join(' ');
+  return hiveMoves({
+    ...state, nemesis,
+    control: applyMissionControl(state, mission, result, rand),
+    chronicle: [...state.chronicle, entry(state, 'battle', text, mission.sector)],
+  }, missionId, context, rand);
+}
+
+export function abandonMission(state: HiveState, context: HiveContext, rand: Random = Math.random): HiveState {
+  return state.activeMissionId ? resolveMission(state, state.activeMissionId, 'loss', context, [], [], rand) : state;
+}
+
+export function controlLabel(value: number): string {
+  return ['Their stronghold', 'Firmly theirs', 'Theirs', 'Contested', 'Yours', 'Firmly yours', 'Your stronghold'][value + 3];
+}

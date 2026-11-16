@@ -506,3 +506,79 @@ body,
     animation: none !important;
   }
 }
+
+/* Six-level campaign cutaway. Controls stay legible over the artwork. */
+.hive-campaign-layout {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+.hive-map {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  width: min(100%, 46.66vh);
+  max-height: 70vh;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 2px solid rgb(var(--color-brass));
+  background: #14110e;
+}
+.hive-map picture,
+.hive-map img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hive-map-bands {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+}
+.hive-map-band {
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  color: rgb(var(--color-vellum));
+  background: linear-gradient(90deg, rgb(20 17 14 / 82%) 0, rgb(20 17 14 / 35%) 70%, rgb(20 17 14 / 15%) 100%);
+  text-shadow: 0 1px 3px #14110e;
+  border: 1px solid rgb(var(--color-vellum) / 25%);
+  text-align: left;
+}
+.hive-map-band.reachable {
+  border-inline-start: 4px solid rgb(var(--color-brass));
+}
+.hive-map-band.unreachable {
+  background: rgb(20 17 14 / 72%);
+}
+.hive-map-band[aria-pressed='true'],
+.hive-map-band:focus-visible {
+  outline: 2px solid rgb(var(--color-brass-text));
+  outline-offset: -3px;
+}
+.hive-pips {
+  display: flex;
+  gap: 0.4rem;
+}
+.hive-pips > span {
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgb(var(--color-vellum));
+  border-radius: 50%;
+  background: #26211c;
+}
+.hive-pips > .marked {
+  outline: 2px solid rgb(var(--color-vellum));
+  outline-offset: 1px;
+}
+.hive-pips > .yours { background: rgb(var(--color-brass)); }
+.hive-pips > .enemy { background: rgb(var(--color-wax)); }
+.hive-pips > .neutral { background: rgb(var(--color-vellum)); }
+@media (min-width: 900px) {
+  .hive-campaign-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hive-map { width: 100%; max-height: none; }
+}

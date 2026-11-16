@@ -24,6 +24,8 @@ import { BattleResult } from '../types';
 import ExplorationRoll from '../components/ExplorationRoll';
 import { recordBattle } from '../lib/battles';
 import { computeWarbandRating } from '../lib/rating';
+import { useSoloCampaigns } from '../store/soloCampaign';
+import { resolveMission } from '../lib/hiveCampaign';
 
 const { terms } = strings;
 const STEPS = ['Battle Info', 'Injuries', 'Experience', 'Advances', 'Income', 'Upkeep', 'Confirm'] as const;
@@ -67,6 +69,7 @@ function PostBattleForWarband() {
   const navigate = useNavigate();
   const warband = useWarbandLookup(warbandId);
   const { saveWarband, warbands } = useWarbands();
+  const { getCampaign, saveCampaign } = useSoloCampaigns();
   const [saving, setSaving] = useState(false);
   const [battleSession, setBattleSession] = useState(() => loadBattleSession(warbandId ?? ''));
   const [finishedSession, setFinishedSession] = useState<BattleSession | null>(() => { const s=loadBattleSession(warbandId ?? ''); return s?.postBattleComplete ? s : null; });
@@ -106,6 +109,7 @@ function PostBattleForWarband() {
     setSaving(true);
     const before = warband!;
     const session = loadBattleSession(before.id);
+    let destination = `/warbands/${before.id}`;
     const next = applyDraft(before, draft);
     saveWarband(next);
     const err = await recordBattle({
@@ -116,14 +120,48 @@ function PostBattleForWarband() {
       session,
       myWarbands: warbands,
     });
+    if (session?.soloMission && !session.postBattleComplete) {
+      const campaign = getCampaign(session.soloMission.campaignId);
+      if (campaign?.kind === 'hive' && campaign.hive && campaign.status === 'active'
+        && campaign.warbandId === before.id
+        && campaign.hive.activeMissionId === session.soloMission.missionId) {
+        const hive = resolveMission(
+          campaign.hive,
+          session.soloMission.missionId,
+          draft.result,
+          { warband: before.name, faction: campaign.nemesisName },
+          session.npcWarband?.heroes.map((hero) => hero.id) ?? [],
+          session.npcOutOfAction.heroIds,
+        );
+        saveCampaign({ ...campaign, hive, status: hive.outcome ? 'concluded' : 'active' });
+        destination = `/solo/${campaign.id}`;
+      }
+    }
     if (session?.allies.length) {
       const finished = {...session, started:false, postBattleComplete:true, result:draft.result};
       saveBattleSession(finished);
       setFinishedSession(finished);
-    } else { clearBattleSession(before.id); navigate(`/warbands/${before.id}`, { replace: true, state: err ? { notice: err } : undefined }); }
+    } else {
+      clearBattleSession(before.id);
+      navigate(err ? `/warbands/${before.id}` : destination, {
+        replace: true,
+        state: err ? { notice: err } : undefined,
+      });
+    }
   }
 
-  if (finishedSession) return <AllyAfterBattle session={finishedSession} onDone={()=>{clearBattleSession(warband.id);navigate(`/warbands/${warband.id}`, {replace:true});}} />;
+  if (finishedSession) {
+    return (
+      <AllyAfterBattle
+        session={finishedSession}
+        onDone={() => {
+          clearBattleSession(warband.id);
+          const campaign = getCampaign(finishedSession.soloMission?.campaignId);
+          navigate(campaign?.kind === 'hive' ? `/solo/${campaign.id}` : `/warbands/${warband.id}`, { replace: true });
+        }}
+      />
+    );
+  }
 
   const heroList = warband.heroes.filter((h) => h.status === 'active' || h.status === 'missNextGame');
   const hiredList = warband.hiredSwords.filter((h) => draft.hired?.[h.id]);

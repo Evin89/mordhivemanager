@@ -18,6 +18,9 @@ import BattlefieldMap from '../components/BattlefieldMap';
 import { warbandDefinitionsByName, getWarbandDefinition } from '../data/warbandRegistry';
 import { BattleSession, defaultBattleSession, loadBattleSession, saveBattleSession } from '../store/battle';
 import scenariosData from '../data/scenarios.json';
+import { CONDITIONS, identifyNemesis, sectorName } from '../lib/hiveCampaign';
+import { rollHiveEvent } from '../lib/oracle';
+import { generateId } from '../lib/id';
 
 /** Battle setup (spec §5): pick or roll a scenario, note the opponent, jot
  * pre-battle notes, then start the fight. Persists so a refresh doesn't lose it. */
@@ -39,9 +42,41 @@ export default function PreBattleScreen() {
   const campaign = getCampaign(searchParams.get('campaign') ?? undefined);
   // A solo chapter for this warband: muster the nemesis at act strength if the
   // session doesn't already carry an opponent (so a resume doesn't re-roll it).
-  const campaignActive = campaign && campaign.warbandId === warbandId && campaign.status === 'active';
+  const hiveMission = campaign?.kind === 'hive'
+    ? campaign.hive?.board.find((mission) => mission.id === campaign.hive?.activeMissionId)
+    : undefined;
+  const campaignActive = campaign && campaign.warbandId === warbandId && campaign.status === 'active'
+    && (campaign.kind !== 'hive' || !!hiveMission);
+  const hiveBattleConflict = !!(campaignActive && hiveMission && (session.started || session.postBattleComplete)
+    && (session.postBattleComplete || session.soloMission?.campaignId !== campaign?.id
+      || session.soloMission?.missionId !== hiveMission.id));
   useEffect(() => {
     if (!campaignActive || !campaign) return;
+    if (campaign.kind === 'hive') {
+      if (!hiveMission || !campaign.hive || hiveBattleConflict) return;
+      if (session.soloMission?.campaignId === campaign.id && session.soloMission.missionId === hiveMission.id) return;
+      const def = getWarbandDefinition(campaign.nemesisType);
+      if (!def) return;
+      const npc = identifyNemesis(buildNpcWarband(def, hiveMission.budget), campaign.hive, hiveMission);
+      const agenda = generateAgenda();
+      const next: BattleSession = {
+        ...defaultBattleSession(warbandId ?? ''),
+        soloMission: { campaignId: campaign.id, missionId: hiveMission.id },
+        scenario: scenariosData.scenarios.find((item) => item.id === hiveMission.scenarioId)?.name ?? '',
+        npcWarband: npc,
+        opponentName: npc.name,
+        npcAgenda: agenda,
+        alarmEnabled: true,
+        alarm: hiveMission.condition === 'on-alert' ? 4 : 0,
+        endeavourDraw: hiveMission.condition === 'bounty' ? 'd3' : 'none',
+        npcBehaviours: assignBehaviours(npc, agenda),
+      };
+      setNpcTypeId(def.id);
+      setNpcBudget(hiveMission.budget);
+      setSession(next);
+      saveBattleSession(next);
+      return;
+    }
     if (session.npcWarband) return;
     const def = getWarbandDefinition(campaign.nemesisType);
     if (!def) return;
@@ -59,9 +94,24 @@ export default function PreBattleScreen() {
     setSession(next);
     saveBattleSession(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaignActive]);
+  }, [campaignActive, campaign?.id, hiveMission?.id]);
 
   if (!warband) return <Navigate to="/warbands" replace />;
+  if (hiveBattleConflict) {
+    return (
+      <div className="space-y-6">
+        <BackHeader title="Pre-Battle" to={`/solo/${campaign?.id}`} />
+        <Plate className="p-4 space-y-3">
+          <p className="font-body text-ink">
+            This warband has another battle or allied post-battle work in progress. Finish it before fighting this mission.
+          </p>
+          <Button onClick={() => navigate(`/warbands/${warband.id}/${session.postBattleComplete ? 'post-battle' : 'battle'}`)}>
+            Return to the current battle
+          </Button>
+        </Plate>
+      </div>
+    );
+  }
 
   const otherWarbands = warbands.filter((w) => w.id !== warband.id);
   const scenario = scenariosData.scenarios.find((s) => s.name === session.scenario);
@@ -90,7 +140,10 @@ export default function PreBattleScreen() {
   function generateNpc() {
     const def = warbandDefinitionsByName.find((d) => d.id === npcTypeId);
     if (!def) return;
-    const npc = buildNpcWarband(def, npcBudget);
+    const generated = buildNpcWarband(def, npcBudget);
+    const npc = campaignActive && campaign?.kind === 'hive' && campaign.hive && hiveMission
+      ? identifyNemesis(generated, campaign.hive, hiveMission)
+      : generated;
     const agenda = generateAgenda();
     update({
       npcWarband: npc,
@@ -107,8 +160,13 @@ export default function PreBattleScreen() {
   }
 
   function startBattle() {
-    if (!warband) return;
+    if (!warband || hiveBattleConflict) return;
+    const ashEvent = !session.started && campaignActive && hiveMission?.condition === 'ash-storm'
+      ? rollHiveEvent() : null;
     update({ started: true, turn: session.started ? session.turn : 1,
+      events: ashEvent
+        ? [{ id: generateId(), turn: 1, text: `Ash Storm — Hive event ${ashEvent.roll}: ${ashEvent.text}` }, ...session.events]
+        : session.events,
       npcBehaviours: session.npcWarband ? { ...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours } : {},
       endeavours: session.started ? session.endeavours : drawEndeavours(session.endeavourDraw),
       allies: session.allies.map(a => ({...a, endeavours: session.started ? a.endeavours : drawEndeavours(session.endeavourDraw)})),
@@ -123,10 +181,14 @@ export default function PreBattleScreen() {
         {campaignActive && campaign && (
           <Plate className="p-3">
             <p className="font-display uppercase tracking-[0.05em] text-ink text-sm">
-              {campaign.name} · {actLabel(campaign.act)} · Chapter {campaign.chapter}
+              {campaign.name} · {hiveMission
+                ? `${sectorName(hiveMission.sector)} · ${hiveMission.stake === 'defence' ? 'Defence' : 'Raid'} · ${CONDITIONS[hiveMission.condition].name}`
+                : `${actLabel(campaign.act)} · Chapter ${campaign.chapter}`}
             </p>
             <p className="font-body text-ink-faded text-sm">
-              The {campaign.nemesisName} return in force. Record the outcome back on the campaign page afterwards.
+              {hiveMission
+                ? 'App-original · Not part of the ruleset. Apply & finish in post-battle resolves this mission automatically.'
+                : `The ${campaign.nemesisName} return in force. Record the outcome back on the campaign page afterwards.`}
             </p>
           </Plate>
         )}
@@ -304,7 +366,7 @@ export default function PreBattleScreen() {
           </Plate>
         </section>
 
-        <Button onClick={startBattle} disabled={!session.scenario}>
+        <Button onClick={startBattle} disabled={!session.scenario || hiveBattleConflict}>
           {session.started ? 'Resume battle' : 'Start battle'}
         </Button>
         {!session.scenario && <p className="font-body text-ink-faded text-sm">Pick a scenario to begin.</p>}

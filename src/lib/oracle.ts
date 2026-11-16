@@ -4,7 +4,6 @@
 // (spec §6), themed to Mord Hive, never presented as ruleset content.
 
 const d6 = () => 1 + Math.floor(Math.random() * 6);
-const d66 = () => `${d6()}${d6()}`;
 
 // --- Yes / No with likelihood ---
 
@@ -76,8 +75,8 @@ const HIVE_EVENTS: { min: number; max: number; text: string }[] = [
   { min: 64, max: 66, text: 'An eerie calm. Nothing happens — but everyone feels watched.' },
 ];
 
-export function rollHiveEvent(): HiveEvent {
-  const roll = d66();
+export function rollHiveEvent(rand: () => number = Math.random): HiveEvent {
+  const roll = `${1 + Math.floor(rand() * 6)}${1 + Math.floor(rand() * 6)}`;
   const n = parseInt(roll, 10);
   const entry = HIVE_EVENTS.find((e) => n >= e.min && n <= e.max) ?? HIVE_EVENTS[HIVE_EVENTS.length - 1];
   return { roll, text: entry.text };

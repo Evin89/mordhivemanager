@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, ReactNode, createElement } from 'react';
 import { RemoteCollection, useRemoteCollection } from './remoteCollection';
 import { CampaignAgenda } from '../lib/soloAgenda';
+import type { HiveState } from '../lib/hiveCampaign';
 
 // Solo campaigns — a sequence of linked games for one warband against a recurring
 // app-built nemesis, with a hidden overarching agenda (spec §6). Supabase-backed
@@ -19,6 +20,8 @@ export type SoloChapterEntry = {
 };
 
 export type SoloCampaign = {
+  kind?: 'classic' | 'hive';
+  hive?: HiveState;
   id: string;
   name: string;
   warbandId: string; // the player's warband on this campaign
