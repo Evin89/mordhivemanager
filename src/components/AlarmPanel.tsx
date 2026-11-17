@@ -5,6 +5,8 @@ import { generateId } from '../lib/id';
 import { Button } from './ui';
 import { SoloPlate } from './SoloNote';
 
+const plural = (n: number) => `${n} reinforcement${n === 1 ? '' : 's'}`;
+
 export default function AlarmPanel({ session: s, update }: {
   session: BattleSession;
   update: (patch: Partial<BattleSession>) => void;
@@ -35,7 +37,7 @@ export default function AlarmPanel({ session: s, update }: {
               <Button key={label} variant="secondary" fullWidth={false} disabled={locked || dark} onClick={() => change(Number(amount), String(label))}>{label}</Button>
             ))}
           </div>
-          <p>Next turn: {Math.min(grade + (s.alarmEvent?.id === 'vox-call' ? 1 : 0), alarmCapacity(s))} reinforcement(s){grade === 3 ? ' and one alarm event' : ''}</p>
+          <p>Next turn: {plural(Math.min(grade + (s.alarmEvent?.id === 'vox-call' ? 1 : 0), alarmCapacity(s)))}{grade === 3 ? ' and one alarm event' : ''}</p>
           <p>{locked ? 'Arrivals do not change the alarm.' : 'Each arrival quiets the alarm by 2.'}</p>
         </>}
       </SoloPlate>
