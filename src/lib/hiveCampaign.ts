@@ -81,6 +81,12 @@ export function generateNemesisName(used: string[], rand: Random = Math.random):
   return pick(available, rand);
 }
 
+/** Faction names in the data sometimes carry their own article ("The Pox Cult");
+ *  this keeps the chronicle from printing "the The Pox Cult". */
+export function theFaction(faction: string, sentenceStart = false): string {
+  return `${sentenceStart ? 'The' : 'the'} ${faction.replace(/^the\s+/i, '')}`;
+}
+
 export function sectorName(id: SectorId): string {
   return SECTORS.find((sector) => sector.id === id)!.name;
 }
@@ -167,7 +173,7 @@ export function createHiveState(
     turn: 1, control, board: [], activeMissionId: null, nemesis, outcome: null,
     chronicle: [{
       turn: 1, kind: 'event', date: new Date().toISOString(),
-      text: `${context.warband} made camp in the Underhive. ${nemesis.find((hero) => hero.isLeader)?.name ?? context.faction} of the ${context.faction} holds ${sectorName(lair)}.`,
+      text: `${context.warband} made camp in the Underhive. ${nemesis.find((hero) => hero.isLeader)?.name ?? context.faction} of ${theFaction(context.faction)} holds ${sectorName(lair)}.`,
     }],
   };
   return normalizeHive({ ...state, board: generateBoard(state, rand) });
@@ -220,7 +226,7 @@ export function checkOutcome(control: HiveState['control'], dark: SectorId[] = [
 export function outcomeText(outcome: 'won' | 'lost', context: HiveContext): string {
   return outcome === 'won'
     ? `Four levels answer to ${context.warband}. For now, Mord Hive is theirs.`
-    : `The ${context.faction} hold the hive. ${context.warband} are hunted in it.`;
+    : `${theFaction(context.faction, true)} hold the hive. ${context.warband} are hunted in it.`;
 }
 
 function entry(state: HiveState, kind: HiveChronicleEntry['kind'], text: string, sector?: SectorId): HiveChronicleEntry {
@@ -248,13 +254,13 @@ export function hiveMoves(
   const adjacent = eligible.filter(({ id }) => adjacentSectors(id).some((other) => !state.dark!.includes(other) && control[other] <= -1));
   const target = nemesisChecked ? undefined : pick(adjacent.length ? adjacent : eligible, rand);
   if (nemesisChecked) {
-    chronicle.push(entry(state, 'nemesis', `The ${context.faction} gained no ground this turn.`));
+    chronicle.push(entry(state, 'nemesis', `${theFaction(context.faction, true)} gained no ground this turn.`));
   }
   if (target) {
     control[target.id] = clamp(control[target.id] - 1);
     const leader = state.nemesis.find((hero) => hero.isLeader && hero.status === 'active');
     const text = pick([
-      `The ${context.faction} pushed into ${target.name}.`,
+      `${theFaction(context.faction, true)} pushed into ${target.name}.`,
       `${leader?.name ?? context.faction}'s people were seen in ${target.name}.`,
     ], rand);
     chronicle.push(entry(state, 'nemesis', text, target.id));
@@ -338,12 +344,12 @@ export function resolveMission(
   const scenario = scenariosData.scenarios.find((item) => item.id === mission.scenarioId)!.name;
   const opening = pick([
     `Turn ${state.turn}. ${sector}: ${context.warband} went in after ${scenario}.`,
-    `Turn ${state.turn}. ${context.warband} fought the ${context.faction} in ${sector} (${scenario}).`,
-    `Turn ${state.turn}. ${sector}, ${CONDITIONS[mission.condition].name}. ${context.warband} against the ${context.faction}.`,
+    `Turn ${state.turn}. ${context.warband} fought ${theFaction(context.faction)} in ${sector} (${scenario}).`,
+    `Turn ${state.turn}. ${sector}, ${CONDITIONS[mission.condition].name}. ${context.warband} against ${theFaction(context.faction)}.`,
   ], rand);
   const results = {
-    win: ['They held the field.', `The ${context.faction} broke first.`, `It cost them, but ${sector} is quieter tonight.`],
-    loss: ['They were driven back to camp.', `The ${context.faction} kept the ground.`, 'Nobody talks about how it ended.'],
+    win: ['They held the field.', `${theFaction(context.faction, true)} broke first.`, `It cost them, but ${sector} is quieter tonight.`],
+    loss: ['They were driven back to camp.', `${theFaction(context.faction, true)} kept the ground.`, 'Nobody talks about how it ended.'],
     draw: ['Neither side could finish it.', 'Both pulled back before the lamps ran dry.'],
   };
   const text = [opening, pick(results[result], rand), ...casualtyLines].join(' ');
@@ -352,8 +358,10 @@ export function resolveMission(
     (lead ? 1 : 0) + (result === 'win' ? 1 : 0) + Math.min(2, state.nemesis.filter((hero) =>
       hero.status === 'active' && participatingIds.includes(hero.id) && downIds.includes(hero.id)).length), context.agenda);
   if (mission.stake === 'reckoning' && result === 'win') {
+    // The Reckoning ends the leader for good, so the list of known enemies agrees with the chronicle.
+    const fallen = next.nemesis.map((hero) => (hero.isLeader && hero.status === 'active' ? { ...hero, status: 'dead' as const } : hero));
     return {
-      ...next, outcome: 'won', activeMissionId: null, board: [],
+      ...next, nemesis: fallen, outcome: 'won', activeMissionId: null, board: [],
       chronicle: [...next.chronicle, entry(next, 'outcome', `${leader?.name ?? context.faction} is finished. The scheme dies with them.`)],
     };
   }
@@ -422,7 +430,7 @@ function finishTurn(state: HiveState, previousScheme: number, context: HiveConte
   const next = normalizeHive(state);
   next.chronicle = [...next.chronicle];
   [4, 8].filter((threshold) => previousScheme < threshold && next.scheme >= threshold)
-    .forEach(() => next.chronicle.push(entry(next, 'event', `The ${context.faction} move to their next step.`)));
+    .forEach(() => next.chronicle.push(entry(next, 'event', `${theFaction(context.faction, true)} move to their next step.`)));
   next.outcome = next.scheme >= 12 ? 'lost' : checkOutcome(next.control, next.dark);
   if (next.outcome) {
     const text = next.scheme >= 12
@@ -456,7 +464,7 @@ export function prisonerAction(state: HiveState, id: string, action: PrisonerAct
     text = `${hero.name} was traded for ground in ${sector.name}.`;
   } else {
     next.vengeance = true;
-    text = `${hero.name} was made an example of. The ${context.faction} will answer.`;
+    text = `${hero.name} was made an example of. ${theFaction(context.faction, true)} will answer.`;
   }
   next.chronicle.push(entry(next, 'event', text));
   next = finishTurn(next, next.scheme!, context);

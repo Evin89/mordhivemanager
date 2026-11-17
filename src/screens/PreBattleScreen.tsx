@@ -23,7 +23,7 @@ import BattlefieldMap from '../components/BattlefieldMap';
 import { warbandDefinitionsByName, getWarbandDefinition } from '../data/warbandRegistry';
 import { BattleSession, defaultBattleSession, loadBattleSession, saveBattleSession } from '../store/battle';
 import scenariosData from '../data/scenarios.json';
-import { CONDITIONS, identifyNemesis, sectorName } from '../lib/hiveCampaign';
+import { CONDITIONS, identifyNemesis, sectorName, theFaction } from '../lib/hiveCampaign';
 import { rollHiveEvent } from '../lib/oracle';
 import { generateId } from '../lib/id';
 
@@ -195,7 +195,7 @@ export default function PreBattleScreen() {
             <p className="font-body text-ink-faded text-sm">
               {hiveMission
                 ? 'App-original · Not part of the ruleset. Apply & finish in post-battle resolves this mission automatically.'
-                : `The ${campaign.nemesisName} return in force. Record the outcome back on the campaign page afterwards.`}
+                : `${theFaction(campaign.nemesisName, true)} return in force. Record the outcome back on the campaign page afterwards.`}
             </p>
           </Plate>
         )}

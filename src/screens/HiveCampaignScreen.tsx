@@ -1,5 +1,5 @@
 import { Dossier, SchemeClock, WantedBills, Prisoners } from '../components/Investigation';
-import { normalizeHive, prisonerAction } from '../lib/hiveCampaign';
+import { normalizeHive, prisonerAction, theFaction } from '../lib/hiveCampaign';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -55,7 +55,7 @@ export default function HiveCampaignScreen() {
         <p className="font-ui text-brass-text text-xl">The Hive · Turn {hive.turn}{closed ? ' · Concluded' : ''}</p>
         <p className="font-body text-ink">
           {warband ? <Link className="inline-flex items-center min-h-[44px] underline" to={`/warbands/${warband.id}`}>{warband.name}</Link> : 'Warband deleted'}
-          {' '}against the {campaign.nemesisName}
+          {' '}against {theFaction(campaign.nemesisName)}
         </p>
         <p className="font-mono text-ink">Firmly held: you {yours} · them {theirs} · 4 wins the hive</p>
         <p className="font-body text-ink-faded text-sm">Four levels at +2 win the hive; four at −2 lose it.</p>
