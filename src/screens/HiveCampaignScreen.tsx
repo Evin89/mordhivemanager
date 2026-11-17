@@ -1,5 +1,5 @@
 import { Dossier, SchemeClock, WantedBills, Prisoners } from '../components/Investigation';
-import { normalizeHive, prisonerAction, theFaction } from '../lib/hiveCampaign';
+import { levelsToWin, normalizeHive, prisonerAction, theFaction } from '../lib/hiveCampaign';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -57,8 +57,8 @@ export default function HiveCampaignScreen() {
           {warband ? <Link className="inline-flex items-center min-h-[44px] underline" to={`/warbands/${warband.id}`}>{warband.name}</Link> : 'Warband deleted'}
           {' '}against {theFaction(campaign.nemesisName)}
         </p>
-        <p className="font-mono text-ink">Firmly held: you {yours} · them {theirs} · 4 wins the hive</p>
-        <p className="font-body text-ink-faded text-sm">Four levels at +2 win the hive; four at −2 lose it.</p>
+        <p className="font-mono text-ink">Firmly held: you {yours} · them {theirs} · {levelsToWin(hive.dark)} wins the hive</p>
+        <p className="font-body text-ink-faded text-sm">{levelsToWin(hive.dark) === 3 ? 'Three levels at +2 win the hive now that a level has gone dark; four at −2 lose it.' : 'Four levels at +2 win the hive (three once a level goes dark); four at −2 lose it.'}</p>
         <p className="font-ui text-ink">Clues {hive.clues} / 8</p>
         <SchemeClock scheme={hive.scheme} />
       </Plate>

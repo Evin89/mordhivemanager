@@ -56,16 +56,22 @@ export function equipNpcModel(def: WarbandDefinition, equipmentOptions: string[]
 export function buildNpcWarband(def: WarbandDefinition, budget = 500, shape: EnemyShape = 'balanced'): Warband {
   if (shape !== 'balanced') return buildShapedNpc(def, budget, shape);
   const warband = createWarband(def, `${def.name} (AI)`);
+  // The budget pays for models AND their wargear, as a player's warband does.
+  // (Until the 2026-11-17 playtest the wargear came free on top, so a "500 tn"
+  // enemy was worth 425 to 1132 rating depending on its list.)
   let gold = budget;
   const sizeCap = def.maxWarbandSize ?? 20;
   let size = 0;
+  const gearCost = (items: { cost?: number }[]) => items.reduce((sum, item) => sum + (item.cost ?? 0), 0);
 
+  // The leader always comes; if its wargear would overrun a small budget it goes without.
   const leaderSlot = def.heroSlots.find((s) => s.isLeader);
   if (leaderSlot) {
     const hero = createHeroFromSlot(leaderSlot, leaderSlot.unitType);
-    hero.equipment.push(...equipNpcModel(def, leaderSlot.equipmentOptions, hero.stats));
+    const gear = equipNpcModel(def, leaderSlot.equipmentOptions, hero.stats);
+    if ((leaderSlot.cost ?? 0) + gearCost(gear) <= gold) hero.equipment.push(...gear);
     warband.heroes.push(hero);
-    gold = Math.max(0, gold - (leaderSlot.cost ?? 0));
+    gold = Math.max(0, gold - (leaderSlot.cost ?? 0) - gearCost(hero.equipment));
     size += 1;
   }
 
@@ -75,38 +81,38 @@ export function buildNpcWarband(def: WarbandDefinition, budget = 500, shape: Ene
     .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0));
   for (const slot of otherHeroes) {
     if (size >= sizeCap) break;
-    const cost = slot.cost ?? 0;
-    if (cost > gold - 40) continue;
     const hero = createHeroFromSlot(slot, slot.unitType);
-    hero.equipment.push(...equipNpcModel(def, slot.equipmentOptions, hero.stats));
+    const gear = equipNpcModel(def, slot.equipmentOptions, hero.stats);
+    const cost = (slot.cost ?? 0) + gearCost(gear);
+    if (cost > gold - 40) continue;
+    hero.equipment.push(...gear);
     warband.heroes.push(hero);
     gold -= cost;
     size += 1;
   }
 
-  // Fill toward the cap with the cheapest henchman type (in groups of up to 5).
-  const cheapest = def.henchmenTypes
-    .filter((t) => (t.cost ?? 0) > 0)
-    .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))[0];
-  if (cheapest) {
-    const cost = cheapest.cost as number;
-    let n = 0;
-    const perTypeCap = cheapest.maxCount ?? Number.POSITIVE_INFINITY;
-    while (size < sizeCap && n < perTypeCap && gold >= cost) {
-      gold -= cost;
-      size += 1;
-      n += 1;
-    }
-    // Split into groups of 5, as the rules recruit henchmen. Each group shares a
-    // loadout drawn from its own equipment list.
-    let remaining = n;
+  // Fill toward the cap with henchmen, cheapest type first, in groups of up to 5.
+  // When a type reaches its own limit the next cheapest is used, so lists with a
+  // small cap on their cheapest henchmen still spend their budget.
+  const types = def.henchmenTypes
+    .filter((t) => (t.cost ?? 0) > 0 && t.maxCount !== 0)
+    .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0));
+  for (const type of types) {
+    const perTypeCap = type.maxCount ?? Number.POSITIVE_INFINITY;
+    let taken = 0;
     let groupIndex = 1;
-    while (remaining > 0) {
-      const g = Math.min(5, remaining);
-      const group = createHenchmenGroupFromType(cheapest, `${cheapest.unitType} ${groupIndex}`, g);
-      group.equipment.push(...equipNpcModel(def, cheapest.equipmentOptions, group.stats));
+    while (size < sizeCap && taken < perTypeCap) {
+      const wanted = Math.min(5, sizeCap - size, perTypeCap - taken);
+      const group = createHenchmenGroupFromType(type, `${type.unitType} ${groupIndex}`, wanted);
+      group.equipment.push(...equipNpcModel(def, type.equipmentOptions, group.stats));
+      const perModel = (type.cost ?? 0) + gearCost(group.equipment);
+      const count = Math.min(wanted, Math.floor(gold / perModel));
+      if (count <= 0) break;
+      group.count = count;
       warband.henchmenGroups.push(group);
-      remaining -= g;
+      gold -= count * perModel;
+      size += count;
+      taken += count;
       groupIndex += 1;
     }
   }

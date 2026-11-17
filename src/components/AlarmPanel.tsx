@@ -1,5 +1,5 @@
 import { BattleSession } from '../store/battle';
-import { alarmGrade, alarmLabels, alarmCapacity } from '../lib/alarm';
+import { alarmGrade, alarmLabels, alarmCapacity, reinforcementsForGrade } from '../lib/alarm';
 import { changeAlarm } from '../lib/alarmEvents';
 import { generateId } from '../lib/id';
 import { Button } from './ui';
@@ -37,8 +37,8 @@ export default function AlarmPanel({ session: s, update }: {
               <Button key={label} variant="secondary" fullWidth={false} disabled={locked || dark} onClick={() => change(Number(amount), String(label))}>{label}</Button>
             ))}
           </div>
-          <p>Next turn: {plural(Math.min(grade + (s.alarmEvent?.id === 'vox-call' ? 1 : 0), alarmCapacity(s)))}{grade === 3 ? ' and one alarm event' : ''}</p>
-          <p>{locked ? 'Arrivals do not change the alarm.' : 'Each arrival quiets the alarm by 2.'}</p>
+          <p>Next turn: {plural(Math.min(reinforcementsForGrade(grade, locked) + (s.alarmEvent?.id === 'vox-call' ? 1 : 0), alarmCapacity(s)))}{grade === 3 ? ' and one alarm event' : ''}</p>
+          <p>{locked ? 'Arrivals do not change the alarm.' : 'Each arrival quiets the alarm by 1. Stirring brings no one yet.'}</p>
         </>}
       </SoloPlate>
     </div>

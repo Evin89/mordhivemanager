@@ -216,16 +216,22 @@ export function applyMissionControl(state: HiveState, mission: HiveMission, resu
   return control;
 }
 
+/** Levels at +2 or more needed to win on the map: four, or three once a level
+ *  has gone dark. Without that, the 2026-11-17 playtest found no map wins at all. */
+export function levelsToWin(dark: SectorId[] = []): number {
+  return dark.length > 0 ? 3 : 4;
+}
+
 export function checkOutcome(control: HiveState['control'], dark: SectorId[] = []): HiveState['outcome'] {
   const values = SECTORS.filter(({ id }) => !dark.includes(id)).map(({ id }) => control[id]);
-  if (values.filter((value) => value >= 2).length >= 4) return 'won';
+  if (values.filter((value) => value >= 2).length >= levelsToWin(dark)) return 'won';
   if (values.filter((value) => value <= -2).length >= 4) return 'lost';
   return null;
 }
 
 export function outcomeText(outcome: 'won' | 'lost', context: HiveContext): string {
   return outcome === 'won'
-    ? `Four levels answer to ${context.warband}. For now, Mord Hive is theirs.`
+    ? `The hive's levels answer to ${context.warband}. For now, Mord Hive is theirs.`
     : `${theFaction(context.faction, true)} hold the hive. ${context.warband} are hunted in it.`;
 }
 
@@ -354,9 +360,12 @@ export function resolveMission(
   };
   const text = [opening, pick(results[result], rand), ...casualtyLines].join(' ');
   const leader = state.nemesis.find((hero) => hero.isLeader && hero.status === 'active');
+  // At most two clues per battle (lead, win and heroes taken down together), so the
+  // Reckoning does not open after three or four battles.
+  const heroesDown = Math.min(2, state.nemesis.filter((hero) =>
+    hero.status === 'active' && participatingIds.includes(hero.id) && downIds.includes(hero.id)).length);
   let next = gainClues({ ...state, nemesis },
-    (lead ? 1 : 0) + (result === 'win' ? 1 : 0) + Math.min(2, state.nemesis.filter((hero) =>
-      hero.status === 'active' && participatingIds.includes(hero.id) && downIds.includes(hero.id)).length), context.agenda);
+    Math.min(2, (lead ? 1 : 0) + (result === 'win' ? 1 : 0) + heroesDown), context.agenda);
   if (mission.stake === 'reckoning' && result === 'win') {
     // The Reckoning ends the leader for good, so the list of known enemies agrees with the chronicle.
     const fallen = next.nemesis.map((hero) => (hero.isLeader && hero.status === 'active' ? { ...hero, status: 'dead' as const } : hero));
