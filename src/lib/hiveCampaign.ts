@@ -204,7 +204,10 @@ export function applyMissionControl(state: HiveState, mission: HiveMission, resu
   const control = { ...state.control };
   if (mission.stake === 'reckoning') return control;
   let change = 0;
-  if (mission.stake === 'raid') change = result === 'win' ? (mission.condition === 'rich-seam' ? 2 : 1) : result === 'loss' ? -1 : 0;
+  // A lost raid costs no ground of its own: the nemesis already advances after
+  // any turn without a win, and counting both made the map drift away from the
+  // player by more than half a step a turn at an even win rate (playtest 2026-11-17).
+  if (mission.stake === 'raid') change = result === 'win' ? (mission.condition === 'rich-seam' ? 2 : 1) : 0;
   else if (result === 'win') {
     const enemies = adjacentSectors(mission.sector).filter((id) => !state.dark!.includes(id) && control[id] <= -1);
     if (enemies.length) {
