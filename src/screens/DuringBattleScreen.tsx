@@ -1,5 +1,8 @@
 import SearchPoints from '../components/SearchPoints';
 import AlarmEventCard from '../components/AlarmEventCard';
+import ActivationOrder from '../components/ActivationOrder';
+import { ForesightChoice, ReckoningClock } from '../components/Phase6Cards';
+import { checkClock } from '../lib/clockDeck';
 import ObjectivePlate from '../components/ObjectivePlate';
 import { evaluateObjective, advanceSolo, battleField, findSoloScenario } from '../lib/soloScenarios';
 import { ContactInstructions, HiddenContact, Strangers } from '../components/BattleEncounters';
@@ -73,7 +76,7 @@ export default function DuringBattleScreen() {
   function update(patch: Partial<BattleSession>) {
     setSession(current => {
       const next = evaluateObjective(
-        advanceSolo(applyContactAlarm({ ...current, ...patch })),
+        advanceSolo(checkClock(applyContactAlarm({ ...current, ...patch }))),
         warband!,
       );
       saveBattleSession(next);
@@ -91,7 +94,7 @@ export default function DuringBattleScreen() {
     if (delta < 0) {
       if (!window.confirm('Step the turn counter back?')) return;
     }
-    update(delta > 0 ? advanceStrangers(advanceTurn(applyContactAlarm(session), warband!.warbandType), warband!.warbandType, session.alarmEnabled ? alarmGrade(session.alarm) : 0) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {} });
+    update(delta > 0 ? advanceStrangers(advanceTurn(applyContactAlarm(session), warband!.warbandType), warband!.warbandType, session.alarmEnabled ? alarmGrade(session.alarm) : 0) : { turn: Math.max(1, session.turn + delta), behaviourTicks: {}, activation: {} });
   }
 
   function toggleHero(id: string) {
@@ -264,6 +267,7 @@ export default function DuringBattleScreen() {
             <p className="font-ui">Enemy out of action: {session.npcOutOfAction.heroIds.length + Object.values(session.npcOutOfAction.henchmenCounts).reduce((sum,n)=>sum+n,0) + session.npcReinforcements.filter(r=>r.outOfAction).length} / {countModels(session.npcWarband) + session.npcReinforcements.length}</p>
             <ContactInstructions session={session} update={update}/>
             <EnemyInstructions temperament={session.npcAgenda?.temperament}/>
+            {aiOpen && <ActivationOrder session={session} update={update}/>}
             <Plate className="p-3 space-y-3">
               {/* Enemy heroes */}
               <ul className="space-y-2">
@@ -346,7 +350,9 @@ export default function DuringBattleScreen() {
         <ObjectivePlate session={session} warband={warband} update={update}/>
         <CogitatorStartup session={session} update={update}/>
         <AlarmPanel session={session} update={update}/>
+        <ForesightChoice session={session} playerType={warband.warbandType} update={update}/>
         <AlarmEventCard session={session}/>
+        <ReckoningClock session={session}/>
         <SearchPoints session={session} update={update}/>
         {/* Battlefield map */}
         {session.battlefieldSeed !== null && (

@@ -593,3 +593,4 @@ body,
 
 /* Small section labels inside the warband rules tabs (Grenze stays for titles of 22px and up). */
 [data-theme='plated'] h4.rules-label{font:600 14px/1.2 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.06em;color:rgb(var(--color-ink-faded))}
+.hive-threat{background:transparent;border:1px solid rgb(var(--color-wax));color:#f4d9d4}

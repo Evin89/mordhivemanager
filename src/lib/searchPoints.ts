@@ -5,6 +5,7 @@ import { findSoloScenario } from './soloScenarios';
 import { changeAlarm } from './alarmEvents';
 import { revealContacts } from './battleEncounters';
 import { generateId } from './id';
+import { markedCache } from './intel';
 
 export type SearchPoint = { n: number; x: number; y: number; searched: boolean; result: string | null };
 
@@ -22,6 +23,7 @@ export function prepareSearchPoints(s: BattleSession): BattleSession {
 export function searchPoint(s: BattleSession, n: number, roll = 1 + Math.floor(Math.random() * 6)): BattleSession {
   const point = s.searchPoints.find(p => p.n === n);
   if (!s.searchEnabled || !point || point.searched) return s;
+  if (n === 1 && markedCache(s)) roll = 6;
   let next = s;
   let result: string;
   if (roll === 1) {

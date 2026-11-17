@@ -56,7 +56,10 @@ export const alarmEvents = [
 export function changeAlarm(s: BattleSession, amount: number): BattleSession {
   if (!s.alarmEnabled) return s;
   if (s.soloScenario?.id === 'solo-hold' && s.turn >= 2) return { ...s, alarm: 8 };
+  if (s.soloScenario?.id === 'solo-salvage') return { ...s, alarm: 0 };
   if (amount > 0 && s.alarmEvent?.id === 'lights-out' && s.alarmEvent.turn === s.turn) return s;
+  if (amount > 0 && s.clockCard?.id === 'lights-out' && s.clockCard.turn === s.turn) return s;
+  if (amount > 0 && s.turn === 1 && s.intel?.card === '3') return s; // Quiet Approach
   return { ...s, alarm: Math.max(0, Math.min(15, s.alarm + amount)) };
 }
 
@@ -80,16 +83,31 @@ export function applyAlarmEvent(s: BattleSession, id: string, playerType = ''): 
   return { ...next, events: [{ id: generateId(), turn: s.turn, text: `${card?.name}: ${card?.text} ${card?.effect}${id === 'ghost' && !s.hiddenContacts ? ' Static on the auspex.' : ''}` }, ...next.events] };
 }
 
+function shuffled(ids: string[]): string[] {
+  const deck = [...ids];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
 export function drawAlarmEvent(s: BattleSession, playerType = ''): BattleSession {
   if (!s.alarmEnabled) return s;
   const deck = [...s.alarmDeck];
-  if (!deck.length) {
-    deck.push(...alarmEvents.map(e => e.id));
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
+  if (deck.length < 2) deck.push(...shuffled(alarmEvents.map(e => e.id).filter(id => !deck.includes(id))));
+  // Foresight (phase 6): see two, keep one; the other goes to the bottom.
+  if (s.foresight > 0 && !s.pendingChoice) {
+    const ids: [string, string] = [deck.shift()!, deck.shift()!];
+    return { ...s, alarmDeck: deck, foresight: s.foresight - 1, pendingChoice: { deck: 'alarm', ids } };
   }
   const id = deck.shift()!;
   return applyAlarmEvent({ ...s, alarmDeck: deck }, id, playerType);
+}
+
+/** Keep one of the two foresight cards; the other goes under its deck. */
+export function keepAlarmChoice(s: BattleSession, keep: string, playerType = ''): BattleSession {
+  if (s.pendingChoice?.deck !== 'alarm' || !s.pendingChoice.ids.includes(keep)) return s;
+  const other = s.pendingChoice.ids.find(id => id !== keep)!;
+  return applyAlarmEvent({ ...s, pendingChoice: null, alarmDeck: [...s.alarmDeck, other] }, keep, playerType);
 }

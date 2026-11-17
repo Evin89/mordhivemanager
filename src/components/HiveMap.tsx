@@ -23,11 +23,12 @@ export default function HiveMap({ state, selected, onSelect }: Props) {
               type="button"
               className={`hive-map-band ${reachable.includes(sector.id) ? 'reachable' : 'unreachable'}`}
               aria-pressed={selected === sector.id}
-              aria-label={`${sector.name}: ${controlLabel(value)}, control ${value}. ${reachable.includes(sector.id) ? 'Reachable' : 'Unreachable'}.${mission ? ' Mission available.' : ''}`}
+              aria-label={`${sector.name}: ${controlLabel(value)}, control ${value}. ${reachable.includes(sector.id) ? 'Reachable' : 'Unreachable'}.${mission ? ' Mission available.' : ''}${state.threat === sector.id ? ' Their next move.' : ''}`}
               onClick={() => onSelect(sector.id)}
             >
               <span className="font-ui">{sector.name}{mission && <span aria-hidden="true"> ◆</span>}</span>
               {state.lastSeen === sector.id && <span className="hive-last-seen">last seen</span>}
+              {state.threat === sector.id && <span className="hive-last-seen hive-threat">their next move</span>}
               {state.dark!.includes(sector.id) ? <span>Gone dark</span> : <span className="hive-pips" aria-hidden="true">
                 {[-3, -2, -1, 0, 1, 2, 3].map((pip) => (
                   <span key={pip} className={pip === value ? `marked ${value < 0 ? 'enemy' : value > 0 ? 'yours' : 'neutral'}` : ''} />

@@ -1,5 +1,6 @@
 import { Dossier, SchemeClock, WantedBills, Prisoners } from '../components/Investigation';
-import { levelsToWin, normalizeHive, prisonerAction, theFaction } from '../lib/hiveCampaign';
+import { ASSETS, chooseAsset, levelsToWin, normalizeHive, operationName, prisonerAction, sectorName, theFaction, applyCutouts } from '../lib/hiveCampaign';
+import { computeWarbandRating } from '../lib/rating';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BackHeader from '../components/BackHeader';
@@ -25,7 +26,7 @@ export default function HiveCampaignScreen() {
   if (!campaign?.hive) return <Navigate to="/solo" replace />;
   const hive = normalizeHive(campaign.hive);
   const warband = warbands.find((item) => item.id === campaign.warbandId);
-  const context = { warband: warband?.name ?? 'Warband', faction: campaign.nemesisName, agenda: campaign.agenda };
+  const context = { warband: warband?.name ?? 'Warband', faction: campaign.nemesisName, agenda: campaign.agenda, rating: warband ? computeWarbandRating(warband) : undefined };
   const sector = SECTORS.find((item) => item.id === selected)!;
   const leaderName = hive.nemesis.find((hero) => hero.isLeader && hero.status === 'active')?.name ?? campaign.nemesisName;
   const yours = SECTORS.filter(({ id }) => !hive.dark.includes(id)).map(({ id }) => hive.control[id]).filter((value) => value >= 2).length;
@@ -60,6 +61,9 @@ export default function HiveCampaignScreen() {
         <p className="font-mono text-ink">Firmly held: you {yours} · them {theirs} · {levelsToWin(hive.dark)} wins the hive</p>
         <p className="font-body text-ink-faded text-sm">{levelsToWin(hive.dark) === 3 ? 'Three levels at +2 win the hive now that a level has gone dark; four at −2 lose it.' : 'Four levels at +2 win the hive (three once a level goes dark); four at −2 lose it.'}</p>
         <p className="font-ui text-ink">Clues {hive.clues} / 8</p>
+        {hive.strength === 'matched' && <p className="font-body text-ink-faded text-sm">Enemy strength is matched to your warband's rating.</p>}
+        {hive.threat && !hive.outcome && !closed && <p className="font-ui text-ink">Their next move: {sectorName(hive.threat)}. Only a win there stops it.</p>}
+        {hive.operation && !closed && <p className="font-ui text-ink">Operation under way: {operationName(hive.operation.id)}, part 2 waits in {sectorName(hive.operation.sector)}.</p>}
         <SchemeClock scheme={hive.scheme} />
       </Plate>
       {hive.outcome && <Plate className="p-4 font-body text-ink">{[...hive.chronicle].reverse().find((item) => item.kind === 'outcome')?.text ?? outcomeText(hive.outcome, context)}</Plate>}
@@ -85,6 +89,7 @@ export default function HiveCampaignScreen() {
                 mission={mission}
                 leaderName={leaderName}
                 active={hive.activeMissionId === mission.id}
+                threatened={hive.threat === mission.sector}
                 disabled={closed || !warband || (hive.activeMissionId !== null && hive.activeMissionId !== mission.id)}
                 onTake={() => {
                   setSelected(mission.sector);
@@ -97,6 +102,34 @@ export default function HiveCampaignScreen() {
           ))}
         </div>
       </div>
+      <section className="space-y-3">
+        <BannerHeader>Assets</BannerHeader>
+        <Plate className="p-4 space-y-3">
+          <SoloNote />
+          {hive.assets.length === 0 && hive.assetChoices === 0 && <p className="font-body text-ink">No assets yet. Win both parts of an operation to earn one.</p>}
+          {hive.assets.map((id) => {
+            const asset = ASSETS.find((item) => item.id === id)!;
+            return (
+              <div key={id} className="space-y-1">
+                <p className="font-ui text-brass-text">{asset.name}</p>
+                <p className="font-body text-ink">{asset.text}</p>
+                {id === 'cut-outs' && !closed && <Button variant="secondary" disabled={hive.cutoutsUsed || !!hive.activeMissionId || hive.scheme === 0} onClick={() => saveCampaign({ ...campaign, hive: applyCutouts(hive) })}>
+                  {hive.cutoutsUsed ? 'Used' : 'Use the cut-outs: plan clock −2'}
+                </Button>}
+              </div>
+            );
+          })}
+          {hive.assetChoices > 0 && !closed && <div className="space-y-2">
+            <p className="font-ui text-ink">Choose an asset{hive.assetChoices > 1 ? ` (${hive.assetChoices} to choose)` : ''}</p>
+            {ASSETS.filter((asset) => !hive.assets.includes(asset.id)).map((asset) => (
+              <div key={asset.id} className="space-y-1">
+                <Button variant="secondary" onClick={() => saveCampaign({ ...campaign, hive: chooseAsset(hive, asset.id) })}>{asset.name}</Button>
+                <p className="font-body text-ink-faded text-sm">{asset.text}</p>
+              </div>
+            ))}
+          </div>}
+        </Plate>
+      </section>
       <Dossier agenda={campaign.agenda} clues={closed ? 8 : hive.clues} />
       <WantedBills state={hive} agenda={campaign.agenda} faction={campaign.nemesisName} type={campaign.nemesisType} />
       <Prisoners state={hive} onAction={(id, action) => {

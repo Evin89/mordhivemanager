@@ -23,9 +23,12 @@ import BattlefieldMap from '../components/BattlefieldMap';
 import { warbandDefinitionsByName, getWarbandDefinition } from '../data/warbandRegistry';
 import { BattleSession, defaultBattleSession, loadBattleSession, saveBattleSession } from '../store/battle';
 import scenariosData from '../data/scenarios.json';
-import { CONDITIONS, identifyNemesis, sectorName, theFaction } from '../lib/hiveCampaign';
+import { CONDITIONS, identifyNemesis, operationName, scenarioName, sectorName, theFaction } from '../lib/hiveCampaign';
 import { rollHiveEvent } from '../lib/oracle';
 import { generateId } from '../lib/id';
+import { IntelDraw } from '../components/Phase6Cards';
+import { applyIntelAtStart, intelWantsSearch } from '../lib/intel';
+import { newClockDeck } from '../lib/clockDeck';
 
 /** Battle setup (spec §5): pick or roll a scenario, note the opponent, jot
  * pre-battle notes, then start the fight. Persists so a refresh doesn't lose it. */
@@ -41,6 +44,8 @@ export default function PreBattleScreen() {
   const [roll, setRoll] = useState<string | null>(null);
   const [npcTypeId, setNpcTypeId] = useState(warbandDefinitionsByName[0]?.id ?? '');
   const [npcBudget, setNpcBudget] = useState(500);
+  /** Phase 6 matched strength: a factor of your side's rating, or null for a fixed budget. */
+  const [matchFactor, setMatchFactor] = useState<number | null>(null);
 
   const [searchParams] = useSearchParams();
   const { getCampaign } = useSoloCampaigns();
@@ -64,10 +69,14 @@ export default function PreBattleScreen() {
       if (!def) return;
       const npc = identifyNemesis(buildNpcWarband(def, hiveMission.budget), campaign.hive, hiveMission);
       const agenda = generateAgenda();
+      const solo = soloScenarios.find((item) => item.id === hiveMission.scenarioId);
       const next: BattleSession = {
         ...defaultBattleSession(warbandId ?? ''),
         soloMission: { campaignId: campaign.id, missionId: hiveMission.id },
-        scenario: scenariosData.scenarios.find((item) => item.id === hiveMission.scenarioId)?.name ?? '',
+        scenario: solo?.name ?? scenarioName(hiveMission.scenarioId),
+        soloScenario: solo ? { id: solo.id, trackers: {}, outcome: null } : null,
+        assets: [...(campaign.hive.assets ?? [])],
+        clockDeck: hiveMission.stake === 'reckoning' ? newClockDeck() : null,
         npcWarband: npc,
         opponentName: npc.name,
         npcAgenda: agenda,
@@ -101,6 +110,12 @@ export default function PreBattleScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaignActive, campaign?.id, hiveMission?.id]);
 
+  // Matched strength follows your side's rating, allies included.
+  const liveSide = warband ? computeWarbandRating(warband) + session.allies.reduce((sum, a) => sum + computeWarbandRating(a.warband), 0) : 0;
+  useEffect(() => {
+    if (matchFactor !== null) setNpcBudget(Math.max(250, Math.round(liveSide * matchFactor / 25) * 25));
+  }, [liveSide, matchFactor]);
+
   if (!warband) return <Navigate to="/warbands" replace />;
   if (hiveBattleConflict) {
     return (
@@ -119,6 +134,9 @@ export default function PreBattleScreen() {
   }
 
   const otherWarbands = warbands.filter((w) => w.id !== warband.id);
+  // Phase 6 matched strength: your warband plus any allies.
+  const sideRating = computeWarbandRating(warband) + session.allies.reduce((sum, a) => sum + computeWarbandRating(a.warband), 0);
+  const matchedBudget = (factor: number) => Math.max(250, Math.round(sideRating * factor / 25) * 25);
   const scenario = scenariosData.scenarios.find((s) => s.name === session.scenario);
 
   function update(patch: Partial<BattleSession>) {
@@ -161,7 +179,7 @@ export default function PreBattleScreen() {
   }
 
   function clearNpc() {
-    update({ scenario: findSoloScenario(session.scenario) ? '' : session.scenario, soloScenario: null, searchEnabled: false, searchPoints: [], lead: false, npcWarband: null, npcAgenda: null, npcAgendaRevealed: false, alarmEnabled:false, npcBehaviours:{}, behaviourTicks:{}, npcReinforcements:[], allies:[] });
+    update({ intel: null, scenario: findSoloScenario(session.scenario) ? '' : session.scenario, soloScenario: null, searchEnabled: false, searchPoints: [], lead: false, npcWarband: null, npcAgenda: null, npcAgendaRevealed: false, alarmEnabled:false, npcBehaviours:{}, behaviourTicks:{}, npcReinforcements:[], allies:[] });
   }
 
   function startBattle() {
@@ -169,12 +187,15 @@ export default function PreBattleScreen() {
     if (session.soloScenario?.id === 'solo-rescue' && !session.soloScenario.captiveHeroId) return;
     const ashEvent = !session.started && campaignActive && hiveMission?.condition === 'ash-storm'
       ? rollHiveEvent() : null;
-    const prepared = prepareSearchPoints(startSolo(session));
-    update({ ...prepared, ...prepareContacts(prepared), started: true, turn: session.started ? session.turn : 1,
+    const solo = startSolo(session);
+    const prepared = prepareSearchPoints(!session.started && intelWantsSearch(solo) ? { ...solo, searchEnabled: true } : solo);
+    const withContacts = { ...prepared, ...prepareContacts(prepared) };
+    const ready = session.started ? withContacts : applyIntelAtStart(withContacts);
+    update({ ...ready, started: true, turn: session.started ? session.turn : 1,
       events: ashEvent
-        ? [{ id: generateId(), turn: 1, text: `Ash Storm — Hive event ${ashEvent.roll}: ${ashEvent.text}` }, ...session.events]
-        : session.events,
-      npcBehaviours: session.npcWarband ? { ...assignBehaviours(session.npcWarband, session.npcAgenda), ...session.npcBehaviours } : {},
+        ? [{ id: generateId(), turn: 1, text: `Ash Storm — Hive event ${ashEvent.roll}: ${ashEvent.text}` }, ...ready.events]
+        : ready.events,
+      npcBehaviours: ready.npcWarband ? { ...assignBehaviours(ready.npcWarband, ready.npcAgenda), ...session.npcBehaviours } : {},
       endeavours: session.started ? session.endeavours : drawEndeavours(session.endeavourDraw),
       allies: session.allies.map(a => ({...a, endeavours: session.started ? a.endeavours : drawEndeavours(session.endeavourDraw)})),
     });
@@ -189,7 +210,7 @@ export default function PreBattleScreen() {
           <Plate className="p-3">
             <p className="font-display uppercase tracking-[0.05em] text-ink text-sm">
               {campaign.name} · {hiveMission
-                ? `${sectorName(hiveMission.sector)} · ${hiveMission.stake === 'reckoning' ? 'Reckoning' : hiveMission.stake === 'defence' ? 'Defence' : 'Raid'} · ${CONDITIONS[hiveMission.condition].name}`
+                ? `${sectorName(hiveMission.sector)} · ${hiveMission.operation ? `${operationName(hiveMission.operation.id)} ${hiveMission.operation.step}/2` : hiveMission.stake === 'reckoning' ? 'Reckoning' : hiveMission.stake === 'defence' ? 'Defence' : 'Raid'} · ${CONDITIONS[hiveMission.condition].name}`
                 : `${actLabel(campaign.act)} · Chapter ${campaign.chapter}`}
             </p>
             <p className="font-body text-ink-faded text-sm">
@@ -213,7 +234,7 @@ export default function PreBattleScreen() {
               {scenariosData.scenarios.map((s) => (
                 <option key={s.id} value={s.name}>{s.name}</option>
               ))}
-              {session.npcWarband && !campaignActive && <optgroup label="Solo scenarios (app-original)">
+              {session.npcWarband && (!campaignActive || findSoloScenario(session.scenario)) && <optgroup label="Solo scenarios (app-original)">
                 {soloScenarios.filter(s => s.id !== 'solo-rescue' || warband.heroes.some(h => !h.isLeader)).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
               </optgroup>}
             </Select>
@@ -331,7 +352,7 @@ export default function PreBattleScreen() {
                 {Object.entries(shapeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </Select>
             </label>
-            <p className="font-body text-ink-faded text-xs">Difficulty: {difficultyForBudget(npcBudget)} · {shapeLabels[session.enemyShape]}</p>
+            <p className="font-body text-ink-faded text-xs">Difficulty: {difficultyForBudget(npcBudget)} · {shapeLabels[session.enemyShape]}{matchFactor !== null && ` · Your side: ${sideRating} · enemy budget ${npcBudget} tn`}</p>
             {session.npcWarband ? (
               <Plate className="p-3">
                 <p className="font-display uppercase tracking-[0.04em] text-ink text-sm">{session.npcWarband.name}</p>
@@ -362,11 +383,24 @@ export default function PreBattleScreen() {
                 </label>
                 <label className="block">
                   <span className="font-display uppercase tracking-[0.06em] text-ink-faded text-xs">Strength</span>
-                  <Select value={npcBudget} onChange={(e) => setNpcBudget(parseInt(e.target.value, 10))}>
-                    <option value={350}>Skirmish (350 tn)</option>
-                    <option value={500}>Even (500 tn)</option>
-                    <option value={650}>Overwhelming (650 tn)</option>
-                    {![350,500,650].includes(npcBudget) && <option value={npcBudget}>Combined strength ({npcBudget} tn)</option>}
+                  <Select value={matchFactor !== null ? `match-${matchFactor}` : String(npcBudget)} onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.startsWith('match-')) {
+                      const factor = Number(value.slice(6));
+                      setMatchFactor(factor);
+                      setNpcBudget(matchedBudget(factor));
+                    } else {
+                      setMatchFactor(null);
+                      setNpcBudget(parseInt(value, 10));
+                    }
+                  }}>
+                    <option value="350">Skirmish (350 tn)</option>
+                    <option value="500">Even (500 tn)</option>
+                    <option value="650">Overwhelming (650 tn)</option>
+                    {matchFactor === null && ![350,500,650].includes(npcBudget) && <option value={String(npcBudget)}>Combined strength ({npcBudget} tn)</option>}
+                    <option value="match-1">Match my side ×1 ({matchedBudget(1)} tn)</option>
+                    <option value="match-1.25">Hard ×1.25 ({matchedBudget(1.25)} tn)</option>
+                    <option value="match-1.5">Brutal ×1.5 ({matchedBudget(1.5)} tn)</option>
                   </Select>
                 </label>
                 <Button size="dense" fullWidth={false} onClick={generateNpc}>Generate</Button>
@@ -375,7 +409,8 @@ export default function PreBattleScreen() {
           </div>
         </section>
 
-        <BattleExtrasSetup session={session} own={warbands} update={update} onAlliesChanged={count => setNpcBudget(500 * (count + 1))} />
+        {session.npcWarband && <IntelDraw session={session} update={next => update(next)} />}
+        <BattleExtrasSetup session={session} own={warbands} update={update} onAlliesChanged={count => { if (matchFactor === null) setNpcBudget(500 * (count + 1)); }} />
         {/* Notes */}
         <section className="space-y-2">
           <BannerHeader>Pre-Battle Notes</BannerHeader>

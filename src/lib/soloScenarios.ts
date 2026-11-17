@@ -34,7 +34,7 @@ export const soloScenarios = [
     "name": "The Break-in",
     "briefing": "In, take it, out. Nobody needs to know you were here.",
     "setup": [
-      "The alarm starts at 0. While it stays at 0, the enemy does not activate.",
+      "The alarm starts at 0. While it stays at 0, the enemy are sentries: roll for each one on its card instead of following its behaviour. A sentry does not attack.",
       "A vault stands at the central objective. From turn 2, a hero of yours who ends a turn in contact with it, not in combat, opens it. Opening it raises the alarm by 2.",
       "The hero who opened it carries the take and must leave by your table edge."
     ],
@@ -119,6 +119,22 @@ export const soloScenarios = [
       "Captive left by your table edge"
     ],
     "turnLimit": null
+  },
+  {
+    "id": "solo-salvage",
+    "name": "The Salvage",
+    "briefing": "Four caches, a lot of noise, and less time than you think.",
+    "setup": [
+      "The map marks four caches on four buildings. A model of yours that ends a turn in contact with a cache, not in combat, picks it up. A model carries one cache; if it goes out of action, the cache stays where it fell.",
+      "The alarm plays no part. At the end of turn N, N reinforcements arrive, and twice as many as they started with can arrive in total.",
+      "Your models may leave by your table edge at any time and take no further part. Count each cache that leaves with them."
+    ],
+    "special": [],
+    "win": "Bring out at least two caches.",
+    "lose": "You rout, or two caches can no longer be brought out.",
+    "mapBase": "occupy",
+    "trackers": [],
+    "turnLimit": null
   }
 ];
 export const findSoloScenario = (name: string) => soloScenarios.find(s => s.name === name);
@@ -127,9 +143,10 @@ export const neededToEscape = (warband: Warband) => Math.floor(countModels(warba
 
 export function battleField(s: BattleSession) {
   const solo = findSoloScenario(s.scenario);
-  const field = generateBattlefield(s.battlefieldSeed ?? 0, solo?.mapBase ?? '', solo?.id === 'solo-sabotage' ? { buildings: 3 } : undefined);
-  if (solo?.id === 'solo-sabotage') {
-    field.markers.forEach((m, i) => { m.label = `Target ${i + 1}`; });
+  const counts = solo?.id === 'solo-sabotage' ? { buildings: 3 } : solo?.id === 'solo-salvage' ? { buildings: 4 } : undefined;
+  const field = generateBattlefield(s.battlefieldSeed ?? 0, solo?.mapBase ?? '', counts);
+  if (solo?.id === 'solo-sabotage' || solo?.id === 'solo-salvage') {
+    field.markers.forEach((m, i) => { m.label = `${solo.id === 'solo-sabotage' ? 'Target' : 'Cache'} ${i + 1}`; });
   }
   return field;
 }
@@ -141,8 +158,8 @@ export function startSolo(s: BattleSession): BattleSession {
     ...s,
     battlefieldSeed: s.battlefieldSeed ?? Math.floor(Math.random() * 4294967296),
     hiddenContacts: def.id === 'solo-hunt' || s.hiddenContacts,
-    alarmEnabled: ['solo-break-in', 'solo-hold', 'solo-sabotage'].includes(def.id) || s.alarmEnabled,
-    alarm: def.id === 'solo-break-in' ? 0 : s.alarm,
+    alarmEnabled: ['solo-break-in', 'solo-hold', 'solo-sabotage', 'solo-salvage'].includes(def.id) || s.alarmEnabled,
+    alarm: ['solo-break-in', 'solo-salvage'].includes(def.id) ? 0 : s.alarm,
     soloScenario: { id: def.id, trackers: {}, outcome: null, captiveHeroId: s.soloScenario?.captiveHeroId, exitEdge: def.id === 'solo-way-out' ? rollExit() : undefined },
   };
 }
@@ -157,6 +174,7 @@ export function evaluateObjective(s: BattleSession, warband: Warband): BattleSes
   const leader = s.npcWarband?.heroes.find(h => h.isLeader);
   const won = def.id === 'solo-hunt' ? !!leader && s.npcOutOfAction.heroIds.includes(leader.id)
     : def.id === 'solo-way-out' ? escaped >= neededToEscape(warband)
+    : def.id === 'solo-salvage' ? Number(t.brought ?? 0) >= 2
     : def.trackers.length > 0 && def.trackers.every(label => !!t[label]);
   const lost = !!t.routed || !!t.failed
     || (['solo-hunt', 'solo-sabotage'].includes(def.id) && s.turn > 10)

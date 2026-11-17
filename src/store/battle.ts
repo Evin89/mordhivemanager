@@ -51,6 +51,19 @@ export type ThirdParty = {
 };
 
 export type BattleSession = {
+  /** Phase 6 — tapped per enemy model each turn for the activation order. */
+  activation: Record<string, 'charge' | 'sight' | 'none'>;
+  /** Phase 6 — the pre-battle intel card, if one was drawn. */
+  intel: { card: string; redrawn: boolean } | null;
+  /** Phase 6 — Hive campaign assets in force for this battle. */
+  assets: string[];
+  /** Phase 6 — uses of "see two, keep one" left this battle. */
+  foresight: number;
+  pendingChoice: { deck: 'alarm' | 'clock'; ids: [string, string] } | null;
+  /** Phase 6 — the Reckoning deck (null outside a Reckoning). */
+  clockDeck: string[] | null;
+  clockCard: { id: string; turn: number } | null;
+  voxRelayUsed: boolean;
   enemyShape: import('../lib/enemyShape').EnemyShape;
   searchEnabled: boolean;
   searchPoints: import('../lib/searchPoints').SearchPoint[];
@@ -105,6 +118,8 @@ export function defaultBattleSession(warbandId: string): BattleSession {
   return {
     hiddenContacts: false, contacts: [], thirdPartyEnabled: false, thirdParty: null, cogitatorStarted: false,
     enemyShape: 'balanced',
+    activation: {}, intel: null, assets: [], foresight: 0, pendingChoice: null,
+    clockDeck: null, clockCard: null, voxRelayUsed: false,
     searchEnabled: false, searchPoints: [], lead: false,
     alarmDeck: [], alarmEvent: null,
     soloScenario: null,

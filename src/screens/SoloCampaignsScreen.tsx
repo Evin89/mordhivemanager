@@ -11,6 +11,7 @@ import { generateCampaignAgenda, actLabel } from '../lib/soloAgenda';
 import { warbandDefinitionsByName, getWarbandTypeName } from '../data/warbandRegistry';
 import { createHiveState } from '../lib/hiveCampaign';
 import { buildNpcWarband } from '../lib/npc';
+import { computeWarbandRating } from '../lib/rating';
 
 const CHAPTERS_PER_ACT = 3;
 
@@ -25,6 +26,7 @@ export default function SoloCampaignsScreen() {
   const [warbandId, setWarbandId] = useState('');
   const [nemesis, setNemesis] = useState('random');
   const [kind, setKind] = useState<'hive' | 'classic'>('hive');
+  const [strength, setStrength] = useState<'hive' | 'matched'>('hive');
 
   const canCreate = warbands.length > 0 && (warbandId || warbands[0]);
 
@@ -40,7 +42,7 @@ export default function SoloCampaignsScreen() {
     const campaign: SoloCampaign = {
       kind,
       hive: kind === 'hive'
-        ? createHiveState({ warband: wb?.name ?? 'Warband', faction: def.name }, buildNpcWarband(def, 500).heroes)
+        ? createHiveState({ warband: wb?.name ?? 'Warband', faction: def.name, rating: wb ? computeWarbandRating(wb) : undefined }, buildNpcWarband(def, 500).heroes, Math.random, strength)
         : undefined,
       id: generateId(),
       name: name.trim() || `${wb?.name ?? 'Warband'} — Solo Campaign`,
@@ -114,6 +116,13 @@ export default function SoloCampaignsScreen() {
                 <option value="classic">Three Acts — the original format</option>
               </Select>
             </label>
+            {kind === 'hive' && <label className="block">
+              <span className="font-ui text-ink-faded">Enemy strength</span>
+              <Select value={strength} onChange={(event) => setStrength(event.target.value as 'hive' | 'matched')}>
+                <option value="hive">The hive's own (grows each turn)</option>
+                <option value="matched">Matched to your warband (its rating)</option>
+              </Select>
+            </label>}
             <label className="block">
               <span className="font-display uppercase tracking-[0.06em] text-ink-faded text-xs">Campaign name</span>
               <TextField value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. The Long Dark" />
