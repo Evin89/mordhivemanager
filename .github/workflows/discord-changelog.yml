@@ -1,5 +1,5 @@
 # Posts new src/data/changelog.json entries to the community Discord (#mord-hive-manager-changelog).
-# Secret: DISCORD_CHANGELOG_WEBHOOK (Discord › #mord-hive-manager-changelog › Integrations ›
+# Secret: DISCORD_MORDHIVE_CHANGELOG_WEBHOOK (Discord › #mord-hive-manager-changelog › Integrations ›
 # Webhooks › "Mord Hive Manager changelog" › Copy Webhook URL). Without it the job is a no-op.
 # Entries: player-facing, in English, newest first: {"date": "YYYY-MM-DD", "title": "…", "description": "…"}.
 name: Discord changelog
@@ -45,5 +45,5 @@ jobs:
 
       - name: Post new entries
         env:
-          DISCORD_CHANGELOG_WEBHOOK: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK }}
+          DISCORD_CHANGELOG_WEBHOOK: ${{ secrets.DISCORD_MORDHIVE_CHANGELOG_WEBHOOK }}
         run: node scripts/post-changelog-discord.mjs "$RUNNER_TEMP/changelog-before.json" src/data/changelog.json
