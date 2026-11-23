@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "date": "2026-11-23",
+    "title": "Join us on Discord",
+    "description": "Mord Hive Manager now has its own channel on the Mordheim Manager Discord. Find the link on your Account page or on the landing page, and pick “Mord Hive Manager” when the server asks which apps you use."
+  },
+  {
+    "date": "2026-11-17",
+    "title": "Solo campaigns: a sharper opponent",
+    "description": "Solo campaigns gained a new layer of app-original mechanics: matched strength, a preview of the enemy's next move, activation order, operations, assets and intel, and more. None of it changes the v0.5 rules or your roster."
+  }
+]
