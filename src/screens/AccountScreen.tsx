@@ -10,6 +10,12 @@ import DesignerNote from '../components/DesignerNote';
 import PageChip from '../components/PageChip';
 import { Button, TextField } from '../components/ui';
 
+// Community (Mordheim Manager spec §4.10.1): the shared Discord server. The
+// invite works for anyone; the #mord-hive-manager deep link only resolves for
+// members who picked the Mord Hive role in onboarding.
+const DISCORD_INVITE = 'https://discord.gg/F7HTH5zrmj';
+const DISCORD_MORDHIVE_CHANNEL_URL = 'https://discord.com/channels/1573273187393863851/1573274275446652938';
+
 const label = 'block font-display uppercase tracking-[0.06em] text-sm text-ink mb-1';
 
 function Notice({ tone, children }: { tone: 'error' | 'ok'; children: string }) {
@@ -135,6 +141,38 @@ export default function AccountScreen() {
           </Button>
         </div>
       </Plate>
+
+      <section className="space-y-3">
+        <BannerHeader>Community</BannerHeader>
+        <Plate className="p-4 sm:p-6 space-y-3">
+          <p className="font-body text-ink text-body-min">
+            Questions, ideas or bugs in the app? Bring them to the Mord Hive Manager channel on the Mordheim Manager
+            Discord. It is about this app, not the game itself.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={DISCORD_MORDHIVE_CHANNEL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ordo-button font-ui uppercase tracking-[0.06em] inline-flex items-center justify-center border-2 px-4 py-2 min-h-[48px] bg-brass text-page border-brass hover:opacity-90"
+            >
+              Open #mord-hive-manager
+            </a>
+            <a
+              href={DISCORD_INVITE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ordo-button font-ui uppercase tracking-[0.06em] inline-flex items-center justify-center border-2 px-4 py-2 min-h-[48px] bg-transparent text-brass-text border-brass hover:bg-brass/10"
+            >
+              Join the server
+            </a>
+          </div>
+          <p className="font-body text-ink-faded text-sm">
+            New to the server? Join first and pick “Mord Hive Manager” when it asks which apps you use. That unlocks
+            the channel.
+          </p>
+        </Plate>
+      </section>
 
       <section className="space-y-3">
         <BannerHeader>Remove my Mord Hive data</BannerHeader>
